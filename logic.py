@@ -40,5 +40,28 @@ def find_title(site):
         if not found_match:
             print(f"Słowo kluczowe '{i}' nie występuje w tytule")
 
+#find_title('')
 
-find_title('https://miroslawmamczur.pl/beautifulsoup/')
+def find_headings(site):
+    response = requests.get(site)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    headings = soup.find_all(['h1','h2','h3','h4','h5','h6'])
+    for i in headings:
+        print(i.get_text())
+
+def find_all_links(site):
+    response = requests.get(site)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    links = soup.find_all('a', href = True) #szuka wszytskich linków, gdzie jest spełniony warunek href = true
+    for link in links:
+        print(link['href'])
+
+    LinksGroup = set()
+    for link in links:
+        LinksGroup.add(link)
+
+
+#find_headings('https://wazdan.com/')
+#find_headings('https://www.pragmaticplay.com/pl/')
+
+find_all_links('https://wazdan.com/')
