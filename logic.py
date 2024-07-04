@@ -77,7 +77,7 @@ class WebCrawler:
             print(f"błąd: {error}") 
             return None
 
-    def find_key_words(self,promt = 'Najlepsze filmy w Polsce na wieczór - coś z BeautifulSoup'):
+    def find_key_words(self,promt = 'Wazdan'):
         key_words = promt.split()
         list_of_key_words = []
         for i in key_words:
@@ -94,15 +94,15 @@ class WebCrawler:
         for keyword in title_keywords:
             found_match = False #flaga pozwalająca śledzić czy dane słowo zostało już użyte
             for keyword_2 in promt_keywords:
-                if title_keywords == promt_keywords:
+                if keyword == keyword_2:
                     print(f"Słowo kluczowe '{keyword}' występuje w tytule")
                     found_match = True
                     break
-            if not found_match:
-                print(f"Słowo kluczowe '{keyword_2}' nie występuje w tytule")
+                if not found_match:
+                    print(f"Słowo kluczowe '{keyword_2}' nie występuje w tytule")
 
 if __name__ == '__main__':
-    base_site = 'https://miroslawmamczur.pl/beautifulsoup/' 
+    base_site = 'https://wazdan.com/' 
     crawler = WebCrawler(base_site)
     links = crawler.find_all_links(base_site)
     print(f'Znalezione linki:')
