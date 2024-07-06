@@ -1,6 +1,6 @@
 import requests 
 from bs4 import BeautifulSoup
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse, parse_qs
 
 '''
 def analyse_site(site='https://miroslawmamczur.pl/beautifulsoup/'):
@@ -77,15 +77,14 @@ class WebCrawler:
             print(f"błąd: {error}") 
             return None
 
-    def find_key_words(self,promt = 'Wazdan'):
+    def find_key_words(self,promt = 'wazdan'):
         key_words = promt.split()
         list_of_key_words = []
         for i in key_words:
             list_of_key_words.append(i)
         print(list_of_key_words)
         return list_of_key_words
-        
-
+    
     def analyse_title_and_key_words(self):
         title = self.find_title(self.site)
 
@@ -101,11 +100,32 @@ class WebCrawler:
                 if not found_match:
                     print(f"Słowo kluczowe '{keyword_2}' nie występuje w tytule")
 
+base_site = 'https://wazdan.com/' 
+crawler = WebCrawler(base_site)
+links = crawler.find_all_links(base_site)
+
+def find_key_words_in_url(site):
+    crawler = WebCrawler(site)
+    key_words = crawler.find_key_words('wazdan news press losowe') 
+
+    parsed_url = urlparse(site)
+    url_parts = [parsed_url.scheme, parsed_url.netloc, parsed_url.path, parsed_url.params, parsed_url.query, parsed_url.fragment]
+    found_keywords =[]
+
+    for part in url_parts:
+        for keyword in key_words:
+            if keyword in part:
+                found_keywords.append(keyword)
+    return list(set(found_keywords))
+
+x = find_key_words_in_url('https://wazdan.com/news/in-the-press/tragaperrasweb-interview-with-joanna-zdanowska-bieniek-the-secret-to-the-success-of-the-coins-series-and-expectations-for-score-the-jackpot')
+print(x)
+'''
 if __name__ == '__main__':
-    base_site = 'https://wazdan.com/' 
-    crawler = WebCrawler(base_site)
-    links = crawler.find_all_links(base_site)
     print(f'Znalezione linki:')
     for link in links:
         print(link)
     crawler.analyse_title_and_key_words()
+'''
+
+    
