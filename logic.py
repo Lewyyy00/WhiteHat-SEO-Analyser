@@ -42,14 +42,14 @@ def find_title(site):
         if not found_match:
             print(f"Słowo kluczowe '{i}' nie występuje w tytule")
 '''
-'''
+
 def find_headings(site):
     response = requests.get(site)
     soup = BeautifulSoup(response.content, 'html.parser')
     headings = soup.find_all(['h1','h2','h3','h4','h5','h6'])
     for i in headings:
         print(i.get_text())
-'''
+
 
 class WebCrawler:
     def __init__(self,site):
@@ -82,7 +82,6 @@ class WebCrawler:
         list_of_key_words = []
         for i in key_words:
             list_of_key_words.append(i)
-        print(list_of_key_words)
         return list_of_key_words
     
     def analyse_title_and_key_words(self):
@@ -100,13 +99,11 @@ class WebCrawler:
                 if not found_match:
                     print(f"Słowo kluczowe '{keyword_2}' nie występuje w tytule")
 
-base_site = 'https://wazdan.com/' 
-crawler = WebCrawler(base_site)
-links = crawler.find_all_links(base_site)
 
-def find_key_words_in_url(site):
+#must fix
+def find_key_words_in_url(site, keywords='wazdan news press losowe'):
     crawler = WebCrawler(site)
-    key_words = crawler.find_key_words('wazdan news press losowe') 
+    key_words = crawler.find_key_words(keywords) 
 
     parsed_url = urlparse(site)
     url_parts = [parsed_url.scheme, parsed_url.netloc, parsed_url.path, parsed_url.params, parsed_url.query, parsed_url.fragment]
@@ -118,10 +115,44 @@ def find_key_words_in_url(site):
                 found_keywords.append(keyword)
     return list(set(found_keywords))
 
-x = find_key_words_in_url('https://wazdan.com/news/in-the-press/tragaperrasweb-interview-with-joanna-zdanowska-bieniek-the-secret-to-the-success-of-the-coins-series-and-expectations-for-score-the-jackpot')
-print(x)
+#x = find_key_words_in_url('https://wazdan.com/news/in-the-press/tragaperrasweb-interview-with-joanna-zdanowska-bieniek-the-secret-to-the-success-of-the-coins-series-and-expectations-for-score-the-jackpot')
+#print(x)
+
+#must fix
+def find_key_words_in_all_urls(site, keywords='wazdan market games gaming'):
+    crawler = WebCrawler(site)
+    urls = crawler.find_all_links(site)
+    key_words = crawler.find_key_words(keywords)
+
+    found_keywords = []
+    for url in urls:
+        found_keywords.append(find_key_words_in_url(url,keywords))
+        print(f"URL: {url}")
+        for keyword in key_words:
+            if keyword in found_keywords:
+                    print(f"Słowo kluczowe '{keyword}' jest w URL.")
+            else:
+                    print(f"Słowo kluczowe '{keyword}' NIE jest w URL.")
+        print()  
+
+y = find_key_words_in_all_urls('https://wazdan.com/')    
+print(y)
+    
+
+def find_headings(site):
+    response = requests.get(site)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    headings = soup.find_all(['h1','h2','h3','h4','h5','h6'])
+    for i in headings:
+        print(i.get_text())
+
+#y = find_headings('https://wazdan.com/news/in-the-press/tragaperrasweb-interview-with-joanna-zdanowska-bieniek-the-secret-to-the-success-of-the-coins-series-and-expectations-for-score-the-jackpot')
+
 '''
 if __name__ == '__main__':
+    base_site = 'https://wazdan.com/' 
+    crawler = WebCrawler(base_site)
+    links = crawler.find_all_links(base_site)
     print(f'Znalezione linki:')
     for link in links:
         print(link)
