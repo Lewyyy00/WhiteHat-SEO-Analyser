@@ -1,13 +1,6 @@
 import requests 
 from bs4 import BeautifulSoup
-from urllib.parse import urljoin, urlparse, parse_qs
-
-def find_headings(site):
-    response = requests.get(site)
-    soup = BeautifulSoup(response.content, 'html.parser')
-    headings = soup.find_all(['h1','h2','h3','h4','h5','h6'])
-    for i in headings:
-        print(i.get_text())
+from urllib.parse import urljoin, urlparse
 
 class WebCrawler:
     def __init__(self,site):
@@ -88,7 +81,21 @@ def find_key_words_in_all_urls(site, keywords='wazdan market games gaming'):
                     print(f"Słowo kluczowe '{keyword}' NIE jest w URL.")
         print()  
 
-y = find_key_words_in_all_urls('https://wazdan.com/')    
+def find_headings(site):
+    response = requests.get(site)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    headings = soup.find_all(['h1','h2','h3','h4','h5','h6'])
+    return [heading.text for heading in headings]
+
+def find_paragraphs(site):
+    response = requests.get(site)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    paragraphs = soup.find_all('p')
+    return [paragraph.text for paragraph in paragraphs]
+
+
+
+y = find_paragraphs('https://miroslawmamczur.pl/beautifulsoup/')    
 print(y)
     
 '''
