@@ -1,6 +1,8 @@
 import requests 
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
+import re
+from itertools import combinations
 
 class WebCrawler:
     def __init__(self,site):
@@ -93,11 +95,40 @@ def find_paragraphs(site):
     paragraphs = soup.find_all('p')
     return [paragraph.text for paragraph in paragraphs]
 
+#y = find_paragraphs('https://miroslawmamczur.pl/beautifulsoup/')    
+#print(y)
 
-
-y = find_paragraphs('https://miroslawmamczur.pl/beautifulsoup/')    
-print(y)
+def find_key_words_2(prompt):
+        key_words = prompt.split()
+        #list_of_key_words = []
+        #for i in key_words:
+            #list_of_key_words.append(i)
+        #return list_of_key_words
+        return key_words
     
+def find_key_words_extended(prompt,site = 'https://miroslawmamczur.pl/beautifulsoup/'):
+    
+    key_words = find_key_words_2(prompt) 
+    text = find_paragraphs(site)
+
+    combo_matches = {}
+
+     # Znajdowanie kombinacji słów
+    for i in range(1, len(key_words) + 1):
+        phrase_combinations = list(combinations(key_words, i))
+        for combo in phrase_combinations:
+            combo_pattern = ' '.join(combo)
+            matches = re.findall(re.escape(combo_pattern), text, re.IGNORECASE)
+            if matches:
+                combo_matches[combo_pattern] = matches
+
+    return {
+        'combo_matches': combo_matches
+    }
+
+c = find_key_words_extended('cos nie wiem itd')
+print(c)
+
 '''
 if __name__ == '__main__':
     base_site = 'https://wazdan.com/' 
