@@ -61,10 +61,17 @@ class TextAnalyzer:
             return self._preprocess_single_text(self.text)
 
     def _preprocess_single_text(self, text):
+<<<<<<< HEAD
         preprocesed_text = text.lower()  
         preprocesed_text = re.sub(r'\b\w{1}\b', '', preprocesed_text)  
         preprocesed_text = re.sub(r'\s+', ' ', preprocesed_text)  
         preprocesed_text = re.sub(r'[^\w\s]', '', preprocesed_text) 
+=======
+        preprocesed_text = text.lower()  # Normalizacja tekstu
+        preprocesed_text = re.sub(r'\b\w{1}\b', '', preprocesed_text)  # Usuwanie krótkich słów (opcjonalne)
+        preprocesed_text = re.sub(r'\s+', ' ', preprocesed_text)  # Usuwanie nadmiarowych spacji
+        preprocesed_text = re.sub(r'[^\w\s]', '', preprocesed_text)  # Usuwanie znaków interpunkcyjnych
+>>>>>>> e74af55ae1fc134180ab12219142a27131319e4d
         print(preprocesed_text)
         return preprocesed_text
 
@@ -81,6 +88,13 @@ class KeyWordFinder:
     
     def get_key_words(self, query):
         key_words = [word.lower() for word in query.split()]
+<<<<<<< HEAD
+=======
+        #list_of_key_words = []
+        #for i in key_words:
+            #list_of_key_words.append(i)
+        #return list_of_key_words
+>>>>>>> e74af55ae1fc134180ab12219142a27131319e4d
         return key_words
     
     
