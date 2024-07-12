@@ -2,7 +2,9 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
 import re
-from itertools import combinations
+import nltk
+from sklearn.feature_extraction.text import TfidfVectorizer
+from nltk.corpus import stopwords
 
 
 class WebsiteData:
@@ -16,7 +18,6 @@ class WebsiteData:
 
     def get_all_links(self,website):
         soup = self.get_soup()
-
         links = soup.find_all('a', href = True) #szuka wszytskich linków, gdzie jest spełniony warunek href = true
        
         LinksGroup = set()
@@ -30,6 +31,7 @@ class WebsiteData:
             soup = self.get_soup()
             title_tag = soup.title
             title = title_tag.string
+            print(title)
             return title
         except requests.exceptions.RequestException as error:
             print(f"błąd: {error}") 
@@ -45,22 +47,46 @@ class WebsiteData:
         paragraphs = soup.find_all('p')
         return [paragraph.text for paragraph in paragraphs]
     
+
+class TextAnalyzer:
+    def __init__(self, text):
+        self.text = text
+
+    """Due to we got a list from get_paragrapghs, preprocess_text checks if text is a list... """
+    def preprocess_text(self):
+        if isinstance(self.text, list):
+            processed_texts = [self._preprocess_single_text(t) for t in self.text]
+            return processed_texts
+        else:
+            return self._preprocess_single_text(self.text)
+
+    def _preprocess_single_text(self, text):
+        preprocesed_text = text.lower()  
+        preprocesed_text = re.sub(r'\b\w{1}\b', '', preprocesed_text)  
+        preprocesed_text = re.sub(r'\s+', ' ', preprocesed_text)  
+        preprocesed_text = re.sub(r'[^\w\s]', '', preprocesed_text) 
+        print(preprocesed_text)
+        return preprocesed_text
+
+wd = WebsiteData('https://wazdan.com/career/all-offers')
+data = wd.get_paragraphs()
+print(data)
+c= TextAnalyzer(data)
+r = c.preprocess_text()
+
+    
 class KeyWordFinder:
     def __init__(self, query):
         self.query = query
     
     def get_key_words(self, query):
-        key_words = query.split()
-        #list_of_key_words = []
-        #for i in key_words:
-            #list_of_key_words.append(i)
-        #return list_of_key_words
+        key_words = [word.lower() for word in query.split()]
         return key_words
     
     
     def find_key_words_in_title(self, title):
         title_keywords = self.get_key_words(title)
-        query_keywords = self.get_key_words()
+        query_keywords = self.get_key_words(self.query)
         for keyword in title_keywords:
             found_match = False #flaga pozwalająca śledzić czy dane słowo zostało już użyte
             for keyword_2 in query_keywords:
@@ -95,3 +121,4 @@ class KeyWordFinder:
                 else:
                         print(f"Słowo kluczowe '{keyword}' NIE jest w URL.")
             print() 
+
