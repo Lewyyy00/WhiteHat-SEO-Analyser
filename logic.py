@@ -18,10 +18,6 @@ class WebsiteData:
 
     def get_all_links(self,website):
         soup = self.get_soup()
-<<<<<<< HEAD
-
-=======
->>>>>>> b66d79180d897d65a12a4e0f9be54cd3f30165eb
         links = soup.find_all('a', href = True) #szuka wszytskich linków, gdzie jest spełniony warunek href = true
        
         LinksGroup = set()
@@ -51,8 +47,6 @@ class WebsiteData:
         paragraphs = soup.find_all('p')
         return [paragraph.text for paragraph in paragraphs]
     
-<<<<<<< HEAD
-=======
 
 class TextAnalyzer:
     def __init__(self, text):
@@ -67,17 +61,10 @@ class TextAnalyzer:
             return self._preprocess_single_text(self.text)
 
     def _preprocess_single_text(self, text):
-<<<<<<< HEAD
         preprocesed_text = text.lower()  
         preprocesed_text = re.sub(r'\b\w{1}\b', '', preprocesed_text)  
         preprocesed_text = re.sub(r'\s+', ' ', preprocesed_text)  
-        preprocesed_text = re.sub(r'[^\w\s]', '', preprocesed_text) 
-=======
-        preprocesed_text = text.lower()  # Normalizacja tekstu
-        preprocesed_text = re.sub(r'\b\w{1}\b', '', preprocesed_text)  # Usuwanie krótkich słów (opcjonalne)
-        preprocesed_text = re.sub(r'\s+', ' ', preprocesed_text)  # Usuwanie nadmiarowych spacji
-        preprocesed_text = re.sub(r'[^\w\s]', '', preprocesed_text)  # Usuwanie znaków interpunkcyjnych
->>>>>>> e74af55ae1fc134180ab12219142a27131319e4d
+        preprocesed_text = re.sub(r'[^\w\s]', '', preprocesed_text)  
         print(preprocesed_text)
         return preprocesed_text
 
@@ -88,34 +75,18 @@ c= TextAnalyzer(data)
 r = c.preprocess_text()
 
     
->>>>>>> b66d79180d897d65a12a4e0f9be54cd3f30165eb
 class KeyWordFinder:
     def __init__(self, query):
         self.query = query
     
     def get_key_words(self, query):
-<<<<<<< HEAD
-        key_words = query.split()
-=======
         key_words = [word.lower() for word in query.split()]
-<<<<<<< HEAD
-=======
->>>>>>> b66d79180d897d65a12a4e0f9be54cd3f30165eb
-        #list_of_key_words = []
-        #for i in key_words:
-            #list_of_key_words.append(i)
-        #return list_of_key_words
->>>>>>> e74af55ae1fc134180ab12219142a27131319e4d
         return key_words
     
     
     def find_key_words_in_title(self, title):
         title_keywords = self.get_key_words(title)
-<<<<<<< HEAD
-        query_keywords = self.get_key_words()
-=======
         query_keywords = self.get_key_words(self.query)
->>>>>>> b66d79180d897d65a12a4e0f9be54cd3f30165eb
         for keyword in title_keywords:
             found_match = False #flaga pozwalająca śledzić czy dane słowo zostało już użyte
             for keyword_2 in query_keywords:
@@ -149,9 +120,5 @@ class KeyWordFinder:
                         print(f"Słowo kluczowe '{keyword}' jest w URL.")
                 else:
                         print(f"Słowo kluczowe '{keyword}' NIE jest w URL.")
-<<<<<<< HEAD
-            print() 
-=======
             print() 
 
->>>>>>> b66d79180d897d65a12a4e0f9be54cd3f30165eb
