@@ -5,7 +5,8 @@ import re
 import nltk
 from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.corpus import stopwords
-
+nltk.download('stopwords')
+nltk.download('punkt')
 
 class WebsiteData:
     def __init__(self, website):
@@ -52,7 +53,6 @@ class TextAnalyzer:
     def __init__(self, text):
         self.text = text
 
-    """Due to we got a list from get_paragrapghs, preprocess_text checks if text is a list... """
     def preprocess_text(self):
         if isinstance(self.text, list):
             processed_texts = [self._preprocess_single_text(t) for t in self.text]
@@ -67,13 +67,7 @@ class TextAnalyzer:
         preprocesed_text = re.sub(r'[^\w\s]', '', preprocesed_text)  
         print(preprocesed_text)
         return preprocesed_text
-
-wd = WebsiteData('https://wazdan.com/career/all-offers')
-data = wd.get_paragraphs()
-print(data)
-c= TextAnalyzer(data)
-r = c.preprocess_text()
-
+    
     
 class KeyWordFinder:
     def __init__(self, query):
