@@ -5,6 +5,7 @@ import re
 import nltk
 from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize, sent_tokenize
 nltk.download('stopwords')
 nltk.download('punkt')
 
@@ -65,10 +66,31 @@ class TextAnalyzer:
         preprocesed_text = re.sub(r'\b\w{1}\b', '', preprocesed_text)  
         preprocesed_text = re.sub(r'\s+', ' ', preprocesed_text)  
         preprocesed_text = re.sub(r'[^\w\s]', '', preprocesed_text)  
-        print(preprocesed_text)
         return preprocesed_text
     
-    
+    def sentance_tokenize(self):
+        preprocessed_texts = self.preprocess_text()
+        stop_words = set(stopwords.words("english"))
+        
+        filtered_sentences = []
+
+        for sentence in preprocessed_texts:
+            words = word_tokenize(sentence)
+            filtered_sentence = ' '.join([word for word in words if word not in stop_words]) #there is a list of lists with each word without ' '.join()
+            filtered_sentences.append(filtered_sentence)
+        return filtered_sentences
+
+
+
+d = WebsiteData('https://en.wikipedia.org/wiki/Google_Books_Ngram_Viewer')    
+data = d.get_paragraphs()
+print(data)
+c = TextAnalyzer(data)
+r = c.sentance_tokenize()
+
+print(r)
+
+
 class KeyWordFinder:
     def __init__(self, query):
         self.query = query
