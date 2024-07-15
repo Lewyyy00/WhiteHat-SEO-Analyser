@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wyniki</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="form-container">
+        <h1>Ourcome</h1>
+        
+        <h2>Website title</h2>
+        <p>{{ title }}</p>
+        
+        <h2>Headings</h2>
+        <ul>
+        {% for heading in headings %}
+            <li>{{ heading }}</li>
+        {% endfor %}
+        </ul>
+        
+        <h2>Content</h2>
+        <ul>
+        {% for paragraph in paragraphs %}
+            <li>{{ paragraph }}</li>
+        {% endfor %}
+        </ul>
+
+        <h2>All links</h2>
+        <ul>
+        {% for link in all_links %}
+            <li><a href="{{ link }}">{{ link }}</a></li>
+        {% endfor %}
+        </ul>
+        
+        <a href="{{ url_for('index') }}">Back to index</a>
+    </div>
+</body>
+</html>

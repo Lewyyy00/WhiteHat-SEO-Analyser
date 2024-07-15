@@ -18,13 +18,13 @@ class WebsiteData:
         soup = BeautifulSoup(response.content, 'html.parser')
         return soup
 
-    def get_all_links(self,website):
+    def get_all_links(self):
         soup = self.get_soup()
         links = soup.find_all('a', href = True) #szuka wszytskich linków, gdzie jest spełniony warunek href = true
        
         LinksGroup = set()
         for link in links:
-            full_url = urljoin(website, link['href'])
+            full_url = urljoin(self.website, link['href'])
             LinksGroup.add(full_url)
         return LinksGroup
     
