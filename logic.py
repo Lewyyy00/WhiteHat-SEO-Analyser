@@ -6,8 +6,8 @@ import nltk
 from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize, sent_tokenize
-nltk.download('stopwords')
-nltk.download('punkt')
+"""nltk.download('stopwords')
+nltk.download('punkt')"""
 
 class WebsiteData:
     def __init__(self, website):
@@ -18,15 +18,39 @@ class WebsiteData:
         soup = BeautifulSoup(response.content, 'html.parser')
         return soup
 
+    """def get_all_links(self):
+        soup = self.get_soup()
+        
+        links = [a.get('href') for a in soup.find_all('a', href = True)]
+        full_url = [urljoin(self.website, link) for link in links]
+
+        return full_url"""
+    
     def get_all_links(self):
         soup = self.get_soup()
         links = soup.find_all('a', href = True) #szuka wszytskich linków, gdzie jest spełniony warunek href = true
-       
+
         LinksGroup = set()
         for link in links:
             full_url = urljoin(self.website, link['href'])
             LinksGroup.add(full_url)
         return LinksGroup
+
+
+    def get_all_404_links(self):
+        links = self.get_all_links()
+        links_404 = []
+        try:    #konieczne inaczej mieli mega dług
+            for link in links:
+                link_response = requests.get(link, timeout=1)
+                if link_response.status_code == 404:
+                    links_404.append(link)
+        except requests.exceptions.Timeout:
+            print(f"Timeout checking {link}")
+
+        print(links_404)
+        return links_404
+
     
     def get_title(self):
         try:
@@ -82,13 +106,9 @@ class TextAnalyzer:
 
 
 
-d = WebsiteData('https://en.wikipedia.org/wiki/Google_Books_Ngram_Viewer')    
-data = d.get_paragraphs()
-print(data)
-c = TextAnalyzer(data)
-r = c.sentance_tokenize()
+d = WebsiteData('https://marczak.me/google-tag-manager-co-to-jest/')    
+data = d.get_all_404_links()
 
-print(r)
 
 
 class KeyWordFinder:

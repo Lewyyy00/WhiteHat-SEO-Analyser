@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wyniki</title>
+    <title>Outcome</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <div class="form-container">
-        <h1>Ourcome</h1>
+        <h1>Outcome</h1>
         
         <h2>Website title</h2>
         <p>{{ title }}</p>
@@ -30,6 +30,13 @@
         <h2>All links</h2>
         <ul>
         {% for link in all_links %}
+            <li><a href="{{ link }}">{{ link }}</a></li>
+        {% endfor %}
+        </ul>
+
+        <h2>All 404 errors</h2>
+        <ul>
+        {% for link in all_404 %}
             <li><a href="{{ link }}">{{ link }}</a></li>
         {% endfor %}
         </ul>

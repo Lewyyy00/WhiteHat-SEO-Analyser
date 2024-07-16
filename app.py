@@ -17,8 +17,14 @@ def submit():
     headings = website_data.get_headings()
     paragraphs = website_data.get_paragraphs()
     all_links = website_data.get_all_links()
+    all_404 = website_data.get_all_404_links()
 
-    return render_template('results.html', title=title, headings=headings, paragraphs=paragraphs, all_links=all_links)
+    return render_template('results.html', 
+                           title = title, 
+                           headings = headings, 
+                           paragraphs = paragraphs, 
+                           all_links = all_links,
+                           all_404 = all_404)
 
 if __name__ == '__main__':
     app.run(debug=True)
