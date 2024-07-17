@@ -105,12 +105,6 @@ class TextAnalyzer:
         return filtered_sentences
 
 
-
-d = WebsiteData('https://marczak.me/google-tag-manager-co-to-jest/')    
-data = d.get_all_404_links()
-
-
-
 class KeyWordFinder:
     def __init__(self, query):
         self.query = query
@@ -123,18 +117,13 @@ class KeyWordFinder:
     def find_key_words_in_title(self, title):
         title_keywords = self.get_key_words(title)
         query_keywords = self.get_key_words(self.query)
-        for keyword in title_keywords:
-            found_match = False #flaga pozwalająca śledzić czy dane słowo zostało już użyte
-            for keyword_2 in query_keywords:
-                if keyword == keyword_2:
-                    print(f"Słowo kluczowe '{keyword}' występuje w tytule")
-                    found_match = True
-                    break
-                if not found_match:
-                    print(f"Słowo kluczowe '{keyword_2}' nie występuje w tytule")
+
+        title_keywords = [keyword for keyword in title_keywords if keyword in query_keywords]
+        return title_keywords
+       
 
     def find_key_words_in_url(self, url):
-        key_words = self.get_key_words() 
+        key_words = self.get_key_words(self.query) 
         parsed_url = urlparse(url)
         url_parts = [parsed_url.scheme, parsed_url.netloc, parsed_url.path, parsed_url.params, parsed_url.query, parsed_url.fragment]
         found_keywords =[]
@@ -146,7 +135,7 @@ class KeyWordFinder:
         return list(set(found_keywords))
     
     def find_key_words_in_all_urls(self, urls):
-        key_words = self.get_key_words() 
+        key_words = self.get_key_words(self.query) 
         #found_keywords = []
         for url in urls:
             keywords = self.find_key_words_in_url(url,keywords)
@@ -158,3 +147,17 @@ class KeyWordFinder:
                         print(f"Słowo kluczowe '{keyword}' NIE jest w URL.")
             print() 
 
+
+
+website_data = WebsiteData('https://wazdan.com/')
+kf = KeyWordFinder('Is a wazdan realiable company?')
+
+#title = website_data.get_title()
+#headings = website_data.get_headings()
+#paragraphs = website_data.get_paragraphs()
+#all_links = website_data.get_all_links()
+#all_404 = website_data.get_all_404_links()
+
+#kf_in_title = kf.find_key_words_in_title('reliable company webiste, wazdan, is,')
+#kf_in_url = kf.find_key_words_in_all_urls(all_links)
+#kf_in_all_urls = kf.find_key_words_in_all_urls('https://wazdan.com/')
