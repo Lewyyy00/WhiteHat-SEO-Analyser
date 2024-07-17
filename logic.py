@@ -6,8 +6,8 @@ import nltk
 from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize, sent_tokenize
-"""nltk.download('stopwords')
-nltk.download('punkt')"""
+nltk.download('stopwords')
+nltk.download('punkt')
 
 class WebsiteData:
     def __init__(self, website):
@@ -82,6 +82,10 @@ class TextAnalyzer:
         if isinstance(self.text, list):
             processed_texts = [self._preprocess_single_text(t) for t in self.text]
             return processed_texts
+        elif isinstance(self.text, str):  
+            text = self.text.split()
+            processed_texts = [self._preprocess_single_text(word) for word in text]
+            return processed_texts
         else:
             return self._preprocess_single_text(self.text)
 
@@ -102,6 +106,10 @@ class TextAnalyzer:
             words = word_tokenize(sentence)
             filtered_sentence = ' '.join([word for word in words if word not in stop_words]) #there is a list of lists with each word without ' '.join()
             filtered_sentences.append(filtered_sentence)
+
+        for i in filtered_sentences:
+            if len(i) == 0:
+                filtered_sentences.remove(i)
         return filtered_sentences
 
 
@@ -148,16 +156,55 @@ class KeyWordFinder:
             print() 
 
 
-
-website_data = WebsiteData('https://wazdan.com/')
+"""
+website_data = WebsiteData('https://www.szymonslowik.pl/seo-co-to-jest/')
+paragraphs = website_data.get_paragraphs()
+headings = website_data.get_headings()
 kf = KeyWordFinder('Is a wazdan realiable company?')
+ta = TextAnalyzer('https://www.szymonslowik.pl/seo-co-to-jest/')
+i = ta.preprocess_text()
+y = ta.sentance_tokenize()
 
+print(y)
 #title = website_data.get_title()
-#headings = website_data.get_headings()
-#paragraphs = website_data.get_paragraphs()
+
 #all_links = website_data.get_all_links()
 #all_404 = website_data.get_all_404_links()
 
 #kf_in_title = kf.find_key_words_in_title('reliable company webiste, wazdan, is,')
 #kf_in_url = kf.find_key_words_in_all_urls(all_links)
-#kf_in_all_urls = kf.find_key_words_in_all_urls('https://wazdan.com/')
+#kf_in_all_urls = kf.find_key_words_in_all_urls('https://wazdan.com/')"""
+
+
+
+#1 URL Structure
+
+def split_url(url):
+    url = re.sub(r'^https?:\/\/', '', url)
+    url = re.sub(r'[\/\-_?&=]', ' ', url)
+    potential_keywords = url.split()
+    
+    return potential_keywords
+
+#czy są słowa kluczowe 
+# to samo jest w metodzie find_key_words_in_title
+def find_keywords_url(url, keywords):
+    keywords_url = split_url(url)
+    analyzer = TextAnalyzer(keywords)
+    key_words = analyzer.sentance_tokenize()
+
+    url_keywords = [keyword for keyword in keywords_url if keyword in key_words]
+    return url_keywords
+
+
+x = find_keywords_url('https://www.szymonslowik.pl/seo-co-to-jest/', 'seo co')
+print(x)
+#brak dynamicznych URL
+
+#im krótsze URL tym lepiej 
+
+#użycie - zamiast _
+
+#unikanie stopwords
+
+#brak dużych liter
