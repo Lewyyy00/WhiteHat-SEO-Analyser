@@ -193,11 +193,11 @@ def find_keywords_url(url, keywords):
     analyzer = TextAnalyzer(keywords)
     key_words = analyzer.sentance_tokenize()
 
-    url_keywords = [keyword for keyword in keywords_url if keyword in key_words]
+    url_keywords = [keyword for keyword in keywords_url if any(key in keyword for key in key_words)]
     return url_keywords
 
 
-x = find_keywords_url('https://www.szymonslowik.pl/seo-co-to-jest/', 'seo co')
+x = find_keywords_url('https://www.szymonslowik.pl/seo-co-to-jest/', 'seo co, ')
 print(x)
 #brak dynamicznych URL
 
