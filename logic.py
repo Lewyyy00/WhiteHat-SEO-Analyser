@@ -197,14 +197,24 @@ def find_keywords_url(url, keywords):
     return url_keywords
 
 
-x = find_keywords_url('https://www.szymonslowik.pl/seo-co-to-jest/', 'seo co, ')
+x = split_url('https://www.szymonslowik.pl/seo-co-to-jest/')
 print(x)
+print('---')
 #brak dynamicznych URL
 
 #im krótsze URL tym lepiej 
 
 #użycie - zamiast _
+def analyze_url_hyphens(url):
+    results = {}
+    
+    for url in urls:
+        results[url] = '_' in url
+    return results
+    
 
+y = analyze_url_hyphens('https://www.szymonslowik.pl/seo-co-to-jest/')
+print(y)
 #unikanie stopwords
 
 #brak dużych liter
