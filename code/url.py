@@ -61,23 +61,24 @@ class UrlStructure:
 
         list_of_stopwords = [element for element in splited_url if element in stop_words]
         return list_of_stopwords
+    
+    def analyze_url_hyphens(self):
 
+        for i in enumerate(self.url):
+            if i == '_':
+                return print(f'{url} has emphasis')
+            else:
+                return print(f'{url} does not have emphasis')
 
+    def find_capital_letters(self):
+        for i in self.url:
+            if i.isupper():
+                return f'{self.url} has capital letters'
+        f'{self.url} does not have capital letters'
 
-    def analyze_url_hyphens():
-
-
-        pass
-
-    def find_capital_letters():
-
-
-        pass
-
-    def find_parameters():
-
-
-        pass
+    def find_parameters(self):
+        non_ascii_chars = [char for char in url if ord(char) > 127]
+        return non_ascii_chars
 
     def get_all_links(self):
         soup = self.get_soup()
@@ -121,14 +122,14 @@ class UrlStructure:
 
 
 
-url = 'https://www.szymonslowik.pl/seo-co-to-jest/'
+url = 'https://www.szymonslowik.pl/seo_co-to-jest/'
 text = 'Jak wyszukac co to jest SEO?'
 
 ta = TextAnalyzer(text)
 keywords = ta.sentance_tokenize()
 us = UrlStructure(url, keywords)
 
-x = us.find_stopwords()
+x = us.find_capital_letters()
 print(x)
 
 """x = us.split_url()
