@@ -7,6 +7,9 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize, sent_tokenize
 from logic import *
+from values import polish_stopwords
+nltk.download('stopwords')
+nltk.download('punkt')
 
 #1 URL Structure
 
@@ -17,7 +20,7 @@ class UrlStructure:
 
     def split_url(self):
         url = re.sub(r'^https?:\/\/', '', self.url)
-        url = re.sub(r'[\/\-_?&=]', ' ', self.url)
+        url = re.sub(r'[\/\-_?&=]', ' ', url)
         potential_keywords = url.split()
         return potential_keywords
     
@@ -25,12 +28,9 @@ class UrlStructure:
         response = requests.get(self.url)
         soup = BeautifulSoup(response.content, 'html.parser')
         return soup
-
-    #czy są słowa kluczowe, to samo jest w metodzie find_key_words_in_title
+    
     def find_keywords_url(self):
-        
         keywords_url = self.split_url()
-        
         url_keywords = [keyword for keyword in keywords_url if any(key in keyword for key in self.keywords)]
         return url_keywords
     
@@ -38,11 +38,31 @@ class UrlStructure:
         url_without_protocol  = re.sub(r'^https?:\/\/', '', self.url)
         lenght = len(url_without_protocol)
         return lenght
-        
-    def find_stopwords():
-        
+    
+    def get_website_language(self):
+        soup = self.get_soup()
+        html_tag = soup.find('html')
 
-        pass
+        if html_tag.has_attr("lang"):
+            return html_tag['lang']
+        
+    def get_stopwords_language(self):
+        web_lang = self.get_website_language()
+        
+        if web_lang.startswith('pl'):
+            stopwordss = polish_stopwords
+        else:
+            stopwordss = set(stopwords.words("english"))
+        return stopwordss
+        
+    def find_stopwords(self):
+        stop_words = self.get_stopwords_language()
+        splited_url = self.split_url()
+
+        list_of_stopwords = [element for element in splited_url if element in stop_words]
+        return list_of_stopwords
+
+
 
     def analyze_url_hyphens():
 
@@ -62,7 +82,6 @@ class UrlStructure:
     def get_all_links(self):
         soup = self.get_soup()
         links = soup.find_all('a', href=True)  # szuka wszystkich linków, gdzie jest spełniony warunek href=True
-
         links_200 = []
         error_links = {}  # Słownik do przechowywania błędnych linków i ich statusów
         
@@ -94,10 +113,13 @@ class UrlStructure:
         return links_200, error_links
     
     def asses_results():
-
+        
 
 
         pass
+
+
+
 
 url = 'https://www.szymonslowik.pl/seo-co-to-jest/'
 text = 'Jak wyszukac co to jest SEO?'
@@ -106,14 +128,17 @@ ta = TextAnalyzer(text)
 keywords = ta.sentance_tokenize()
 us = UrlStructure(url, keywords)
 
+x = us.find_stopwords()
+print(x)
+
 """x = us.split_url()
 print(x)
 y = us.find_keywords_url()
 print(y)
 z = us.get_all_links()
 print(z)"""
-l = us.get_lenght_url()
+"""l = us.get_lenght_url()
 print(l)
-
+"""
 
 
