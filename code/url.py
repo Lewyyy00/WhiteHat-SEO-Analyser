@@ -66,9 +66,9 @@ class UrlStructure:
 
         for i in enumerate(self.url):
             if i == '_':
-                return print(f'{url} has emphasis')
+                return print(f'{self.url} has emphasis')
             else:
-                return print(f'{url} does not have emphasis')
+                return print(f'{self.url} does not have emphasis')
 
     def find_capital_letters(self):
         for i in self.url:
@@ -76,8 +76,8 @@ class UrlStructure:
                 return f'{self.url} has capital letters'
         f'{self.url} does not have capital letters'
 
-    def find_parameters(self):
-        non_ascii_chars = [char for char in url if ord(char) > 127]
+    def find_any_not_ascii_letters(self):
+        non_ascii_chars = [char for char in self.url if ord(char) > 127]
         return non_ascii_chars
 
     def get_all_links(self):
@@ -119,10 +119,7 @@ class UrlStructure:
 
         pass
 
-
-
-
-url = 'https://www.szymonslowik.pl/seo_co-to-jest/'
+"""url = 'https://www.szymonslowik.pl/seo_co-to-jest/'
 text = 'Jak wyszukac co to jest SEO?'
 
 ta = TextAnalyzer(text)
@@ -132,14 +129,71 @@ us = UrlStructure(url, keywords)
 x = us.find_capital_letters()
 print(x)
 
-"""x = us.split_url()
+x = us.split_url()
 print(x)
 y = us.find_keywords_url()
 print(y)
 z = us.get_all_links()
-print(z)"""
-"""l = us.get_lenght_url()
-print(l)
-"""
+print(z)
+l = us.get_lenght_url()
+print(l)"""
 
+
+
+# HTML 
+
+class HtmlStructure:
+    def __init__(self, website):
+        self.website = website
+
+    def get_soup(self):
+        response = requests.get(self.website)
+        soup = BeautifulSoup(response.content, 'html.parser')
+        return soup
+
+    def get_title(self):
+        try:
+            soup = self.get_soup()
+            title_tag = soup.title
+            title = title_tag.string
+            return title
+        except requests.exceptions.RequestException as error:
+            print(f"błąd: {error}") 
+            return None
+        
+    def get_headings(self):
+        headings_dictionary = {}
+        try:
+            soup = self.get_soup()
+            headings = soup.find_all(['h1','h2','h3','h4','h5','h6'])
+            for heading in headings:
+                if heading.name not in headings_dictionary:
+                    headings_dictionary[heading.name] = []
+                headings_dictionary[heading.name].append(heading.get_text())
+            return headings_dictionary
+        except requests.exceptions.RequestException as error:
+            print(f"błąd: {error}") 
+            return None
+    
+    def get_meta_description(self):
+        try:
+            soup = self.get_soup()
+            meta_description = soup.find('meta', attrs={"name": "description"})
+
+            if meta_description and 'content' in meta_description.attrs:
+                return meta_description['content']
+            else:
+                return None
+        except requests.exceptions.RequestException as error:
+            print(f"błąd: {error}") 
+            return None
+
+    def get_content(self):
+        soup = self.get_soup()
+        paragraphs = soup.find_all('p')
+        return [paragraph.text for paragraph in paragraphs]
+    
+
+"""d =HtmlStructure('https://www.szymonslowik.pl/seo-co-to-jest/')
+print(d.get_meta_description())"""
 

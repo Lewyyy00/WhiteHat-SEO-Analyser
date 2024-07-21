@@ -1,5 +1,5 @@
 import requests 
-from bs4 import BeautifulSoup
+
 from urllib.parse import urljoin, urlparse
 import re
 import nltk
@@ -8,71 +8,6 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize, sent_tokenize
 nltk.download('stopwords')
 nltk.download('punkt')
-
-class WebsiteData:
-    def __init__(self, website):
-        self.website = website
-
-    def get_soup(self):
-        response = requests.get(self.website)
-        soup = BeautifulSoup(response.content, 'html.parser')
-        return soup
-
-    """def get_all_links(self):
-        soup = self.get_soup()
-        
-        links = [a.get('href') for a in soup.find_all('a', href = True)]
-        full_url = [urljoin(self.website, link) for link in links]
-
-        return full_url"""
-    
-    def get_all_links(self):
-        soup = self.get_soup()
-        links = soup.find_all('a', href = True) #szuka wszytskich linków, gdzie jest spełniony warunek href = true
-
-        LinksGroup = set()
-        for link in links:
-            full_url = urljoin(self.website, link['href'])
-            LinksGroup.add(full_url)
-        return LinksGroup
-
-
-    def get_all_404_links(self):
-        links = self.get_all_links()
-        links_404 = []
-        try:    #konieczne inaczej mieli mega dług
-            for link in links:
-                link_response = requests.get(link, timeout=1)
-                if link_response.status_code == 404:
-                    links_404.append(link)
-        except requests.exceptions.Timeout:
-            print(f"Timeout checking {link}")
-
-        print(links_404)
-        return links_404
-
-    
-    def get_title(self):
-        try:
-            soup = self.get_soup()
-            title_tag = soup.title
-            title = title_tag.string
-            print(title)
-            return title
-        except requests.exceptions.RequestException as error:
-            print(f"błąd: {error}") 
-            return None
-        
-    def get_headings(self):
-        soup = self.get_soup()
-        headings = soup.find_all(['h1','h2','h3','h4','h5','h6'])
-        return [heading.text for heading in headings]
-    
-    def get_paragraphs(self):
-        soup = self.get_soup()
-        paragraphs = soup.find_all('p')
-        return [paragraph.text for paragraph in paragraphs]
-    
 
 class TextAnalyzer:
     def __init__(self, text):
