@@ -12,7 +12,6 @@ nltk.download('stopwords')
 nltk.download('punkt')
 
 #1 URL Structure
-
 class UrlStructure:
     def __init__(self,url,keywords):
         self.url = url 
@@ -80,11 +79,10 @@ class UrlStructure:
         non_ascii_chars = [char for char in self.url if ord(char) > 127]
         return non_ascii_chars
 
-    def get_all_links(self):
+    def get_all_200_links(self):
         soup = self.get_soup()
         links = soup.find_all('a', href=True)  # szuka wszystkich linków, gdzie jest spełniony warunek href=True
         links_200 = []
-        error_links = {}  # Słownik do przechowywania błędnych linków i ich statusów
         
         for link in links:
             href = link['href']
@@ -96,7 +94,26 @@ class UrlStructure:
                 link_response = requests.get(full_url, timeout=1)
                 if link_response.status_code == 200:
                     links_200.append(full_url)
-                else:
+            except requests.exceptions.Timeout:
+                print(f"Timeout checking {full_url}")
+            except requests.exceptions.RequestException as e:
+                print(f"Error checking {full_url}: {e}")  
+        return links_200
+    
+    def get_all_not_valid_links(self):
+        soup = self.get_soup()
+        links = soup.find_all('a', href=True)  # szuka wszystkich linków, gdzie jest spełniony warunek href=True
+        error_links = {}  # Słownik do przechowywania błędnych linków i ich statusów
+        
+        for link in links:
+            href = link['href']
+            full_url = urljoin(self.url, href)
+            if not urlparse(full_url).scheme:
+                print(f"Invalid URL: {href}")
+                continue
+            try:
+                link_response = requests.get(full_url, timeout=1)
+                if link_response.status_code != 200:
                     if link_response.status_code not in error_links:
                         error_links[link_response.status_code] = []
                     error_links[link_response.status_code].append(full_url)
@@ -109,39 +126,44 @@ class UrlStructure:
                 print(f"Error checking {full_url}: {e}")
                 if 'RequestException' not in error_links:
                     error_links['RequestException'] = []
-                error_links['RequestException'].append(full_url)
-                
-        return links_200, error_links
+                error_links['RequestException'].append(full_url)     
+        return error_links
     
+    def get_all_internal_links(self):
+        parsed_url = urlparse(self.url)
+        url_domain = parsed_url.netloc
+        soup = self.get_soup()
+        links = soup.find_all('a', href=True)
+        internal_links = []
+
+        for link in links:
+            href = link['href']
+            full_url = urljoin(self.url, href)
+            potential_internal_link = urlparse(full_url)
+            if url_domain == potential_internal_link.netloc:
+                internal_links.append(link)
+        return internal_links
+
+    def get_all_external_links(self):
+        parsed_url = urlparse(self.url)
+        url_domain = parsed_url.netloc
+        soup = self.get_soup()
+        links = soup.find_all('a', href=True)
+        external_links = []
+
+        for link in links:
+            href = link['href']
+            full_url = urljoin(self.url, href)
+            potential_internal_link = urlparse(full_url)
+            if url_domain != potential_internal_link.netloc:
+                external_links.append(link)
+        return external_links
+
     def asses_results():
         
-
-
         pass
 
-"""url = 'https://www.szymonslowik.pl/seo_co-to-jest/'
-text = 'Jak wyszukac co to jest SEO?'
-
-ta = TextAnalyzer(text)
-keywords = ta.sentance_tokenize()
-us = UrlStructure(url, keywords)
-
-x = us.find_capital_letters()
-print(x)
-
-x = us.split_url()
-print(x)
-y = us.find_keywords_url()
-print(y)
-z = us.get_all_links()
-print(z)
-l = us.get_lenght_url()
-print(l)"""
-
-
-
 # HTML 
-
 class HtmlStructure:
     def __init__(self, website):
         self.website = website
@@ -194,6 +216,18 @@ class HtmlStructure:
         return [paragraph.text for paragraph in paragraphs]
     
 
-"""d =HtmlStructure('https://www.szymonslowik.pl/seo-co-to-jest/')
-print(d.get_meta_description())"""
+#Images 
+class ImagesStructure:
+    def __init__(self, website):
+        self.website = website
 
+    def get_all_images(self):
+        images_list = []
+        try:
+            soup = self.get_soup()
+            images = soup.find_all('img', attrs={"alt": ''})
+
+
+        except requests.exceptions.RequestException as error:
+            print(f"błąd: {error}") 
+            return None
