@@ -8,6 +8,7 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize, sent_tokenize
 from logic import *
 from values import polish_stopwords
+import pandas as pd
 nltk.download('stopwords')
 nltk.download('punkt')
 
@@ -164,7 +165,7 @@ class UrlStructure:
         pass
 
 # HTML 
-class HtmlStructure:
+class DataFromHtmlStructure:
     def __init__(self, website):
         self.website = website
 
@@ -214,9 +215,47 @@ class HtmlStructure:
         soup = self.get_soup()
         paragraphs = soup.find_all('p')
         return [paragraph.text for paragraph in paragraphs]
-    
+     
+class AnalyseData():
+    def __init__(self, data):
+        self.data = data
 
-#Images 
+    def is_right_file(self):
+        if isinstance(self.data, list):
+            return self.data
+        elif isinstance(self.data, dict):  
+            rows = []
+            for heading, texts in self.data.items():
+                for text in texts:
+                    rows.append((heading, text))
+
+            df = pd.DataFrame(rows, columns=['Headings', 'Text'])
+            return df['Text']
+        else:
+        
+            pass
+
+    def is_missing(self):
+        data = self.is_right_file()
+
+        for i in data:
+            
+            pass
+
+    def is_duplicate():
+
+        pass
+
+    def lenght():
+
+        pass
+
+    def is_multiple():
+
+        pass
+
+
+    #Images 
 class ImagesStructure:
     def __init__(self, website):
         self.website = website
