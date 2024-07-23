@@ -130,6 +130,7 @@ class UrlStructure:
                 error_links['RequestException'].append(full_url)     
         return error_links
     
+    # it doesnt recognise the same website but with other domain in case of changeing langauge example.pl != example.com
     def get_all_internal_links(self):
         parsed_url = urlparse(self.url)
         url_domain = parsed_url.netloc
@@ -142,7 +143,7 @@ class UrlStructure:
             full_url = urljoin(self.url, href)
             potential_internal_link = urlparse(full_url)
             if url_domain == potential_internal_link.netloc:
-                internal_links.append(link)
+                internal_links.append(full_url)
         return internal_links
 
     def get_all_external_links(self):
@@ -217,8 +218,9 @@ class DataFromHtmlStructure:
         return [paragraph.text for paragraph in paragraphs]
      
 class AnalyseData():
-    def __init__(self, data):
+    def __init__(self, data, website):
         self.data = data
+        self.website = website
 
     def is_right_file(self):
         if isinstance(self.data, list):
@@ -234,17 +236,29 @@ class AnalyseData():
         else:
         
             pass
-
+#in progress
     def is_missing(self):
         data = self.is_right_file()
 
         for i in data:
+            if len(i) == 0:
+                pass
+            else:
+                pass
+            
+#in progress
+    def is_duplicate(self):
+        urls = UrlStructure(self.website)
+        
+
+        internal_links = urls.get_all_internal_links()
+        
+
+        for i in internal_links:
+            dfhs = DataFromHtmlStructure(i)
+            title = dfhs.get_title()
             
             pass
-
-    def is_duplicate():
-
-        pass
 
     def lenght():
 
@@ -270,3 +284,25 @@ class ImagesStructure:
         except requests.exceptions.RequestException as error:
             print(f"błąd: {error}") 
             return None
+        
+def make_df(url):
+    keywords = 'cos'
+    us = UrlStructure(url, keywords)
+    linki = us.get_all_internal_links()
+    data = []
+
+    for link in linki:
+        data_extractor = DataFromHtmlStructure(link)
+        title = data_extractor.get_title()
+        headings = data_extractor.get_headings()
+        meta_description = data_extractor.get_meta_description()
+        data.append({
+            'URL': link,
+            'Title': title,
+            'Meta Description': meta_description,
+            'Headings': headings,
+            #'Content': content
+        })
+
+    df = pd.DataFrame(data)
+    return df
