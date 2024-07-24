@@ -9,26 +9,43 @@ from nltk.tokenize import word_tokenize, sent_tokenize
 from logic import *
 from values import polish_stopwords
 import pandas as pd
+from typing import Optional
 nltk.download('stopwords')
 nltk.download('punkt')
+
+
+def handle_request_errors(func):
+    def wrapper(self, *args, **kwargs):
+        try:
+            return func(self, *args, **kwargs)
+        except requests.exceptions.RequestException as error:
+            print(error)
+            return None
+    return wrapper
 
 #1 URL Structure
 class UrlStructure:
     def __init__(self,url,keywords):
         self.url = url 
         self.keywords = keywords
+        self.soup: Optional[BeautifulSoup] = None
+        self._initialize_soup()
+
+    def _initialize_soup(self):
+        try:
+            response = requests.get(self.url)
+            response.raise_for_status() 
+            self.soup = BeautifulSoup(response.content, 'html.parser')
+        except requests.exceptions.RequestException as error:
+            print(error)
+            self.soup = None
 
     def split_url(self):
         url = re.sub(r'^https?:\/\/', '', self.url)
         url = re.sub(r'[\/\-_?&=]', ' ', url)
         potential_keywords = url.split()
         return potential_keywords
-    
-    def get_soup(self):
-        response = requests.get(self.url)
-        soup = BeautifulSoup(response.content, 'html.parser')
-        return soup
-    
+     
     def find_keywords_url(self):
         keywords_url = self.split_url()
         url_keywords = [keyword for keyword in keywords_url if any(key in keyword for key in self.keywords)]
@@ -39,12 +56,13 @@ class UrlStructure:
         lenght = len(url_without_protocol)
         return lenght
     
+    @handle_request_errors
     def get_website_language(self):
-        soup = self.get_soup()
-        html_tag = soup.find('html')
-
-        if html_tag.has_attr("lang"):
-            return html_tag['lang']
+        if self.soup:
+            html_tag = self.soup.find('html')
+            if html_tag.has_attr("lang"):
+                return html_tag['lang']
+        return None
         
     def get_stopwords_language(self):
         web_lang = self.get_website_language()
@@ -79,58 +97,62 @@ class UrlStructure:
     def find_any_not_ascii_letters(self):
         non_ascii_chars = [char for char in self.url if ord(char) > 127]
         return non_ascii_chars
-
+    
+    @handle_request_errors
     def get_all_200_links(self):
-        soup = self.get_soup()
-        links = soup.find_all('a', href=True)  # szuka wszystkich linków, gdzie jest spełniony warunek href=True
-        links_200 = []
-        
-        for link in links:
-            href = link['href']
-            full_url = urljoin(self.url, href)
-            if not urlparse(full_url).scheme:
-                print(f"Invalid URL: {href}")
-                continue
-            try:
-                link_response = requests.get(full_url, timeout=1)
-                if link_response.status_code == 200:
-                    links_200.append(full_url)
-            except requests.exceptions.Timeout:
-                print(f"Timeout checking {full_url}")
-            except requests.exceptions.RequestException as e:
-                print(f"Error checking {full_url}: {e}")  
-        return links_200
+        if self.soup:
+            links = self.soup.find_all('a', href=True)  # szuka wszystkich linków, gdzie jest spełniony warunek href=True
+            links_200 = []
+            
+            for link in links:
+                href = link['href']
+                full_url = urljoin(self.url, href)
+                if not urlparse(full_url).scheme:
+                    print(f"Invalid URL: {href}")
+                    continue
+                try:
+                    link_response = requests.get(full_url, timeout=1)
+                    if link_response.status_code == 200:
+                        links_200.append(full_url)
+                except requests.exceptions.Timeout:
+                    print(f"Timeout checking {full_url}")
+                except requests.exceptions.RequestException as e:
+                    print(f"Error checking {full_url}: {e}")  
+            return links_200
+        return None
     
+    @handle_request_errors
     def get_all_not_valid_links(self):
-        soup = self.get_soup()
-        links = soup.find_all('a', href=True)  # szuka wszystkich linków, gdzie jest spełniony warunek href=True
-        error_links = {}  # Słownik do przechowywania błędnych linków i ich statusów
-        
-        for link in links:
-            href = link['href']
-            full_url = urljoin(self.url, href)
-            if not urlparse(full_url).scheme:
-                print(f"Invalid URL: {href}")
-                continue
-            try:
-                link_response = requests.get(full_url, timeout=1)
-                if link_response.status_code != 200:
-                    if link_response.status_code not in error_links:
-                        error_links[link_response.status_code] = []
-                    error_links[link_response.status_code].append(full_url)
-            except requests.exceptions.Timeout:
-                print(f"Timeout checking {full_url}")
-                if 'Timeout' not in error_links:
-                    error_links['Timeout'] = []
-                error_links['Timeout'].append(full_url)
-            except requests.exceptions.RequestException as e:
-                print(f"Error checking {full_url}: {e}")
-                if 'RequestException' not in error_links:
-                    error_links['RequestException'] = []
-                error_links['RequestException'].append(full_url)     
-        return error_links
+        if self.soup:
+            links = self.soup.find_all('a', href=True)  # szuka wszystkich linków, gdzie jest spełniony warunek href=True
+            error_links = {}  # Słownik do przechowywania błędnych linków i ich statusów
+            
+            for link in links:
+                href = link['href']
+                full_url = urljoin(self.url, href)
+                if not urlparse(full_url).scheme:
+                    print(f"Invalid URL: {href}")
+                    continue
+                try:
+                    link_response = requests.get(full_url, timeout=1)
+                    if link_response.status_code != 200:
+                        if link_response.status_code not in error_links:
+                            error_links[link_response.status_code] = []
+                        error_links[link_response.status_code].append(full_url)
+                except requests.exceptions.Timeout:
+                    print(f"Timeout checking {full_url}")
+                    if 'Timeout' not in error_links:
+                        error_links['Timeout'] = []
+                    error_links['Timeout'].append(full_url)
+                except requests.exceptions.RequestException as e:
+                    print(f"Error checking {full_url}: {e}")
+                    if 'RequestException' not in error_links:
+                        error_links['RequestException'] = []
+                    error_links['RequestException'].append(full_url)     
+            return error_links
+        return None
     
-    # it doesnt recognise the same website but with other domain in case of changeing langauge example.pl != example.com
+    # it doesnt recognise the same website but with other domain in case of changeing langauge (TLD) example.pl != example.com
     def get_all_internal_links(self):
         parsed_url = urlparse(self.url)
         url_domain = parsed_url.netloc
@@ -161,61 +183,59 @@ class UrlStructure:
                 external_links.append(link)
         return external_links
 
-    def asses_results():
-        
-        pass
-
 # HTML 
 class DataFromHtmlStructure:
     def __init__(self, website):
         self.website = website
+        self.soup: Optional[BeautifulSoup] = None
+        self._initialize_soup()
 
-    def get_soup(self):
-        response = requests.get(self.website)
-        soup = BeautifulSoup(response.content, 'html.parser')
-        return soup
-
-    def get_title(self):
+    def _initialize_soup(self):
         try:
-            soup = self.get_soup()
-            title_tag = soup.title
+            response = requests.get(self.website)
+            response.raise_for_status()  
+            self.soup = BeautifulSoup(response.content, 'html.parser')
+        except requests.exceptions.RequestException as error:
+            print(error)
+            self.soup = None
+    
+    @handle_request_errors
+    def get_title(self):
+        if self.soup:
+            title_tag = self.soup.title
             title = title_tag.string
             return title
-        except requests.exceptions.RequestException as error:
-            print(f"błąd: {error}") 
-            return None
-        
+        return None
+
+    @handle_request_errors    
     def get_headings(self):
         headings_dictionary = {}
-        try:
-            soup = self.get_soup()
-            headings = soup.find_all(['h1','h2','h3','h4','h5','h6'])
+        if self.soup:
+            headings = self.soup.find_all(['h1','h2','h3','h4','h5','h6'])
             for heading in headings:
                 if heading.name not in headings_dictionary:
                     headings_dictionary[heading.name] = []
                 headings_dictionary[heading.name].append(heading.get_text())
             return headings_dictionary
-        except requests.exceptions.RequestException as error:
-            print(f"błąd: {error}") 
-            return None
+        return None
     
+    @handle_request_errors
     def get_meta_description(self):
-        try:
-            soup = self.get_soup()
-            meta_description = soup.find('meta', attrs={"name": "description"})
+        if self.soup:
+            meta_description = self.soup.find('meta', attrs={"name": "description"})
 
             if meta_description and 'content' in meta_description.attrs:
-                return meta_description['content']
+                return meta_description['content'] 
             else:
                 return None
-        except requests.exceptions.RequestException as error:
-            print(f"błąd: {error}") 
-            return None
-
+        return None
+    
+    @handle_request_errors
     def get_content(self):
-        soup = self.get_soup()
-        paragraphs = soup.find_all('p')
-        return [paragraph.text for paragraph in paragraphs]
+        if self.soup:
+            paragraphs = self.soup.find_all('p')
+            return [paragraph.text for paragraph in paragraphs]
+        return None
      
 class AnalyseData():
     def __init__(self, data, website):
