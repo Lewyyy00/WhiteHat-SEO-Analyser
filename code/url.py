@@ -238,13 +238,17 @@ class DataFromHtmlStructure:
         return None
      
 class AnalyseData():
-    def __init__(self, data, website):
+    def __init__(self, data):
         self.data = data
-        self.website = website
-
+        
     def is_right_file(self):
-        if isinstance(self.data, list):
-            return self.data
+        if isinstance(self.data, list) or isinstance(self.data, str):
+            newdata = {
+                'Given data':[self.data]
+            }
+            df = pd.DataFrame(newdata)
+            return df
+
         elif isinstance(self.data, dict):  
             rows = []
             for heading, texts in self.data.items():
@@ -252,38 +256,30 @@ class AnalyseData():
                     rows.append((heading, text))
 
             df = pd.DataFrame(rows, columns=['Headings', 'Text'])
-            return df['Text']
+            return df
         else:
-        
-            pass
-#in progress
-    def is_missing(self):
+            return pd.DataFrame()
+            
+    def is_duplicate(self):
+       
+       pass
+
+    def is_lenght_alright(self):
         data = self.is_right_file()
 
-        for i in data:
-            if len(i) == 0:
-                pass
-            else:
-                pass
-            
-#in progress
-    def is_duplicate(self):
-        urls = UrlStructure(self.website)
+        if 'Text' in data.columns:
+            data['length'] = data['Text'].apply(len)
+        elif 'Given data' in data.columns:
+            data['length'] = data['Given data'].apply(len)
+        return data
+
+    def is_missing(self):
+        data = self.is_lenght_alright()
+
+        data['Missing value'] = data['length'] == 0
+        data['Missing value'] = data['Missing value'].apply(lambda x: 'True' if x else 'False')
+        return data
         
-
-        internal_links = urls.get_all_internal_links()
-        
-
-        for i in internal_links:
-            dfhs = DataFromHtmlStructure(i)
-            title = dfhs.get_title()
-            
-            pass
-
-    def lenght():
-
-        pass
-
     def is_multiple():
 
         pass
