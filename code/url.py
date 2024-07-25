@@ -110,14 +110,10 @@ class UrlStructure(BaseStructure):
                 if not urlparse(full_url).scheme:
                     print(f"Invalid URL: {href}")
                     continue
-                try:
-                    link_response = requests.get(full_url, timeout=1)
-                    if link_response.status_code == 200:
-                        links_200.append(full_url)
-                except requests.exceptions.Timeout:
-                    print(f"Timeout checking {full_url}")
-                except requests.exceptions.RequestException as e:
-                    print(f"Error checking {full_url}: {e}")  
+        
+                link_response = requests.get(full_url, timeout=1)
+                if link_response.status_code == 200:
+                    links_200.append(full_url)                 
             return links_200
         return None
     
@@ -225,14 +221,6 @@ class DataFromHtmlStructure(BaseStructure):
                 return None
         return None
     
-    #it will be somewhere else 
-    @handle_request_errors
-    def get_content(self):
-        if self.soup:
-            paragraphs = self.soup.find_all('p')
-            return [paragraph.text for paragraph in paragraphs]
-        return None
-     
 class AnalyseData:
     def __init__(self, data):
         self.data = data
@@ -240,7 +228,7 @@ class AnalyseData:
     def is_right_file(self):
         if isinstance(self.data, list) or isinstance(self.data, str):
             newdata = {
-                'Given data':[self.data]
+                "Given data":[self.data]
             }
             df = pd.DataFrame(newdata)
             return df
@@ -256,9 +244,13 @@ class AnalyseData:
         else:
             return pd.DataFrame()
             
-    def is_duplicate(self):
-       
-       pass
+    def count_words(self, text):
+        words = text.split()
+        return len(words)
+
+    def count_words_in_list(self, elements):
+        numer_of_words = [self.count_words(element) for element in elements]
+        return numer_of_words.toString()
 
     def is_lenght_alright(self):
         data = self.is_right_file()
@@ -266,7 +258,9 @@ class AnalyseData:
         if 'Text' in data.columns:
             data['length'] = data['Text'].apply(len)
         elif 'Given data' in data.columns:
-            data['length'] = data['Given data'].apply(len)
+            data['Number of elements'] = data['Given data'].apply(len)
+            data['word_count'] = data['Given data'].apply(lambda x: self.count_words_in_list(x))
+        
         return data
 
     def is_missing(self):
@@ -277,44 +271,36 @@ class AnalyseData:
         return data
         
     def is_multiple(self):
-        data = self.is_right_file()
+        data = self.is_missing()
 
-        pass
-        
+        if isinstance(data, dict) is not True:
+            if data['length'] != 1:
+                data['Multiple Values'] = data['Multiple Values'].apply(lambda x: 'True' if x else 'False')
+            return data
+        else: 
+            pass
+
+    def is_duplicate(self):
+       
+       pass
+
 
     #Images 
-class ImagesStructure:
-    def __init__(self, website):
-        self.website = website
-
-    def get_all_images(self):
-        images_list = []
-        try:
-            soup = self.get_soup()
-            images = soup.find_all('img', attrs={"alt": ''})
-
-        except requests.exceptions.RequestException as error:
-            print(f"błąd: {error}") 
-            return None
+class TextStructures(BaseStructure):
+    
+    @handle_request_errors
+    def get_content(self):
+        if self.soup:
+            paragraphs = self.soup.find_all('p')
+            return [paragraph.text for paragraph in paragraphs]
+        return None
+    
+    @handle_request_errors
+    def get_all_alt_texts(self):
+        if self.soup:
+            images = self.soup.find_all('img', src = True)
+            return [alt_text.get('alt') for alt_text in images]
+        return None
         
-def make_df(url):
-    keywords = 'cos'
-    us = UrlStructure(url, keywords)
-    linki = us.get_all_internal_links()
-    data = []
-
-    for link in linki:
-        data_extractor = DataFromHtmlStructure(link)
-        title = data_extractor.get_title()
-        headings = data_extractor.get_headings()
-        meta_description = data_extractor.get_meta_description()
-        data.append({
-            'URL': link,
-            'Title': title,
-            'Meta Description': meta_description,
-            'Headings': headings,
-            #'Content': content
-        })
-
-    df = pd.DataFrame(data)
-    return df
+    
+        
