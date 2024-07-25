@@ -13,6 +13,20 @@ from typing import Optional
 nltk.download('stopwords')
 nltk.download('punkt')
 
+class BaseStructure:
+    def __init__(self, website: str):
+        self.website = website
+        self.soup: Optional[BeautifulSoup] = None
+        self._initialize_soup()
+
+    def _initialize_soup(self):
+        try:
+            response = requests.get(self.website)
+            response.raise_for_status()  # Raise an error for bad status codes
+            self.soup = BeautifulSoup(response.content, 'html.parser')
+        except requests.exceptions.RequestException as error:
+            print(f"Błąd podczas pobierania strony: {error}")
+            self.soup = None
 
 def handle_request_errors(func):
     def wrapper(self, *args, **kwargs):
@@ -24,24 +38,10 @@ def handle_request_errors(func):
     return wrapper
 
 #1 URL Structure
-class UrlStructure:
-    def __init__(self,url,keywords):
-        self.url = url 
-        self.keywords = keywords
-        self.soup: Optional[BeautifulSoup] = None
-        self._initialize_soup()
-
-    def _initialize_soup(self):
-        try:
-            response = requests.get(self.url)
-            response.raise_for_status() 
-            self.soup = BeautifulSoup(response.content, 'html.parser')
-        except requests.exceptions.RequestException as error:
-            print(error)
-            self.soup = None
+class UrlStructure(BaseStructure):
 
     def split_url(self):
-        url = re.sub(r'^https?:\/\/', '', self.url)
+        url = re.sub(r'^https?:\/\/', '', self.website)
         url = re.sub(r'[\/\-_?&=]', ' ', url)
         potential_keywords = url.split()
         return potential_keywords
@@ -52,7 +52,7 @@ class UrlStructure:
         return url_keywords
     
     def get_lenght_url(self):
-        url_without_protocol  = re.sub(r'^https?:\/\/', '', self.url)
+        url_without_protocol  = re.sub(r'^https?:\/\/', '', self.website)
         lenght = len(url_without_protocol)
         return lenght
     
@@ -82,20 +82,20 @@ class UrlStructure:
     
     def analyze_url_hyphens(self):
 
-        for i in enumerate(self.url):
+        for i in enumerate(self.website):
             if i == '_':
-                return print(f'{self.url} has emphasis')
+                return print(f'{self.website} has emphasis')
             else:
-                return print(f'{self.url} does not have emphasis')
+                return print(f'{self.website} does not have emphasis')
 
     def find_capital_letters(self):
         for i in self.url:
             if i.isupper():
-                return f'{self.url} has capital letters'
+                return f'{self.website} has capital letters'
         f'{self.url} does not have capital letters'
 
     def find_any_not_ascii_letters(self):
-        non_ascii_chars = [char for char in self.url if ord(char) > 127]
+        non_ascii_chars = [char for char in self.website if ord(char) > 127]
         return non_ascii_chars
     
     @handle_request_errors
@@ -106,7 +106,7 @@ class UrlStructure:
             
             for link in links:
                 href = link['href']
-                full_url = urljoin(self.url, href)
+                full_url = urljoin(self.website, href)
                 if not urlparse(full_url).scheme:
                     print(f"Invalid URL: {href}")
                     continue
@@ -129,7 +129,7 @@ class UrlStructure:
             
             for link in links:
                 href = link['href']
-                full_url = urljoin(self.url, href)
+                full_url = urljoin(self.website, href)
                 if not urlparse(full_url).scheme:
                     print(f"Invalid URL: {href}")
                     continue
@@ -154,57 +154,49 @@ class UrlStructure:
     
     # it doesnt recognise the same website but with other domain in case of changeing langauge (TLD) example.pl != example.com
     def get_all_internal_links(self):
-        parsed_url = urlparse(self.url)
-        url_domain = parsed_url.netloc
-        soup = self.get_soup()
-        links = soup.find_all('a', href=True)
-        internal_links = []
+        if self.soup:
+            parsed_url = urlparse(self.website)
+            url_domain = parsed_url.netloc
+            links = self.soup.find_all('a', href=True)
+            internal_links = []
 
-        for link in links:
-            href = link['href']
-            full_url = urljoin(self.url, href)
-            potential_internal_link = urlparse(full_url)
-            if url_domain == potential_internal_link.netloc:
-                internal_links.append(full_url)
-        return internal_links
+            for link in links:
+                href = link['href']
+                full_url = urljoin(self.website, href)
+                potential_internal_link = urlparse(full_url)
+                if url_domain == potential_internal_link.netloc:
+                    internal_links.append(full_url)
+            return internal_links
+        return None
 
     def get_all_external_links(self):
-        parsed_url = urlparse(self.url)
-        url_domain = parsed_url.netloc
-        soup = self.get_soup()
-        links = soup.find_all('a', href=True)
-        external_links = []
+        if self.soup:
+            parsed_url = urlparse(self.website)
+            url_domain = parsed_url.netloc
+            links = self.soup.find_all('a', href=True)
+            internal_links = []
 
-        for link in links:
-            href = link['href']
-            full_url = urljoin(self.url, href)
-            potential_internal_link = urlparse(full_url)
-            if url_domain != potential_internal_link.netloc:
-                external_links.append(link)
-        return external_links
+            for link in links:
+                href = link['href']
+                full_url = urljoin(self.website, href)
+                potential_internal_link = urlparse(full_url)
+                if url_domain != potential_internal_link.netloc:
+                    internal_links.append(full_url)
+            return internal_links
+        return None
 
 # HTML 
-class DataFromHtmlStructure:
-    def __init__(self, website):
-        self.website = website
-        self.soup: Optional[BeautifulSoup] = None
-        self._initialize_soup()
-
-    def _initialize_soup(self):
-        try:
-            response = requests.get(self.website)
-            response.raise_for_status()  
-            self.soup = BeautifulSoup(response.content, 'html.parser')
-        except requests.exceptions.RequestException as error:
-            print(error)
-            self.soup = None
-    
+class DataFromHtmlStructure(BaseStructure):
+ 
     @handle_request_errors
     def get_title(self):
+        titles_list = []
         if self.soup:
-            title_tag = self.soup.title
-            title = title_tag.string
-            return title
+            title_tag = self.soup.find_all('title')
+            for title in title_tag:
+                title_text = title.get_text()
+                titles_list.append(title_text)
+            return titles_list
         return None
 
     @handle_request_errors    
@@ -221,15 +213,19 @@ class DataFromHtmlStructure:
     
     @handle_request_errors
     def get_meta_description(self):
+        meta_description_list = []
         if self.soup:
-            meta_description = self.soup.find('meta', attrs={"name": "description"})
-
-            if meta_description and 'content' in meta_description.attrs:
-                return meta_description['content'] 
+            meta_descriptios = self.soup.find_all('meta', attrs={"name": "description"})
+            for meta_description in meta_descriptios:
+                if 'content' in meta_description.attrs:
+                    clean_content = meta_description['content'].replace('\xa0', ' ')
+                    meta_description_list.append(clean_content)
+                return meta_description_list
             else:
                 return None
         return None
     
+    #it will be somewhere else 
     @handle_request_errors
     def get_content(self):
         if self.soup:
@@ -237,7 +233,7 @@ class DataFromHtmlStructure:
             return [paragraph.text for paragraph in paragraphs]
         return None
      
-class AnalyseData():
+class AnalyseData:
     def __init__(self, data):
         self.data = data
         
@@ -280,10 +276,11 @@ class AnalyseData():
         data['Missing value'] = data['Missing value'].apply(lambda x: 'True' if x else 'False')
         return data
         
-    def is_multiple():
+    def is_multiple(self):
+        data = self.is_right_file()
 
         pass
-
+        
 
     #Images 
 class ImagesStructure:
@@ -295,7 +292,6 @@ class ImagesStructure:
         try:
             soup = self.get_soup()
             images = soup.find_all('img', attrs={"alt": ''})
-
 
         except requests.exceptions.RequestException as error:
             print(f"błąd: {error}") 
