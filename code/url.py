@@ -220,7 +220,23 @@ class DataFromHtmlStructure(BaseStructure):
             else:
                 return None
         return None
+     
+class TextStructures(BaseStructure):
     
+    @handle_request_errors
+    def get_content(self):
+        if self.soup:
+            paragraphs = self.soup.find_all('p')
+            return [paragraph.text for paragraph in paragraphs]
+        return None
+    
+    @handle_request_errors
+    def get_all_alt_texts(self):
+        if self.soup:
+            images = self.soup.find_all('img', src = True)
+            return [alt_text.get('alt') for alt_text in images]
+        return None
+
 class AnalyseData:
     def __init__(self, data):
         self.data = data
@@ -228,11 +244,10 @@ class AnalyseData:
     def is_right_file(self):
         if isinstance(self.data, list) or isinstance(self.data, str):
             newdata = {
-                "Given data":[self.data]
+                "Text":[self.data]
             }
             df = pd.DataFrame(newdata)
             return df
-
         elif isinstance(self.data, dict):  
             rows = []
             for heading, texts in self.data.items():
@@ -250,19 +265,18 @@ class AnalyseData:
 
     def count_words_in_list(self, elements):
         numer_of_words = [self.count_words(element) for element in elements]
-        return numer_of_words.toString()
+        return numer_of_words
 
     def is_lenght_alright(self):
         data = self.is_right_file()
 
-        if 'Text' in data.columns:
+        if 'Text' in data.columns and isinstance(data, dict) is True:
             data['length'] = data['Text'].apply(len)
-        elif 'Given data' in data.columns:
-            data['Number of elements'] = data['Given data'].apply(len)
-            data['word_count'] = data['Given data'].apply(lambda x: self.count_words_in_list(x))
-        
+        elif 'Text' in data.columns:
+            data['length'] = data['Text'].apply(len)
+            data['word_count'] = data['Text'].apply(lambda x: self.count_words_in_list(x) if isinstance(x, list) else self.count_words(x))
         return data
-
+    
     def is_missing(self):
         data = self.is_lenght_alright()
 
@@ -273,34 +287,50 @@ class AnalyseData:
     def is_multiple(self):
         data = self.is_missing()
 
-        if isinstance(data, dict) is not True:
-            if data['length'] != 1:
-                data['Multiple Values'] = data['Multiple Values'].apply(lambda x: 'True' if x else 'False')
-            return data
-        else: 
-            pass
+        data['Multiple values'] = data['length'] != 1
+        data['Multiple values'] = data['Multiple values'].apply(lambda x: 'True' if x else 'False')
+        return data
+        
+    def count_characters(self, elements):
+        return [len(element) for element in elements]
 
+    def is_characters_alright(self):
+        data = self.is_multiple()
+
+        data['Number of characters'] = data['Text'].apply(lambda x: self.count_characters(x) if isinstance(x, list) else len(x))
+        return data
+
+    
     def is_duplicate(self):
        
        pass
 
+class Title(AnalyseData):
 
-    #Images 
-class TextStructures(BaseStructure):
-    
-    @handle_request_errors
-    def get_content(self):
-        if self.soup:
-            paragraphs = self.soup.find_all('p')
-            return [paragraph.text for paragraph in paragraphs]
-        return None
-    
-    @handle_request_errors
-    def get_all_alt_texts(self):
-        if self.soup:
-            images = self.soup.find_all('img', src = True)
-            return [alt_text.get('alt') for alt_text in images]
-        return None
+    def analyse_lenght(self):
+        data = self.is_characters_alright()
+
+        if data <= 70:
+            pass
+        elif data >= 155:
+            pass
+
+
+        pass
+
+
+class Headings(AnalyseData):
+
+
+    pass
+
+
+class MetaDescription(AnalyseData):
+
+
+    pass
+
+
         
     
         
