@@ -1,24 +1,78 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WhiteHatSEO</title>
+    <title>Page Analyser</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <div class="form-container">
-        <form action="/result_page" method="post">
-            <div class="form-group">
-                <label for="url">URL:</label>
-                <input type="text" id="url" name="url" required>
+    <div class="container">
+        <div class="menu">
+            <ul>
+                <li>Ogólne</li>
+                <li>Page Analyser</li>
+                <li>Inne</li>
+            </ul>
+        </div>
+        <div class="content">
+            <div class="main-table">
+                <h2>Main Table</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>URL</th>
+                            <th>Ocena</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in main_table_data %}
+                        <tr data-id="{{ row.id }}">
+                            <td>{{ row.id }}</td>
+                            <td>{{ row.url }}</td>
+                            <td>{{ row.rating }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
-            <div class="form-group">
-                <label for="keywords">Key words:</label>
-                <input type="text" id="keywords" name="keywords" required>
+            <div class="details-table">
+                <h2>Details Table</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Detail ID</th>
+                            <th>Info</th>
+                        </tr>
+                    </thead>
+                    <tbody id="details-body">
+                        <tr>
+                            <td colspan="2">Select a row from the main table to see details</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            <button type="submit">Submit</button>
-        </form>
+        </div>
     </div>
+    <script>
+        $(document).ready(function() {
+            $('tr[data-id]').on('click', function() {
+                const id = $(this).data('id');
+                $.get(`/details/${id}`, function(data) {
+                    let detailsBody = $('#details-body');
+                    detailsBody.empty();
+                    if (data.length === 0) {
+                        detailsBody.append('<tr><td colspan="2">No details available</td></tr>');
+                    } else {
+                        data.forEach(function(detail) {
+                            detailsBody.append(`<tr><td>${detail.detail_id}</td><td>${detail.info}</td></tr>`);
+                        });
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
