@@ -207,6 +207,28 @@ class DataFromHtmlStructure(BaseStructure):
             return headings_dictionary
         return None
     
+    @handle_request_errors    
+    def get_all_h1(self):
+        headings_dictionary = []
+        if self.soup:
+            headings = self.soup.find_all('h1')
+            for heading in headings:
+                heading_name = heading.get_text()
+                headings_dictionary.append(heading_name)
+            return headings_dictionary
+        return None
+    
+    @handle_request_errors    
+    def get_all_h2(self):
+        headings_dictionary = []
+        if self.soup:
+            headings = self.soup.find_all('h2')
+            for heading in headings:
+                heading_name = heading.get_text()
+                headings_dictionary.append(heading_name)
+            return headings_dictionary
+        return None
+    
     @handle_request_errors
     def get_meta_description(self):
         meta_description_list = []
@@ -298,7 +320,7 @@ class AnalyseData:
         data = self.is_multiple()
 
         data['Number of characters'] = data['Text'].apply(lambda x: self.count_characters(x) if isinstance(x, list) else len(x))
-        return data
+        return data.T
 
     
     def is_duplicate(self):
@@ -307,22 +329,103 @@ class AnalyseData:
 
 class Title(AnalyseData):
 
-    def analyse_lenght(self):
+    def analyse_missing(self):
         data = self.is_characters_alright()
+        result_from_missing = 0
+        if all(data.loc['Missing value'] == 'False'):
+            result_from_missing = 5
+        else:
+            result_from_missing = 0
+        return result_from_missing
 
-        if data <= 70:
-            pass
-        elif data >= 155:
-            pass
+    def analyse_length(self):
+        data = self.is_characters_alright()
+        result_from_title = 0
+        for num_chars_list in data.loc['Number of characters']:
+            for num_chars in num_chars_list:
+                if num_chars <= 30:
+                    result_from_title += 0
+                elif num_chars >= 70:
+                    result_from_title += 0
+                else:
+                    result_from_title += 5
+        return result_from_title
 
+    def analyse_multiple(self):
+        data = self.is_characters_alright()
+        result_from_multiple = 0
 
+        if all(data.loc['Multiple values'] == 'False'):
+            result_from_multiple = 5
+        else:
+            result_from_multiple = 0
+        return result_from_multiple
+
+    def is_title_thesame_as_h1():
+        
         pass
-
-
+    def title_result(self):
+        result_from_missing = self.analyse_missing()
+        result_from_title = self.analyse_length()
+        result_from_multiple = self.analyse_multiple()
+        
+        result = result_from_missing + result_from_title + result_from_multiple
+        return result
 class Headings(AnalyseData):
 
+    def analyse_missing(self):
+        data = self.is_characters_alright()
+        result_from_missing = 0
+        if all(data.loc['Missing value'] == 'False'):
+            result_from_missing = 3
+        else:
+            result_from_missing = 0
+        return result_from_missing
 
-    pass
+    def analyse_length(self):
+        data = self.is_characters_alright()
+        print(data)
+        result_from_title = 0
+        for num_chars_list in data.loc['Number of characters']:
+            for num_chars in num_chars_list:
+                if num_chars <= 30:
+                    result_from_title += 0
+                elif num_chars >= 70:
+                    result_from_title += 0
+                else:
+                    result_from_title += 5
+        return result_from_title
+
+    def analyse_multiple(self):
+        data = self.is_characters_alright()
+        result_from_multiple = 0
+
+        if all(data.loc['Multiple values'] == 'False'):
+            result_from_multiple = 2
+        else:
+            result_from_multiple = 0
+        return result_from_multiple
+
+    #work in progress
+    def is_h1_thefirst_heading(self):
+        
+        data = AnalyseData.is_right_file(DataFromHtmlStructure.get_headings(self))
+        result_from_firstheading = 0
+
+        if data.loc['0','Headings'] == 'h1':
+            result_from_firstheading == 2
+        else:
+            result_from_firstheading = 0
+        return result_from_firstheading
+
+    def title_result(self):
+        result_from_missing = self.analyse_missing()
+        result_from_title = self.analyse_length()
+        result_from_multiple = self.analyse_multiple()
+        #result_from_firstheading = self.is_h1_thefirst_heading()
+        
+        result = result_from_missing + result_from_title + result_from_multiple #+ result_from_firstheading
+        return result
 
 
 class MetaDescription(AnalyseData):

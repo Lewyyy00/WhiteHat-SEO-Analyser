@@ -91,24 +91,7 @@ class KeyWordFinder:
             print() 
 
 
-"""
-website_data = WebsiteData('https://www.szymonslowik.pl/seo-co-to-jest/')
-paragraphs = website_data.get_paragraphs()
-headings = website_data.get_headings()
-kf = KeyWordFinder('Is a wazdan realiable company?')
-ta = TextAnalyzer('https://www.szymonslowik.pl/seo-co-to-jest/')
-i = ta.preprocess_text()
-y = ta.sentance_tokenize()
 
-print(y)
-#title = website_data.get_title()
-
-#all_links = website_data.get_all_links()
-#all_404 = website_data.get_all_404_links()
-
-#kf_in_title = kf.find_key_words_in_title('reliable company webiste, wazdan, is,')
-#kf_in_url = kf.find_key_words_in_all_urls(all_links)
-#kf_in_all_urls = kf.find_key_words_in_all_urls('https://wazdan.com/')"""
 
 
 
