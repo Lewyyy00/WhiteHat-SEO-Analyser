@@ -39,65 +39,7 @@ def handle_request_errors(func):
 
 #1 URL Structure
 class UrlStructure(BaseStructure):
-
-    def split_url(self):
-        url = re.sub(r'^https?:\/\/', '', self.website)
-        url = re.sub(r'[\/\-_?&=]', ' ', url)
-        potential_keywords = url.split()
-        return potential_keywords
-     
-    def find_keywords_url(self):
-        keywords_url = self.split_url()
-        url_keywords = [keyword for keyword in keywords_url if any(key in keyword for key in self.keywords)]
-        return url_keywords
-    
-    def get_lenght_url(self):
-        url_without_protocol  = re.sub(r'^https?:\/\/', '', self.website)
-        lenght = len(url_without_protocol)
-        return lenght
-    
-    @handle_request_errors
-    def get_website_language(self):
-        if self.soup:
-            html_tag = self.soup.find('html')
-            if html_tag.has_attr("lang"):
-                return html_tag['lang']
-        return None
-        
-    def get_stopwords_language(self):
-        web_lang = self.get_website_language()
-        
-        if web_lang.startswith('pl'):
-            stopwordss = polish_stopwords
-        else:
-            stopwordss = set(stopwords.words("english"))
-        return stopwordss
-        
-    def find_stopwords(self):
-        stop_words = self.get_stopwords_language()
-        splited_url = self.split_url()
-
-        list_of_stopwords = [element for element in splited_url if element in stop_words]
-        return list_of_stopwords
-    
-    def analyze_url_hyphens(self):
-
-        for i in enumerate(self.website):
-            if i == '_':
-                return print(f'{self.website} has emphasis')
-            else:
-                return print(f'{self.website} does not have emphasis')
-
-    def find_capital_letters(self):
-        for i in self.url:
-            if i.isupper():
-                return f'{self.website} has capital letters'
-        f'{self.url} does not have capital letters'
-
-    def find_any_not_ascii_letters(self):
-        non_ascii_chars = [char for char in self.website if ord(char) > 127]
-        return non_ascii_chars
-    
+ 
     @handle_request_errors
     def get_all_200_links(self):
         if self.soup:
@@ -180,6 +122,87 @@ class UrlStructure(BaseStructure):
                     internal_links.append(full_url)
             return internal_links
         return None
+
+class DataFromUrl(BaseStructure):   
+
+    def split_url(self):
+        url = re.sub(r'^https?:\/\/', '', self.website)
+        url = re.sub(r'[\/\-_?&=]', ' ', url)
+        potential_keywords = url.split()
+        return potential_keywords
+
+    def find_keywords_url(self):
+        keywords_url = self.split_url()
+        url_keywords = [keyword for keyword in keywords_url if any(key in keyword for key in self.keywords)]
+        return url_keywords
+
+    def get_lenght_url(self):
+        url_without_protocol  = re.sub(r'^https?:\/\/', '', self.website)
+        lenght = len(url_without_protocol)
+        return lenght
+
+    """def get_parsed_url(self):
+        parsed_url = urlparse(self.website)
+        url_parts = [parsed_url.scheme, parsed_url.netloc, parsed_url.path, parsed_url.params, parsed_url.query, parsed_url.fragment]
+        return url_parts"""
+    
+    def is_url_has_https(self):
+        parsed_url = urlparse(self.website)
+        data = parsed_url.scheme
+
+        if data == 'https':
+            pass
+        elif data == 'http':
+            pass
+        else:
+            pass
+
+        pass
+
+    @handle_request_errors
+    def get_website_language(self):
+        if self.soup:
+            html_tag = self.soup.find('html')
+            if html_tag.has_attr("lang"):
+                return html_tag['lang']
+        return None
+        
+    def get_stopwords_language(self):
+        web_lang = self.get_website_language()
+        
+        if web_lang.startswith('pl'):
+            stopwordss = polish_stopwords
+        else:
+            stopwordss = set(stopwords.words("english"))
+        return stopwordss
+        
+    def find_stopwords(self):
+        stop_words = self.get_stopwords_language()
+        splited_url = self.split_url()
+
+        list_of_stopwords = [element for element in splited_url if element in stop_words]
+        return list_of_stopwords
+
+    def analyze_url_hyphens(self):
+
+        for i in enumerate(self.website):
+            if i == '_':
+                return print(f'{self.website} has emphasis')
+            else:
+                return print(f'{self.website} does not have emphasis')
+
+    def find_capital_letters(self):
+        for i in self.url:
+            if i.isupper():
+                return f'{self.website} has capital letters'
+        f'{self.url} does not have capital letters'
+
+    def find_any_not_ascii_letters(self):
+        non_ascii_chars = [char for char in self.website if ord(char) > 127]
+        return non_ascii_chars
+
+
+    pass
 
 # HTML 
 class DataFromHtmlStructure(BaseStructure):
