@@ -11,6 +11,7 @@ from values import polish_stopwords
 import pandas as pd
 from typing import Optional
 import json
+from collections import Counter
 nltk.download('stopwords')
 nltk.download('punkt')
 
@@ -318,15 +319,16 @@ class AnalyseData:
     def is_length_alright(self):
         json_data = self.is_right_file()
         data = json.loads(json_data)
-        print(type(data))
         if isinstance(data, dict) and "Text" in data:
             texts = data["Text"]
             lengths = [len(text) for text in texts]
+            elements_in_list = [len(texts)]
             word_counts = [self.count_words(text) for text in texts]
             result = {
                 "Text": texts,
                 "length": lengths,
-                "word_count": word_counts
+                "word_count": word_counts,
+                "elements": elements_in_list
             }
             return json.dumps(result)
         elif isinstance(data, list):
@@ -355,14 +357,26 @@ class AnalyseData:
         data = json.loads(json_data)
 
         if isinstance(data, dict):
-            data["Multiple values"] = [length != 1 for length in data["length"]]
-            data["Multiple values"] = ["True" if mv else "False" for mv in data["Multiple values"]]
+            data["Multiple values"] = [length != 1 for length in data["elements"]]
+            data["Multiple values"] = ["True" if x else "False" for x in data["Multiple values"]]
             return json.dumps(data)
         elif isinstance(data, list):
-            for entry in data:
-                entry["Multiple values"] = "True" if entry["length"] != 1 else "False"
-            return json.dumps(data)
-        return json.dumps([])
+            headings = [d['Headings'] for d in data]
+            amount_of_headings = Counter(headings)
+
+            if amount_of_headings.get('h1', 0) == 1:
+                for element in data:
+                    if element.get('Headings') == 'h1':
+                        element["Multiple values"] = "False"
+                    elif element.get('Headings') != 'h1':
+                        element["Multiple values"] = "does not influance SEO" #change to sth else 
+                    else:
+                        element["Multiple values"] = "True"
+            else:
+                for element in data:
+                    element["Multiple values"] = "s"
+
+        return json.dumps(data)
 
     def count_characters(self, elements):
         return [len(element) for element in elements]
@@ -386,7 +400,6 @@ class AnalyseData:
        pass
 
    
-
 class Title(AnalyseData):
 
     def analyse_missing(self):
