@@ -10,6 +10,7 @@ from logic import *
 from values import polish_stopwords
 import pandas as pd
 from typing import Optional
+import json
 nltk.download('stopwords')
 nltk.download('punkt')
 
@@ -285,24 +286,25 @@ class TextStructures(BaseStructure):
 class AnalyseData:
     def __init__(self, data):
         self.data = data
-        
+
     def is_right_file(self):
         if isinstance(self.data, list) or isinstance(self.data, str):
             newdata = {
-                "Text":[self.data]
+                "Text": self.data 
             }
-            df = pd.DataFrame(newdata)
-            return df
+            json_data = json.dumps(newdata)
+            return json_data
+        
         elif isinstance(self.data, dict):  
             rows = []
             for heading, texts in self.data.items():
                 for text in texts:
-                    rows.append((heading, text))
+                    rows.append({"Headings": heading, "Text": text})
 
-            df = pd.DataFrame(rows, columns=['Headings', 'Text'])
-            return df
+            json_data = json.dumps(rows)
+            return json_data
         else:
-            return pd.DataFrame()
+            return json.dumps([])
             
     def count_words(self, text):
         words = text.split()
@@ -312,43 +314,78 @@ class AnalyseData:
         numer_of_words = [self.count_words(element) for element in elements]
         return numer_of_words
 
-    def is_lenght_alright(self):
-        data = self.is_right_file()
+#needs to be fixed
+    def is_length_alright(self):
+        json_data = self.is_right_file()
+        data = json.loads(json_data)
+        print(type(data))
+        if isinstance(data, dict) and "Text" in data:
+            texts = data["Text"]
+            lengths = [len(text) for text in texts]
+            word_counts = [self.count_words(text) for text in texts]
+            result = {
+                "Text": texts,
+                "length": lengths,
+                "word_count": word_counts
+            }
+            return json.dumps(result)
+        elif isinstance(data, list):
+            for element in data:
+                element["length"] = len(element["Text"])
+                element["word_count"] = self.count_words(element["Text"])
+            return json.dumps(data)
+        return json.dumps([])
 
-        if 'Text' in data.columns and isinstance(data, dict) is True:
-            data['length'] = data['Text'].apply(len)
-        elif 'Text' in data.columns:
-            data['length'] = data['Text'].apply(len)
-            data['word_count'] = data['Text'].apply(lambda x: self.count_words_in_list(x) if isinstance(x, list) else self.count_words(x))
-        return data
-    
     def is_missing(self):
-        data = self.is_lenght_alright()
+        json_data = self.is_length_alright()
+        data = json.loads(json_data)
 
-        data['Missing value'] = data['length'] == 0
-        data['Missing value'] = data['Missing value'].apply(lambda x: 'True' if x else 'False')
-        return data
-        
+        if isinstance(data, dict):
+            data["Missing value"] = [length == 0 for length in data["length"]]
+            data["Missing value"] = ["True" if x else "False" for x in data["Missing value"]]
+            return json.dumps(data)
+        elif isinstance(data, list):
+            for element in data:
+                element["Missing value"] = "True" if element["length"] == 0 else "False"
+            return json.dumps(data)
+        return json.dumps([])
+
     def is_multiple(self):
-        data = self.is_missing()
+        json_data = self.is_missing()
+        data = json.loads(json_data)
 
-        data['Multiple values'] = data['length'] != 1
-        data['Multiple values'] = data['Multiple values'].apply(lambda x: 'True' if x else 'False')
-        return data
-        
+        if isinstance(data, dict):
+            data["Multiple values"] = [length != 1 for length in data["length"]]
+            data["Multiple values"] = ["True" if mv else "False" for mv in data["Multiple values"]]
+            return json.dumps(data)
+        elif isinstance(data, list):
+            for entry in data:
+                entry["Multiple values"] = "True" if entry["length"] != 1 else "False"
+            return json.dumps(data)
+        return json.dumps([])
+
     def count_characters(self, elements):
         return [len(element) for element in elements]
 
     def is_characters_alright(self):
-        data = self.is_multiple()
+        json_data = self.is_multiple()
+        data = json.loads(json_data)
 
-        data['Number of characters'] = data['Text'].apply(lambda x: self.count_characters(x) if isinstance(x, list) else len(x))
-        return data.T
+        if isinstance(data, dict):
+            data["Number of characters"] = self.count_characters(data["Text"])
+            return json.dumps(data)
+        elif isinstance(data, list):
+            for entry in data:
+                entry["Number of characters"] = len(entry["Text"])
+            return json.dumps(data)
+        return json.dumps([])
 
     
     def is_duplicate(self):
        
        pass
+
+   
 
 class Title(AnalyseData):
 
