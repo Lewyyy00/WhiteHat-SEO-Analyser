@@ -106,7 +106,7 @@ class UrlStructure(BaseStructure):
                 potential_internal_link = urlparse(full_url)
                 if url_domain == potential_internal_link.netloc:
                     internal_links.append(full_url)
-            return internal_links
+            return set(internal_links)
         return None
 
     def get_all_external_links(self):
@@ -403,36 +403,71 @@ class AnalyseData:
 class Title(AnalyseData):
 
     def analyse_missing(self):
-        data = self.is_characters_alright()
+        json_data = self.is_characters_alright()
+        data = json.loads(json_data)
         result_from_missing = 0
-        if all(data.loc['Missing value'] == 'False'):
-            result_from_missing = 5
+        if isinstance(data, dict):
+            if data['Missing value'] == ["False"]:
+                result_from_missing = 5
+                data['Points from missing'] = result_from_missing
+                return json.dumps(data)
+            else:
+                result_from_missing = 0
+                data['Points from missing'] = result_from_missing
+                return json.dumps(data)
         else:
-            result_from_missing = 0
-        return result_from_missing
+            for element in data:
+                if element['Missing value'] == 'False':
+                    result_from_missing = 5
+                    element['Points from missing'] = result_from_missing
+                else:
+                    result_from_missing = 0
+                    element['Points from missing'] = result_from_missing
+            return json.dumps(data)
 
     def analyse_length(self):
-        data = self.is_characters_alright()
+        json_data = self.analyse_missing()
+        data = json.loads(json_data)
         result_from_title = 0
-        for num_chars_list in data.loc['Number of characters']:
-            for num_chars in num_chars_list:
-                if num_chars <= 30:
-                    result_from_title += 0
-                elif num_chars >= 70:
-                    result_from_title += 0
-                else:
-                    result_from_title += 5
-        return result_from_title
+        
+        if isinstance(data, dict):
+            num_chars = data['Number of characters']
+            for num_chars in num_chars:
+                if 30 < num_chars < 70:
+                    result_from_title = 5
+            data['Points from length'] = result_from_title
+            return json.dumps(data)
+        else:
+            for element in data:
+                num_chars = element['Number of characters']
+                if 30 < num_chars < 70:
+                    result_from_title = 5
+                element['Points from length'] = result_from_title
+            return json.dumps(data)
 
     def analyse_multiple(self):
-        data = self.is_characters_alright()
+        json_data = self.is_characters_alright()
+        data = json.loads(json_data)
         result_from_multiple = 0
-
-        if all(data.loc['Multiple values'] == 'False'):
-            result_from_multiple = 5
+        
+        if isinstance(data, dict):
+            if data['Multiple values'] == ["False"]:
+                result_from_missing = 5
+                data['Multiple values'] = result_from_missing
+                return json.dumps(data)
+            else:
+                result_from_missing = 0
+                data['Multiple values'] = result_from_missing
+                return json.dumps(data)
         else:
-            result_from_multiple = 0
-        return result_from_multiple
+            for element in data:
+                if element['Multiple values'] == 'False':
+                    result_from_missing = 5
+                    element['Multiple values'] = result_from_missing
+                else:
+                    result_from_missing = 0
+                    element['Multiple values'] = result_from_missing
+            return json.dumps(data)
 
     def is_title_thesame_as_h1():
         

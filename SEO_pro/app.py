@@ -6,7 +6,7 @@ app = Flask(__name__, template_folder="../templates", static_folder="../static")
 
 @app.route('/')
 def index():
-    page_analyser = UrlStructure('https://www.scrapingbee.com/blog/crawling-python/')  # Zmień na odpowiednią stronę
+    page_analyser = UrlStructure('https://wazdan.com')  # Zmień na odpowiednią stronę
     links_200 = page_analyser.get_all_internal_links()
     main_table_data = [{"id": idx + 1, "url": url, "rating": 5} for idx, url in enumerate(links_200)]
     return render_template('index.html', main_table_data=main_table_data)
