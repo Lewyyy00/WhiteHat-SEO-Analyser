@@ -6,19 +6,31 @@ app = Flask(__name__, template_folder="../templates", static_folder="../static")
 
 @app.route('/')
 def index():
-    page_analyser = UrlStructure('https://wazdan.com')  # Zmień na odpowiednią stronę
+    page_analyser = UrlStructure('https://wazdan.com')  
     links_200 = page_analyser.get_all_internal_links()
     main_table_data = [{"id": idx + 1, "url": url, "rating": 5} for idx, url in enumerate(links_200)]
     return render_template('index.html', main_table_data=main_table_data)
 
-@app.route('/details/<int:id>')
-def details(id):
+@app.route('/details/<int:id>/<string:detail_type>')
+def details(id, detail_type):
     details_table_data = {
-        1: [{"detail_id": 1, "info": "Detail 1 for URL 1"}, {"detail_id": 2, "info": "Detail 2 for URL 1"}],
-        2: [{"detail_id": 3, "info": "Detail 1 for URL 2"}],
-        3: [{"detail_id": 4, "info": "Detail 1 for URL 3"}, {"detail_id": 5, "info": "Detail 2 for URL 3"}],
+        "title": {
+            1: [{"detail_id": 1, "info": "Title 1 for URL 1"}, {"detail_id": 2, "info": "Title 2 for URL 1"}],
+            2: [{"detail_id": 3, "info": "Title 1 for URL 2"}],
+            3: [{"detail_id": 4, "info": "Title 1 for URL 3"}, {"detail_id": 5, "info": "Title 2 for URL 3"}],
+        },
+        "meta_description": {
+            1: [{"detail_id": 1, "info": "Meta Description 1 for URL 1"}, {"detail_id": 2, "info": "Meta Description 2 for URL 1"}],
+            2: [{"detail_id": 3, "info": "Meta Description 1 for URL 2"}],
+            3: [{"detail_id": 4, "info": "Meta Description 1 for URL 3"}, {"detail_id": 5, "info": "Meta Description 2 for URL 3"}],
+        },
+        "headings": {
+            1: [{"detail_id": 1, "info": "Heading 1 for URL 1"}, {"detail_id": 2, "info": "Heading 2 for URL 1"}],
+            2: [{"detail_id": 3, "info": "Heading 1 for URL 2"}],
+            3: [{"detail_id": 4, "info": "Heading 1 for URL 3"}, {"detail_id": 5, "info": "Heading 2 for URL 3"}],
+        }
     }
-    details = details_table_data.get(id, [])
+    details = details_table_data.get(detail_type, {}).get(id, [])
     return jsonify(details)
 
 if __name__ == '__main__':

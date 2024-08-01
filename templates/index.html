@@ -40,6 +40,11 @@
             </div>
             <div class="details-table">
                 <h2>Details Table</h2>
+                <div class="buttons">
+                    <button class="details-btn" data-detail="title">Title</button>
+                    <button class="details-btn" data-detail="meta_description">Meta Description</button>
+                    <button class="details-btn" data-detail="headings">Headings</button>
+                </div>
                 <table>
                     <thead>
                         <tr>
@@ -58,9 +63,25 @@
     </div>
     <script>
         $(document).ready(function() {
+            let currentDetailType = 'title';
+            let selectedRowId = null;
+
             $('tr[data-id]').on('click', function() {
-                const id = $(this).data('id');
-                $.get(`/details/${id}`, function(data) {
+                $('tr[data-id]').removeClass('selected');
+                $(this).addClass('selected');
+                selectedRowId = $(this).data('id');
+                fetchDetails(selectedRowId, currentDetailType);
+            });
+
+            $('.details-btn').on('click', function() {
+                currentDetailType = $(this).data('detail');
+                if (selectedRowId) {
+                    fetchDetails(selectedRowId, currentDetailType);
+                }
+            });
+
+            function fetchDetails(id, detailType) {
+                $.get(`/details/${id}/${detailType}`, function(data) {
                     let detailsBody = $('#details-body');
                     detailsBody.empty();
                     if (data.length === 0) {
@@ -71,7 +92,7 @@
                         });
                     }
                 });
-            });
+            }
         });
     </script>
 </body>

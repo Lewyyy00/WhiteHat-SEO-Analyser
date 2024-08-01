@@ -12,8 +12,30 @@ import pandas as pd
 from typing import Optional
 import json
 from collections import Counter
+from functools import wraps
 nltk.download('stopwords')
 nltk.download('punkt')
+
+def handle_request_errors(func):
+    @wraps(func)
+    def wrapper(self, *args, **kwargs):
+        try:
+            return func(self, *args, **kwargs)
+        except requests.exceptions.RequestException as error:
+            print(error)
+            return None
+    return wrapper
+
+def get_url_length(url):
+    return len(url)
+
+def sort_links(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        links = func(*args, **kwargs)
+        sorted_links = sorted(links, key=get_url_length)
+        return sorted_links
+    return wrapper
 
 class BaseStructure:
     def __init__(self, website: str):
@@ -30,18 +52,9 @@ class BaseStructure:
             print(f"Błąd podczas pobierania strony: {error}")
             self.soup = None
 
-def handle_request_errors(func):
-    def wrapper(self, *args, **kwargs):
-        try:
-            return func(self, *args, **kwargs)
-        except requests.exceptions.RequestException as error:
-            print(error)
-            return None
-    return wrapper
-
 #1 URL Structure
 class UrlStructure(BaseStructure):
- 
+    @sort_links
     @handle_request_errors
     def get_all_200_links(self):
         if self.soup:
@@ -60,7 +73,7 @@ class UrlStructure(BaseStructure):
                     links_200.append(full_url)                 
             return links_200
         return None
-    
+    @sort_links
     @handle_request_errors
     def get_all_not_valid_links(self):
         if self.soup:
@@ -93,6 +106,7 @@ class UrlStructure(BaseStructure):
         return None
     
     # it doesnt recognise the same website but with other domain in case of changeing langauge (TLD) example.pl != example.com
+    @sort_links
     def get_all_internal_links(self):
         if self.soup:
             parsed_url = urlparse(self.website)
@@ -108,7 +122,8 @@ class UrlStructure(BaseStructure):
                     internal_links.append(full_url)
             return set(internal_links)
         return None
-
+    
+    @sort_links
     def get_all_external_links(self):
         if self.soup:
             parsed_url = urlparse(self.website)
@@ -127,6 +142,10 @@ class UrlStructure(BaseStructure):
 
 class DataFromUrl(BaseStructure):   
 
+    def make_json(self):
+        data = {'URL': self.website}
+        return json.dumps(data)
+
     def split_url(self):
         url = re.sub(r'^https?:\/\/', '', self.website)
         url = re.sub(r'[\/\-_?&=]', ' ', url)
@@ -139,16 +158,22 @@ class DataFromUrl(BaseStructure):
         return url_keywords
 
     def get_lenght_url(self):
+        json_data = self.make_json()
+        data = json.loads(json_data)
         url_without_protocol  = re.sub(r'^https?:\/\/', '', self.website)
-        lenght = len(url_without_protocol)
-        return lenght
+        
+        data['Url lenght'] = len(url_without_protocol)
+        return json.dumps(data)
 
-    """def get_parsed_url(self):
+    def get_parsed_url(self):
+        json_data = self.get_lenght_url()
+        data = json.loads(json_data)
         parsed_url = urlparse(self.website)
-        url_parts = [parsed_url.scheme, parsed_url.netloc, parsed_url.path, parsed_url.params, parsed_url.query, parsed_url.fragment]
-        return url_parts"""
+
+        data['Url parts'] = [parsed_url.scheme, parsed_url.netloc, parsed_url.path, parsed_url.params, parsed_url.query, parsed_url.fragment]
+        return json.dumps(data)
     
-    def is_url_has_https(self):
+    """def is_url_has_https(self):
         parsed_url = urlparse(self.website)
         data = parsed_url.scheme
 
@@ -159,7 +184,7 @@ class DataFromUrl(BaseStructure):
         else:
             pass
 
-        pass
+        pass"""
 
     @handle_request_errors
     def get_website_language(self):
@@ -179,32 +204,46 @@ class DataFromUrl(BaseStructure):
         return stopwordss
         
     def find_stopwords(self):
+        json_data = self.get_parsed_url()
+        data = json.loads(json_data)
         stop_words = self.get_stopwords_language()
         splited_url = self.split_url()
 
-        list_of_stopwords = [element for element in splited_url if element in stop_words]
-        return list_of_stopwords
+        data['List of stopwords in url'] = [element for element in splited_url if element in stop_words]
+        return json.dumps(data)
 
     def analyze_url_hyphens(self):
-
-        for i in enumerate(self.website):
+        json_data = self.find_stopwords()
+        data = json.loads(json_data)
+        print(self.website)
+        for i in self.website:
             if i == '_':
-                return print(f'{self.website} has emphasis')
-            else:
-                return print(f'{self.website} does not have emphasis')
+                data['Hyphens'] = 'True'
+                return json.dumps(data)
+        data['Hyphens'] = 'False'
+        return json.dumps(data)
 
     def find_capital_letters(self):
-        for i in self.url:
+        json_data = self.analyze_url_hyphens()
+        data = json.loads(json_data)
+        for i in self.website:
             if i.isupper():
-                return f'{self.website} has capital letters'
-        f'{self.url} does not have capital letters'
+                data['Capital letters'] = 'True'
+                return json.dumps(data)
+        data['Capital letters'] = 'False'
+        return json.dumps(data)
 
     def find_any_not_ascii_letters(self):
+        json_data = self.find_capital_letters()
+        data = json.loads(json_data)
         non_ascii_chars = [char for char in self.website if ord(char) > 127]
-        return non_ascii_chars
-
-
-    pass
+        
+        if len(non_ascii_chars) > 0:
+            data['Not ASCII letters'] = 'True'
+            return json.dumps(data)
+        else:
+            data['Not ASCII letters'] = 'False'
+            return json.dumps(data)
 
 # HTML 
 class DataFromHtmlStructure(BaseStructure):
@@ -446,39 +485,44 @@ class Title(AnalyseData):
             return json.dumps(data)
 
     def analyse_multiple(self):
-        json_data = self.is_characters_alright()
+        json_data = self.analyse_length()
         data = json.loads(json_data)
         result_from_multiple = 0
         
         if isinstance(data, dict):
             if data['Multiple values'] == ["False"]:
-                result_from_missing = 5
-                data['Multiple values'] = result_from_missing
+                result_from_multiple = 5
+                data['Points from multiple'] = result_from_multiple
                 return json.dumps(data)
             else:
-                result_from_missing = 0
-                data['Multiple values'] = result_from_missing
+                result_from_multiple = 0
+                data['Points from multiple'] = result_from_multiple
                 return json.dumps(data)
         else:
             for element in data:
                 if element['Multiple values'] == 'False':
-                    result_from_missing = 5
-                    element['Multiple values'] = result_from_missing
+                    result_from_multiple = 5
+                    element['Points from multiple'] = result_from_multiple
                 else:
-                    result_from_missing = 0
-                    element['Multiple values'] = result_from_missing
+                    result_from_multiple = 0
+                    element['Points from multiple'] = result_from_multiple
             return json.dumps(data)
 
     def is_title_thesame_as_h1():
         
         pass
     def title_result(self):
-        result_from_missing = self.analyse_missing()
-        result_from_title = self.analyse_length()
-        result_from_multiple = self.analyse_multiple()
-        
-        result = result_from_missing + result_from_title + result_from_multiple
-        return result
+        json_data = self.analyse_multiple()
+        data = json.loads(json_data)
+
+        if isinstance(data, dict):
+            data['Overall points'] = data['Points from missing'] + data['Points from length'] + data['Points from multiple']  
+            return json.dumps(data)
+        else:
+            for element in data:
+                element['Overall points'] = element['Points from missing'] + element['Points from length'] + element['Points from multiple']  
+            return json.dumps(data)
+
 class Headings(AnalyseData):
 
     def analyse_missing(self):
