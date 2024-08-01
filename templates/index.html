@@ -84,12 +84,32 @@
                 $.get(`/details/${id}/${detailType}`, function(data) {
                     let detailsBody = $('#details-body');
                     detailsBody.empty();
-                    if (data.length === 0) {
-                        detailsBody.append('<tr><td colspan="2">No details available</td></tr>');
+                    if (detailType === "title") {
+                        if ($.isEmptyObject(data)) {
+                            detailsBody.append('<tr><td colspan="2">No details available</td></tr>');
+                        } else {
+                            detailsBody.append(`
+                                <tr><td>Text</td><td>${data.Text[0]}</td></tr>
+                                <tr><td>Length</td><td>${data.length[0]}</td></tr>
+                                <tr><td>Word Count</td><td>${data.word_count[0]}</td></tr>
+                                <tr><td>Elements</td><td>${data.elements[0]}</td></tr>
+                                <tr><td>Missing Value</td><td>${data["Missing value"][0]}</td></tr>
+                                <tr><td>Multiple Values</td><td>${data["Multiple values"][0]}</td></tr>
+                                <tr><td>Number of Characters</td><td>${data["Number of characters"][0]}</td></tr>
+                                <tr><td>Points from Missing</td><td>${data["Points from missing"]}</td></tr>
+                                <tr><td>Points from Length</td><td>${data["Points from length"]}</td></tr>
+                                <tr><td>Points from Multiple</td><td>${data["Points from multiple"]}</td></tr>
+                                <tr><td>Overall Points</td><td>${data["Overall points"]}</td></tr>
+                            `);
+                        }
                     } else {
-                        data.forEach(function(detail) {
-                            detailsBody.append(`<tr><td>${detail.detail_id}</td><td>${detail.info}</td></tr>`);
-                        });
+                        if (data.length === 0) {
+                            detailsBody.append('<tr><td colspan="2">No details available</td></tr>');
+                        } else {
+                            data.forEach(function(detail) {
+                                detailsBody.append(`<tr><td>${detail.detail_id}</td><td>${detail.info}</td></tr>`);
+                            });
+                        }
                     }
                 });
             }
