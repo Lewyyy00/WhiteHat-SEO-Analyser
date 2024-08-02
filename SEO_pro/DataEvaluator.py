@@ -119,6 +119,14 @@ class AnalyseData:
    
 class Title(AnalyseData):
 
+    def path_selector(self):
+        data = self.is_characters_alright()
+        if isinstance(self.data, dict):
+            pass
+
+
+        pass
+
     def analyse_missing(self):
         json_data = self.is_characters_alright()
         data = json.loads(json_data)
@@ -201,7 +209,35 @@ class Title(AnalyseData):
                 element['Overall points'] = element['Points from missing'] + element['Points from length'] + element['Points from multiple']  
             return json.dumps(data)
 
-class Headings(AnalyseData):
+
+
+
+
+"""class Headings(AnalyseData):
+
+
+      def analyse_missing(self):
+        json_data = self.is_characters_alright()
+        data = json.loads(json_data)
+        result_from_missing = 0
+        if isinstance(data, list):
+            if data['Missing value'] == ["False"]:
+                result_from_missing = 3
+                data['Points from missing'] = result_from_missing
+                return json.dumps(data)
+            else:
+                result_from_missing = 0
+                data['Points from missing'] = result_from_missing
+                return json.dumps(data)
+        else:
+            for element in data:
+                if element['Missing value'] == 'False':
+                    result_from_missing = 3
+                    element['Points from missing'] = result_from_missing
+                else:
+                    result_from_missing = 0
+                    element['Points from missing'] = result_from_missing
+            return json.dumps(data)
 
     def analyse_missing(self):
         data = self.is_characters_alright()
@@ -261,4 +297,4 @@ class Headings(AnalyseData):
 class MetaDescription(AnalyseData):
 
 
-    pass
+    pass"""
