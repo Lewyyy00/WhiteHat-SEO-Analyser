@@ -6,6 +6,7 @@ import nltk
 from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize, sent_tokenize
+from nltk.util import ngrams
 nltk.download('stopwords')
 nltk.download('punkt')
 
@@ -31,7 +32,7 @@ class TextAnalyzer:
         preprocesed_text = re.sub(r'[^\w\s]', '', preprocesed_text)  
         return preprocesed_text
     
-    def sentance_tokenize(self):
+    def sentence_tokenize(self):
         preprocessed_texts = self.preprocess_text()
         stop_words = set(stopwords.words("english"))
         
@@ -46,6 +47,19 @@ class TextAnalyzer:
             if len(i) == 0:
                 filtered_sentences.remove(i)
         return filtered_sentences
+    
+    def sentence_chunking(self):
+        pass
+
+    def generate_ngrams(self, n):
+        sentences = self.sentence_tokenize()
+        ngram_list = []
+        
+        for sentence in sentences:
+            words = word_tokenize(sentence)
+            ngrams_generated = list(ngrams(words, n))
+            ngram_list.extend(ngrams_generated)
+        return ngram_list
 
 
 class KeyWordFinder:
