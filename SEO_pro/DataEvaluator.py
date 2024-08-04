@@ -209,14 +209,10 @@ class Title(AnalyseData):
                 element['Overall points'] = element['Points from missing'] + element['Points from length'] + element['Points from multiple']  
             return json.dumps(data)
 
+class Headings(AnalyseData):
 
 
-
-
-"""class Headings(AnalyseData):
-
-
-      def analyse_missing(self):
+    def analyse_missing(self):
         json_data = self.is_characters_alright()
         data = json.loads(json_data)
         result_from_missing = 0
@@ -297,4 +293,4 @@ class Title(AnalyseData):
 class MetaDescription(AnalyseData):
 
 
-    pass"""
+    pass

@@ -1,5 +1,5 @@
 import requests 
-
+from collections import Counter
 from urllib.parse import urljoin, urlparse
 import re
 import nltk
@@ -26,11 +26,14 @@ class TextAnalyzer:
             return self._preprocess_single_text(self.text)
 
     def _preprocess_single_text(self, text):
-        preprocesed_text = text.lower()  
-        preprocesed_text = re.sub(r'\b\w{1}\b', '', preprocesed_text)  
-        preprocesed_text = re.sub(r'\s+', ' ', preprocesed_text)  
-        preprocesed_text = re.sub(r'[^\w\s]', '', preprocesed_text)  
-        return preprocesed_text
+        if text is None:
+            return ''
+        else:
+            preprocesed_text = text.lower()  
+            preprocesed_text = re.sub(r'\b\w{1}\b', '', preprocesed_text)  
+            preprocesed_text = re.sub(r'\s+', ' ', preprocesed_text)  
+            preprocesed_text = re.sub(r'[^\w\s]', '', preprocesed_text)  
+            return preprocesed_text
     
     def sentence_tokenize(self):
         preprocessed_texts = self.preprocess_text()
@@ -51,15 +54,40 @@ class TextAnalyzer:
     def sentence_chunking(self):
         pass
 
+    def is_single_word_list(self, list):
+        return all(len(word_tokenize(item)) == 1 for item in list)
+
     def generate_ngrams(self, n):
         sentences = self.sentence_tokenize()
         ngram_list = []
+
+        if self.is_single_word_list(sentences) == True:
+            ngram_list = list(ngrams(sentences, n))
+            return ngram_list
+        else:
+            for sentence in sentences:
+                words = word_tokenize(sentence)
+                ngrams_generated = list(ngrams(words, n))
+                ngram_list.extend(ngrams_generated)
+            return ngram_list
+    
+    def find_most_common_ngrams(self, n):
+        data = self.generate_ngrams(n)
+        ngram_counts = Counter(data)
+        most_common_ngrams = ngram_counts.most_common(5)
+        return most_common_ngrams
+    
+
+    def is_ngrams_in_query(self, querytext, text, n):
+        text_from_query = TextAnalyzer(querytext).generate_ngrams(n)
+        text_from_page = TextAnalyzer(text).generate_ngrams(n)
+        common_elements = []
+
+        for element in text_from_query:
+            if element in text_from_page:
+                common_elements.append(element)
+        return common_elements
         
-        for sentence in sentences:
-            words = word_tokenize(sentence)
-            ngrams_generated = list(ngrams(words, n))
-            ngram_list.extend(ngrams_generated)
-        return ngram_list
 
 
 class KeyWordFinder:
@@ -69,7 +97,6 @@ class KeyWordFinder:
     def get_key_words(self, query):
         key_words = [word.lower() for word in query.split()]
         return key_words
-    
     
     def find_key_words_in_title(self, title):
         title_keywords = self.get_key_words(title)

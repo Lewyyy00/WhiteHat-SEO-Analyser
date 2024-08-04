@@ -6,7 +6,7 @@ import nltk
 from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize, sent_tokenize
-from logic import *
+from KeyWordLogic import *
 from values import polish_stopwords
 import pandas as pd
 from typing import Optional
@@ -307,7 +307,7 @@ class DataFromHtmlStructure(BaseStructure):
                 return None
         return None
      
-class TextStructures(BaseStructure):
+class DataFromTextStructures(BaseStructure):
     
     @handle_request_errors
     def get_content(self):

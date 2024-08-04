@@ -1,5 +1,5 @@
 from flask import Flask, render_template, jsonify, request
-from logic import *
+from WhiteHatSEO.SEO_pro.KeyWordLogic import *
 from DataCrawler import *
 from DataEvaluator import *
 from DataAnalyser import *
