@@ -77,10 +77,12 @@ class TextAnalyzer:
         most_common_ngrams = ngram_counts.most_common(5)
         return most_common_ngrams
     
-
-    def is_ngrams_in_query(self, querytext, text, n):
-        text_from_query = TextAnalyzer(querytext).generate_ngrams(n)
-        text_from_page = TextAnalyzer(text).generate_ngrams(n)
+    @staticmethod
+    def is_ngrams_in_query(querytext, text, n):
+        analyzer_query = TextAnalyzer(querytext)
+        analyzer_text = TextAnalyzer(text)
+        text_from_query = analyzer_query.generate_ngrams(n)
+        text_from_page = analyzer_text.generate_ngrams(n)
         common_elements = []
 
         for element in text_from_query:
@@ -88,7 +90,6 @@ class TextAnalyzer:
                 common_elements.append(element)
         return common_elements
         
-
 
 class KeyWordFinder:
     def __init__(self, query):
@@ -105,7 +106,6 @@ class KeyWordFinder:
         title_keywords = [keyword for keyword in title_keywords if keyword in query_keywords]
         return title_keywords
        
-
     def find_key_words_in_url(self, url):
         key_words = self.get_key_words(self.query) 
         parsed_url = urlparse(url)

@@ -1,17 +1,30 @@
 from flask import Flask, render_template, jsonify, request
-from WhiteHatSEO.SEO_pro.KeyWordLogic import *
+from KeyWordLogic import *
 from DataCrawler import *
 from DataEvaluator import *
 from DataAnalyser import *
 
 app = Flask(__name__, template_folder="../templates", static_folder="../static")
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    page_analyser = UrlStructure('https://wazdan.com')  
-    links_200 = page_analyser.get_all_internal_links()
-    main_table_data = [{"id": idx + 1, "url": url, "rating": 5} for idx, url in enumerate(links_200)]
-    return render_template('index.html', main_table_data=main_table_data)
+    if request.method == 'POST':
+        url = request.form['url']
+        keyword = request.form['keyword']
+        return render_template('enter_page.html', url=url, keyword=keyword, show_options=True)
+    return render_template('enter_page.html', show_options=False)
+
+@app.route('/results', methods=['POST'])
+def results():
+    url = request.form.get('url')
+    keyword = request.form.get('keyword')
+    if url:
+        page_analyser = UrlStructure(url)
+        links_200 = page_analyser.get_all_internal_links()
+        main_table_data = [{"id": idx + 1, "url": url, "rating": 5} for idx, url in enumerate(links_200)]
+        return render_template('results.html', main_table_data=main_table_data)
+    else:
+        return "No URL provided", 400
 
 @app.route('/details/<int:id>/<string:detail_type>')
 def details(id, detail_type):

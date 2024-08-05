@@ -73,6 +73,7 @@ class UrlStructure(BaseStructure):
                     links_200.append(full_url)                 
             return links_200
         return None
+    
     @sort_links
     @handle_request_errors
     def get_all_not_valid_links(self):

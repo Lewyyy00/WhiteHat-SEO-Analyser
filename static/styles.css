@@ -1,35 +1,44 @@
 body {
     font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
 }
 
 .container {
     display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 .menu {
-    width: 200px;
-    border-right: 1px solid #ddd;
-    padding-right: 10px;
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
 }
 
 .menu ul {
     list-style-type: none;
     padding: 0;
+    margin: 0;
 }
 
 .menu ul li {
-    padding: 10px 0;
+    display: inline;
+    margin-right: 20px;
+}
+
+.menu ul li a {
+    color: #fff;
+    text-decoration: none;
 }
 
 .content {
-    display: flex;
-    flex-grow: 1;
-    justify-content: space-between;
-    padding-left: 10px;
+    flex: 1;
+    padding: 20px;
 }
 
 .main-table, .details-table {
-    width: 45%;
+    margin-bottom: 20px;
 }
 
 table {
@@ -38,7 +47,29 @@ table {
 }
 
 th, td {
-    padding: 10px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
+    padding: 8px;
+    border: 1px solid #ddd;
+}
+
+th {
+    background-color: #f4f4f4;
+}
+
+tr.selected {
+    background-color: #e0e0e0;
+}
+
+.info-message {
+    text-align: center;
+    font-style: italic;
+    color: #888;
+}
+
+.buttons {
+    margin-bottom: 10px;
+}
+
+.details-btn {
+    margin-right: 10px;
+    padding: 5px 10px;
 }
