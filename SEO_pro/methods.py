@@ -8,6 +8,11 @@ def make_right_choice(url, option):
     if option == 'title':
         data_from_html = DataFromHtmlStructure(url)
         title = data_from_html.get_title()
+        
+        text_analyser = TextAnalyzer(title)
+        ta = text_analyser.sentence_tokenize()
+        print(ta)
+
         title_evaluator = Title(title)
         x= title_evaluator.title_result()
         return x
@@ -18,6 +23,11 @@ def make_right_choice(url, option):
     elif option == 'meta_description':
         data_from_html = DataFromHtmlStructure(url)
         meta_description = data_from_html.get_meta_description()
+
+        text_analyser = TextAnalyzer(meta_description)
+        ta = text_analyser.sentence_tokenize()
+        print(ta)
+
         title_evaluator = Title(meta_description)
         x= title_evaluator.title_result()
         return x
@@ -25,6 +35,13 @@ def make_right_choice(url, option):
     elif option == 'headings':
         data_from_html = DataFromHtmlStructure(url)
         headings = data_from_html.get_headings()
+
+        for i, j in headings.items():
+            for y in j:
+                text_analyser = TextAnalyzer(y)
+                ta = text_analyser.sentence_tokenize()
+                print(ta)
+
         title_evaluator = Title(headings)
         x= title_evaluator.title_result()
         return x
@@ -35,9 +52,3 @@ def make_right_choice(url, option):
     elif option == 'alt_content':
         pass
 
-        
-
-  
-
-chuj = make_right_choice('https://wazdan.com/career/all-offers', 'headings')
-print(chuj)

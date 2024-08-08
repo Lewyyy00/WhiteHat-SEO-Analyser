@@ -7,12 +7,14 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk.util import ngrams
+from values import *
 nltk.download('stopwords')
 nltk.download('punkt')
 
 class TextAnalyzer:
-    def __init__(self, text):
+    def __init__(self, text, language = None):
         self.text = text
+        self.language = language
 
     def preprocess_text(self):
         if isinstance(self.text, list):
@@ -34,10 +36,14 @@ class TextAnalyzer:
             preprocesed_text = re.sub(r'\s+', ' ', preprocesed_text)  
             preprocesed_text = re.sub(r'[^\w\s]', '', preprocesed_text)  
             return preprocesed_text
+        
     
     def sentence_tokenize(self):
         preprocessed_texts = self.preprocess_text()
-        stop_words = set(stopwords.words("english"))
+        if self.language is None:
+            stop_words = set(stopwords.words("english"))
+        else:
+            stop_words = polish_stopwords
         
         filtered_sentences = []
 
