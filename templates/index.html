@@ -1,18 +1,14 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>URL Analyzer</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-  </head>
-  <body>
-    <h1>URL Analyzer</h1>
-    <form method="post" action="/">
-      <label for="url">URL:</label>
-      <input type="text" id="url" name="url" required>
-      <label for="keyword">Keyword (optional):</label>
-      <input type="text" id="keyword" name="keyword">
-      <button type="submit">Analyze</button>
-    </form>
-  </body>
-</html>
+{% extends "layout.html" %}
+
+{% block title %}Website Chooser{% endblock %}
+
+{% block content %}
+<h1>URL Analyzer</h1>
+<form method="post" action="/">
+  <label for="url">URL:</label>
+  <input type="text" id="url" name="url" required>
+  <label for="keyword">Keyword (optional):</label>
+  <input type="text" id="keyword" name="keyword">
+  <button type="submit">Analyze</button>
+</form>
+{% endblock %}

@@ -18,7 +18,8 @@ def make_right_choice(url, option):
         return x
     
     elif option == 'url_content':
-        pass
+        data_from_html = DataFromUrl(url)
+        meta_description = data_from_html.find_any_not_ascii_letters()
 
     elif option == 'meta_description':
         data_from_html = DataFromHtmlStructure(url)
@@ -47,8 +48,18 @@ def make_right_choice(url, option):
         return x
     
     elif option == 'content':
-        pass
+        data_from_html = DataFromTextStructures(url)
+        texts = data_from_html.get_content()
+
+        text_analyser = TextAnalyzer(texts)
+        x = text_analyser.sentence_tokenize()
+        return x
 
     elif option == 'alt_content':
-        pass
+        data_from_html = DataFromTextStructures(url)
+        alt_texts = data_from_html.get_all_alt_texts()
+
+        text_analyser = TextAnalyzer(alt_texts)
+        x = text_analyser.sentence_tokenize()
+        return x
 

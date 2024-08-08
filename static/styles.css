@@ -1,40 +1,72 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-  }
-  
-  form {
-    margin-bottom: 20px;
-  }
-  
-  label {
-    margin-right: 10px;
-  }
-  
-  input[type="text"] {
-    margin-right: 10px;
-  }
-  
-  button {
-    padding: 5px 10px;
-  }
-  
-  h1 {
-    margin-bottom: 20px;
-  }
-  
-  ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  li {
-    margin-bottom: 10px;
-  }
-  
-  #result {
-    margin-top: 20px;
-    white-space: pre-wrap;
-    border: 1px solid #ccc;
-    padding: 10px;
-  }
+.container {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  height: 100vh;
+}
+
+.nav {
+  background-color: #f4f4f4;
+  padding: 20px;
+}
+
+.nav h2 {
+  margin-top: 0;
+}
+
+.nav ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.nav ul li {
+  margin-bottom: 10px;
+}
+
+.nav ul li a {
+  text-decoration: none;
+  color: #333;
+}
+
+.content {
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.content ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.content ul li {
+  padding: 10px;
+  border: 1px solid #ccc;
+  margin-bottom: 5px;
+  cursor: pointer;
+}
+
+.content ul li.selected {
+  background-color: #e0e0e0;
+}
+
+.details {
+  background-color: #f4f4f4;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.details button {
+  margin-bottom: 10px;
+  padding: 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#result {
+  margin-top: 20px;
+  white-space: pre-wrap;
+  border: 1px solid #ccc;
+  padding: 10px;
+  overflow-x: auto;
+}
