@@ -63,3 +63,11 @@ def make_right_choice(url, option):
         x = text_analyser.sentence_tokenize()
         return x
 
+x = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'title')
+f = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'content')
+c = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'alt_content')
+e = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'headings')
+z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'meta_description')
+z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'url_content')
+
+print(x)

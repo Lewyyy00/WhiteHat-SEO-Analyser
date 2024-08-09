@@ -24,6 +24,13 @@ class TextAnalyzer:
             text = self.text.split()
             processed_texts = [self._preprocess_single_text(word) for word in text]
             return processed_texts
+        elif isinstance(self.text, dict):  
+            
+            for texts in self.text.items():
+                for text in texts:
+                    print(text)
+            processed_texts = [self._preprocess_single_text(t) for t in self.text]
+            return processed_texts
         else:
             return self._preprocess_single_text(self.text)
 
@@ -95,6 +102,23 @@ class TextAnalyzer:
             if element in text_from_page:
                 common_elements.append(element)
         return common_elements
+    
+    @staticmethod
+    def is_keyword_in_element(querytext, text):
+        analyzer_query = TextAnalyzer(querytext)
+        analyzer_text = TextAnalyzer(text)
+        text_from_query = analyzer_query.sentence_tokenize()
+        text_from_page = analyzer_text.sentence_tokenize()
+        print(text_from_query)
+        print(text_from_page)
+
+        common_elements = []
+
+        for element in text_from_query:
+            if element in text_from_page:
+                common_elements.append(element)
+        return common_elements
+        
         
 
 class KeyWordFinder:
