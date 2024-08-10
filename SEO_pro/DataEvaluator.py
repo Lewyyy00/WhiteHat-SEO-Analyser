@@ -246,7 +246,6 @@ class Headings(AnalyseData):
 
     def analyse_length(self):
         data = self.is_characters_alright()
-        print(data)
         result_from_title = 0
         for num_chars_list in data.loc['Number of characters']:
             for num_chars in num_chars_list:

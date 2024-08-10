@@ -27,10 +27,9 @@ class TextAnalyzer:
         elif isinstance(self.text, dict):  
             
             for texts in self.text.items():
-                for text in texts:
-                    print(text)
-            processed_texts = [self._preprocess_single_text(t) for t in self.text]
-            return processed_texts
+                
+                processed_texts = [self._preprocess_single_text(t) for t in texts]
+                return processed_texts
         else:
             return self._preprocess_single_text(self.text)
 

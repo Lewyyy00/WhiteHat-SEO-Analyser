@@ -216,7 +216,6 @@ class DataFromUrl(BaseStructure):
     def analyze_url_hyphens(self):
         json_data = self.find_stopwords()
         data = json.loads(json_data)
-        print(self.website)
         for i in self.website:
             if i == '_':
                 data['Hyphens'] = 'True'

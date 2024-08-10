@@ -3,48 +3,46 @@ from DataCrawler import *
 from DataEvaluator import *
 from DataAnalyser import *
 
+def choicer(data, keywords):
+    if keywords is None:
+        title_evaluator = Title(data)
+        x= title_evaluator.title_result()
+        return x
+    else:
+        if isinstance(data, dict):
+            headings_list = []
+            for j in data.values():
+                for y in j:
+                    text_analyser = TextAnalyzer(y)
+                    ta = text_analyser.sentence_tokenize()
+                    headings_list.append(ta)
+            return headings_list
+        else:
+            text_analyser = TextAnalyzer(data)
+            ta = text_analyser.sentence_tokenize()
+            return ta
+        
 @handle_request_errors
-def make_right_choice(url, option):
+def make_right_choice(url, option, keywords = None):
     if option == 'title':
         data_from_html = DataFromHtmlStructure(url)
         title = data_from_html.get_title()
         
-        text_analyser = TextAnalyzer(title)
-        ta = text_analyser.sentence_tokenize()
-        print(ta)
-
-        title_evaluator = Title(title)
-        x= title_evaluator.title_result()
+        x = choicer(title, keywords)
         return x
-    
-    elif option == 'url_content':
-        data_from_html = DataFromUrl(url)
-        meta_description = data_from_html.find_any_not_ascii_letters()
 
     elif option == 'meta_description':
         data_from_html = DataFromHtmlStructure(url)
         meta_description = data_from_html.get_meta_description()
 
-        text_analyser = TextAnalyzer(meta_description)
-        ta = text_analyser.sentence_tokenize()
-        print(ta)
-
-        title_evaluator = Title(meta_description)
-        x= title_evaluator.title_result()
+        x = choicer(meta_description, keywords)
         return x
-
+    
     elif option == 'headings':
         data_from_html = DataFromHtmlStructure(url)
         headings = data_from_html.get_headings()
-
-        for i, j in headings.items():
-            for y in j:
-                text_analyser = TextAnalyzer(y)
-                ta = text_analyser.sentence_tokenize()
-                print(ta)
-
-        title_evaluator = Title(headings)
-        x= title_evaluator.title_result()
+        
+        x = choicer(headings, keywords)
         return x
     
     elif option == 'content':
@@ -62,12 +60,17 @@ def make_right_choice(url, option):
         text_analyser = TextAnalyzer(alt_texts)
         x = text_analyser.sentence_tokenize()
         return x
+     
+    elif option == 'url_content':
+        data_from_html = DataFromUrl(url)
+        meta_description = data_from_html.find_any_not_ascii_letters()
 
-x = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'title')
+
+x = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'title', 'load balacer')
 f = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'content')
 c = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'alt_content')
-e = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'headings')
-z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'meta_description')
-z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'url_content')
+e = make_right_choice('https://la-finestra.pl/', 'headings', 'o nas')
+#z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'meta_description')
+#z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'url_content')
 
-print(x)
+print(f)
