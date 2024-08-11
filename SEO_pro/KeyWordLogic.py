@@ -12,7 +12,7 @@ nltk.download('stopwords')
 nltk.download('punkt')
 
 class TextAnalyzer:
-    def __init__(self, text, language = None):
+    def __init__(self, text, language):
         self.text = text
         self.language = language
 
@@ -46,7 +46,7 @@ class TextAnalyzer:
     
     def sentence_tokenize(self):
         preprocessed_texts = self.preprocess_text()
-        if self.language is None:
+        if 'en' or 'GB' in self.language:
             stop_words = set(stopwords.words("english"))
         else:
             stop_words = polish_stopwords
