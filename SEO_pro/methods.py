@@ -9,6 +9,8 @@ def stopwordsss(url):
     return lanuage
 
 def choicer(data, keywords, website_language):
+    print(data)
+    print(type(data))
     if keywords is None:
         title_evaluator = Title(data)
         x= title_evaluator.title_result()
@@ -16,7 +18,7 @@ def choicer(data, keywords, website_language):
     else:
         if isinstance(data, dict):
             headings_list = []
-             
+
             for j in data.values():
                 for y in j:
                     text_analyser = TextAnalyzer(y, website_language)
@@ -70,19 +72,26 @@ def make_right_choice(url, option, keywords = None):
         x = choicer(alt_texts, keywords, website_language)  
         return x
      
-    """elif option == 'url_content':
+    elif option == 'url_content':
         data_from_html = DataFromUrl(url)
-        meta_description = data_from_html.find_any_not_ascii_letters()"""
+        url_content = data_from_html.find_any_not_ascii_letters()
+        website_language = stopwordsss(url)
+        #fix
+        url_json = data_from_html.make_json()
+        url = url_json['URL'][0]
+
+        if keywords is None:
+            return url_content
+        else:
+            x = choicer(url, keywords, website_language) 
+            return x
 
 
-x = make_right_choice('https://wazdan.com', 'title', 'load balacer')
-f = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'content','witaj')
+#x = make_right_choice('https://wazdan.com', 'title')
+#f = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'content','witaj')
 #c = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'alt_content')
-e = make_right_choice('https://la-finestra.pl/', 'headings', 'o nas')
+#e = make_right_choice('https://la-finestra.pl/', 'headings')
 #z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'meta_description')
-#z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'url_content')
+z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'url_content', 'vcygfvug')
 
-#print(f)
-
-
-print(f)
+print(z)

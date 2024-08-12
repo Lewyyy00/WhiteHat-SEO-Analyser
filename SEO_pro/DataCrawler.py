@@ -144,7 +144,7 @@ class UrlStructure(BaseStructure):
 class DataFromUrl(BaseStructure):   
 
     def make_json(self):
-        data = {'URL': self.website}
+        data = {'URL': [self.website]}
         return json.dumps(data)
 
     def split_url(self):
