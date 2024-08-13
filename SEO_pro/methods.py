@@ -27,7 +27,7 @@ def choicer(data, keywords, website_language):
             return headings_list
         else:
             text_analyser = TextAnalyzer(data, website_language)
-            ta = text_analyser.sentence_tokenize()
+            ta = text_analyser.is_keyword_in_element(keywords, data)
             return ta
                 
 @handle_request_errors
@@ -76,22 +76,27 @@ def make_right_choice(url, option, keywords = None):
         data_from_html = DataFromUrl(url)
         url_content = data_from_html.find_any_not_ascii_letters()
         website_language = stopwordsss(url)
-        #fix
-        url_json = data_from_html.make_json()
-        url = url_json['URL'][0]
+       
+        """url_json = data_from_html.get_parsed_url()
+        print(url_json)
+        data = json.loads(url_json)
+        url_json1 = data_from_html.split_url()
+        print(url_json1)
+        url = data['Url parts']"""
 
         if keywords is None:
             return url_content
         else:
-            x = choicer(url, keywords, website_language) 
+            x = data_from_html.split_url()
             return x
 
 
-#x = make_right_choice('https://wazdan.com', 'title')
+#z = make_right_choice('https://wazdan.com', 'title', "wazdan")
 #f = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'content','witaj')
 #c = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'alt_content')
-#e = make_right_choice('https://la-finestra.pl/', 'headings')
-#z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'meta_description')
-z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'url_content', 'vcygfvug')
+#z = make_right_choice('https://la-finestra.pl/', 'headings', "ded")
+z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'meta_description', 'load')
+# = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'url_content', 'vcygfvug')
 
 print(z)
+

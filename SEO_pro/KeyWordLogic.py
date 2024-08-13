@@ -12,7 +12,7 @@ nltk.download('stopwords')
 nltk.download('punkt')
 
 class TextAnalyzer:
-    def __init__(self, text, language):
+    def __init__(self, text, language = None):
         self.text = text
         self.language = language
 
@@ -111,15 +111,16 @@ class TextAnalyzer:
         print(text_from_query)
         print(text_from_page)
 
+        #words_from_page = [word.split() for word in text_from_page]
+        words_from_page = text_from_page[0].split()
+        print(words_from_page)
         common_elements = []
 
         for element in text_from_query:
-            if element in text_from_page:
+            if element in words_from_page:
                 common_elements.append(element)
         return common_elements
-        
-        
-
+    
 class KeyWordFinder:
     def __init__(self, query):
         self.query = query
