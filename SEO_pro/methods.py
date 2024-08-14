@@ -88,15 +88,17 @@ def make_right_choice(url, option, keywords = None):
             return url_content
         else:
             x = data_from_html.split_url()
-            return x
+            text_analyser = TextAnalyzer(x, website_language)
+            ta = text_analyser.is_keyword_in_element(keywords, x)
+            return ta
 
 
 #z = make_right_choice('https://wazdan.com', 'title', "wazdan")
 #f = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'content','witaj')
 #c = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'alt_content')
 #z = make_right_choice('https://la-finestra.pl/', 'headings', "ded")
-z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'meta_description', 'load')
-# = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'url_content', 'vcygfvug')
+#z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'meta_description', 'load')
+z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'url_content', 'ovh')
 
 print(z)
 
