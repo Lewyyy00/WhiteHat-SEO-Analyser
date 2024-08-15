@@ -103,24 +103,20 @@ class TextAnalyzer:
         return common_elements
     
     @staticmethod
-    def is_keyword_in_element(querytext, text):
-        analyzer_query = TextAnalyzer(querytext)
-        analyzer_text = TextAnalyzer(text)
+    def is_keyword_in_element(querytext, text, website_language):
+        analyzer_query = TextAnalyzer(querytext, website_language)
+        analyzer_text = TextAnalyzer(text, website_language)
         text_from_query = analyzer_query.sentence_tokenize()
         text_from_page = analyzer_text.sentence_tokenize()
-        print(text_from_query)
-        print(text_from_page)
+     
+        if len(text_from_page) == 1:
+            words_from_page = text_from_page[0].split()
+        else: 
+            words_from_page = text_from_page
 
-        #words_from_page = [word.split() for word in text_from_page]
-        words_from_page = text_from_page[0].split()
-        print(words_from_page)
-        common_elements = []
-
-        for element in text_from_query:
-            if element in words_from_page:
-                common_elements.append(element)
+        common_elements = [element for element in words_from_page if any(x in element for x in text_from_query)]
         return common_elements
-    
+     
 class KeyWordFinder:
     def __init__(self, query):
         self.query = query
