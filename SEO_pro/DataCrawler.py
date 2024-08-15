@@ -323,7 +323,7 @@ class DataFromTextStructures(BaseStructure):
             return [alt_text.get('alt') for alt_text in images]
         return None
 
-
+    
 
         
     

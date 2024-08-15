@@ -7,7 +7,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk.util import ngrams
-from values import *
+from values import polish_stopwords
 nltk.download('stopwords')
 nltk.download('punkt')
 
@@ -46,7 +46,7 @@ class TextAnalyzer:
     
     def sentence_tokenize(self):
         preprocessed_texts = self.preprocess_text()
-        if 'en' or 'GB' in self.language:
+        if 'en' in self.language or 'GB' in self.language:
             stop_words = set(stopwords.words("english"))
         else:
             stop_words = polish_stopwords
@@ -108,7 +108,9 @@ class TextAnalyzer:
         analyzer_text = TextAnalyzer(text, website_language)
         text_from_query = analyzer_query.sentence_tokenize()
         text_from_page = analyzer_text.sentence_tokenize()
-     
+
+        print(text_from_page)
+
         if len(text_from_page) == 1:
             words_from_page = text_from_page[0].split()
         else: 
@@ -116,6 +118,24 @@ class TextAnalyzer:
 
         common_elements = [element for element in words_from_page if any(x in element for x in text_from_query)]
         return common_elements
+    
+    @staticmethod
+    def keyword_density(querytext, text, website_language):
+        analyzer_query = TextAnalyzer(querytext, website_language)
+        analyzer_text = TextAnalyzer(text, website_language)
+        text_from_query = analyzer_query.sentence_tokenize()
+        text_from_page = analyzer_text.sentence_tokenize()
+
+        ta = ' '.join(text_from_page)
+        x = len(ta.split())
+        counter = 0
+        print(ta)
+        for element in text_from_query:
+            count = ta.count(element)
+            counter += count
+        
+        density = round((counter/x) * 100, 2) 
+        return f'{density}%'
      
 class KeyWordFinder:
     def __init__(self, query):
