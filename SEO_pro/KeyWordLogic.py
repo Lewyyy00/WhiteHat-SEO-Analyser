@@ -109,8 +109,6 @@ class TextAnalyzer:
         text_from_query = analyzer_query.sentence_tokenize()
         text_from_page = analyzer_text.sentence_tokenize()
 
-        print(text_from_page)
-
         if len(text_from_page) == 1:
             words_from_page = text_from_page[0].split()
         else: 
@@ -129,7 +127,7 @@ class TextAnalyzer:
         ta = ' '.join(text_from_page)
         x = len(ta.split())
         counter = 0
-        print(ta)
+    
         for element in text_from_query:
             count = ta.count(element)
             counter += count
