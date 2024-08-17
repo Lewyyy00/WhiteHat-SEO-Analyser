@@ -1,5 +1,5 @@
 from DataCrawler import *
-
+import language_tool_python
 
 class AnalyseData:
     def __init__(self, data):
@@ -293,3 +293,20 @@ class MetaDescription(AnalyseData):
 
 
     pass
+
+class Text():
+    
+    def __init__(self, data, language = 'en'):
+        self.data = data
+        self.language = language
+
+    def check_language_correctness(self):
+        tool = language_tool_python.LanguageTool(self.language)
+        errors = []
+        
+        for paragraph in self.data:
+            matches = tool.check(paragraph)
+        if matches:
+            errors.append((paragraph, matches))
+
+
