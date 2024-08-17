@@ -5,7 +5,6 @@ from DataEvaluator import *
 def stopwordsss(url):
     data = DataFromUrl(url)
     lanuage = data.get_website_language()
-    print(lanuage)
     return lanuage
 
 def choicer(data, keywords, website_language):
@@ -64,6 +63,7 @@ def make_right_choice(url, option, keywords = None):
     elif option == 'content':
         data_from_html = DataFromTextStructures(url)
         texts = data_from_html.get_content()
+        print(texts)
         website_language = stopwordsss(url)
         x = choicer(texts, keywords, website_language)  
         return x
@@ -89,8 +89,8 @@ def make_right_choice(url, option, keywords = None):
             return ta
 
 #z = make_right_choice('https://wazdan.com', 'title', "wazdan")
-#z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'content','load balancer')
-z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'alt_content', 'load')
+z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'content','load balancer')
+#z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'alt_content', 'load')
 #z = make_right_choice('https://la-finestra.pl/', 'headings', "ded")
 #z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'meta_description', 'load')
 #z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'url_content', 'ovh')
