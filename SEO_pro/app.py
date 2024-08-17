@@ -2,7 +2,6 @@ from flask import Flask, render_template, jsonify, request
 from KeyWordLogic import *
 from DataCrawler import *
 from DataEvaluator import *
-from DataAnalyser import *
 from methods import *
 
 app = Flask(__name__, template_folder="../templates", static_folder="../static")
