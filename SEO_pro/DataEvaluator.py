@@ -1,5 +1,6 @@
 from DataCrawler import *
 import language_tool_python
+import language_tool_python
 
 class AnalyseData:
     def __init__(self, data):
