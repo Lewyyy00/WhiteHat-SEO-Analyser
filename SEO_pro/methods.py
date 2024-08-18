@@ -4,15 +4,12 @@ from DataEvaluator import *
 
 def stopwordsss(url):
     data = DataFromUrl(url)
-    lanuage = data.get_website_language()
-    return lanuage
+    return data.get_website_language()
 
-def choicer(data, keywords, website_language):
-    
+def choicer(data, keywords, website_language):    
     if keywords is None:
         title_evaluator = Title(data)
-        x= title_evaluator.title_result()
-        return x
+        return title_evaluator.title_result()
     else:
         if isinstance(data, dict):
             headings_list = []
@@ -26,74 +23,52 @@ def choicer(data, keywords, website_language):
         
         elif len(data) > 3: 
             text_analyser = TextAnalyzer(data, website_language)
-            ta = text_analyser.keyword_density(keywords, data, website_language)
-            return ta
+            return text_analyser.keyword_density(keywords, data, website_language)
                 
         else:
             text_analyser = TextAnalyzer(data, website_language)
-            ta = text_analyser.is_keyword_in_element(keywords, data, website_language)
-            return ta
+            return text_analyser.is_keyword_in_element(keywords, data, website_language)
                 
 @handle_request_errors
 def make_right_choice(url, option, keywords = None):
-    if option == 'title':
-        data_from_html = DataFromHtmlStructure(url)
-        title = data_from_html.get_title()
-        website_language = stopwordsss(url)
-        
-        x = choicer(title, keywords, website_language)
-        return x
 
-    elif option == 'meta_description':
-        data_from_html = DataFromHtmlStructure(url)
-        meta_description = data_from_html.get_meta_description()
-        website_language = stopwordsss(url)
-        
-        x = choicer(meta_description, keywords, website_language)  
-        return x
+    data_from_html = None
+    data = None
     
-    elif option == 'headings':
+    if option in ['title', 'meta_description', 'headings']:
         data_from_html = DataFromHtmlStructure(url)
-        headings = data_from_html.get_headings()
-        website_language = stopwordsss(url)
-        
-        x = choicer(headings, keywords, website_language)  
-        return x
-    
-    elif option == 'content':
+    elif option in ['content', 'alt_content']:
         data_from_html = DataFromTextStructures(url)
-        texts = data_from_html.get_content()
-        print(texts)
-        website_language = stopwordsss(url)
-        x = choicer(texts, keywords, website_language)  
-        return x
-
-    elif option == 'alt_content':
-        data_from_html = DataFromTextStructures(url)
-        alt_texts = data_from_html.get_all_alt_texts()
-        website_language = stopwordsss(url)
-        x = choicer(alt_texts, keywords, website_language)  
-        return x
-       
     elif option == 'url_content':
         data_from_html = DataFromUrl(url)
-        url_content = data_from_html.find_any_not_ascii_letters()
-        website_language = stopwordsss(url)
-       
+
+    website_language = stopwordsss(url)
+
+    if option == 'title':
+        data = data_from_html.get_title()
+    elif option == 'meta_description':
+        data = data_from_html.get_meta_description()
+    elif option == 'headings':
+        data = data_from_html.get_headings()
+    elif option == 'content':
+        data = data_from_html.get_content()
+    elif option == 'alt_content':
+        data = data_from_html.get_all_alt_texts()
+    elif option == 'url_content':
         if keywords is None:
-            return url_content
+            return data_from_html.find_any_not_ascii_letters()
         else:
-            x = data_from_html.split_url()
-            text_analyser = TextAnalyzer(x, website_language)
-            ta = text_analyser.is_keyword_in_element(keywords, x)
-            return ta
+            split_url = data_from_html.split_url()
+            return TextAnalyzer(split_url).is_keyword_in_element(keywords, split_url, website_language)
+
+    return choicer(data, keywords, website_language)
 
 #z = make_right_choice('https://wazdan.com', 'title', "wazdan")
-z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'content','load balancer')
+#z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'content','load balancer')
 #z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'alt_content', 'load')
-#z = make_right_choice('https://la-finestra.pl/', 'headings', "ded")
+#z = make_right_choice('https://la-finestra.pl/', 'headings')
 #z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'meta_description', 'load')
-#z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'url_content', 'ovh')
+z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'url_content')
 
 print(z)
 
