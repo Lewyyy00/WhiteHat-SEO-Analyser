@@ -13,6 +13,7 @@ from typing import Optional
 import json
 from collections import Counter
 from functools import wraps
+from sitemap import Sitemap
 nltk.download('stopwords')
 nltk.download('punkt')
 
@@ -33,6 +34,10 @@ def sort_links(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         links = func(*args, **kwargs)
+
+        if links is None:
+            raise ValueError("NONE")
+
         sorted_links = sorted(links, key=get_url_length)
         return sorted_links
     return wrapper
@@ -72,7 +77,13 @@ class UrlStructure(BaseStructure):
                 if link_response.status_code == 200:
                     links_200.append(full_url)                 
             return links_200
-        return None
+        return []
+    
+    def get_urls_from_sitemap(url):
+        sitemap = Sitemap(url)
+        result = sitemap.fetch()
+        urls = [page['loc'] for page in result.pages]
+        return urls
     
     @sort_links
     @handle_request_errors

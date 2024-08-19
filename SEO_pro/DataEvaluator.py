@@ -301,6 +301,13 @@ class Text():
         self.data = data
         self.language = language
 
+    def text_lenght(self):
+
+       # short_paragraphs = [p for p in self.data  if len(p) < 50]
+       # long_paragraphs = [p for p in self.data  if len(p) > 300]
+        ta = ' '.join(self.data)
+        return len(ta.split())
+
     def check_language_correctness(self):
         tool = language_tool_python.LanguageTool(self.language)
         errors = []
