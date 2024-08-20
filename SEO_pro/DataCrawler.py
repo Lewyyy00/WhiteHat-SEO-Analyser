@@ -79,11 +79,27 @@ class UrlStructure(BaseStructure):
             return links_200
         return []
     
-    def get_urls_from_sitemap(url):
-        sitemap = Sitemap(url)
-        result = sitemap.fetch()
-        urls = [page['loc'] for page in result.pages]
-        return urls
+    def get_sitemap_from_robots(self):
+        if self.soup:
+            if not self.website.endswith('/'):
+                self.website += '/'
+            
+            robots_url = self.website + "robots.txt"
+            response = requests.get(robots_url)
+            
+            if response.status_code == 200:
+                content = response.text
+                sitemap_links = []
+
+                for line in content.splitlines():
+                    if line.lower().startswith("sitemap:"):
+                        sitemap_url = line.split(": ", 1)[1]
+                        sitemap_links.append(sitemap_url)
+                return sitemap_links
+            else:
+                print(f"Nie udało się pobrać {robots_url} (status code: {response.status_code})")
+                return None
+        return []
     
     @sort_links
     @handle_request_errors
