@@ -344,6 +344,23 @@ class DataFromTextStructures(BaseStructure):
         return None
     
     @handle_request_errors
+    def get_page_content(self):
+        if self.soup:
+            paragraphs = self.soup.find_all('p')
+            return ' '.join([paragraph.get_text() for paragraph in paragraphs])
+        return None
+
+    @staticmethod
+    def get_content_from_urls(urls):
+        contents = {}
+        for url in urls:
+            content_fetcher = DataFromTextStructures(url)
+            content = content_fetcher.get_page_content()
+            if content:
+                contents[url] = content
+        return contents
+
+    @handle_request_errors
     def get_all_alt_texts(self):
         if self.soup:
             images = self.soup.find_all('img', src = True)

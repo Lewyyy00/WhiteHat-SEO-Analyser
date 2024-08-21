@@ -1,6 +1,8 @@
 from DataCrawler import *
 import language_tool_python
 import language_tool_python
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
 class AnalyseData:
     def __init__(self, data):
@@ -297,12 +299,38 @@ class MetaDescription(AnalyseData):
 
 class Text():
     
-    def __init__(self, data, language = 'en'):
-        self.data = data
+    def __init__(self, urls, language = 'en'):
+        self.urls = urls
+        self.data = DataFromTextStructures
+        self.contents = self.fetch_contents()
+        self.vectors = self.vectorize_contents()
         self.language = language
 
-    def text_lenght(self):
+    def fetch_contents(self):
+        contents = DataFromTextStructures.get_content_from_urls(self.urls)
+        return contents
+    
+    def vectorize_contents(self):
+        vectorizer = TfidfVectorizer().fit_transform(self.contents.values())
+        vectors = vectorizer.toarray()
+        return vectors
+    
+    def find_duplicates(self, threshold=0.8):
+        similarities = cosine_similarity(self.vectors)
+        duplicates = []
+        for i in range(len(similarities)):
+            for j in range(i + 1, len(similarities)):
+                if similarities[i][j] >= threshold:
+                    duplicates.append((list(self.contents.keys())[i], list(self.contents.keys())[j], similarities[i][j]))
+        return duplicates
+    
+    def print_duplicates(self, threshold=0.8):
+        
+        duplicates = self.find_duplicates(threshold)
+        for url1, url2, similarity in duplicates:
+            print(f"{url1} and {url2} are simillar in {similarity * 100:.2f}%")
 
+    def text_lenght(self):
        # short_paragraphs = [p for p in self.data  if len(p) < 50]
        # long_paragraphs = [p for p in self.data  if len(p) > 300]
         ta = ' '.join(self.data)
@@ -316,7 +344,6 @@ class Text():
             matches = tool.check(paragraph)
         if matches:
             errors.append((paragraph, matches))
-
 
 
 
