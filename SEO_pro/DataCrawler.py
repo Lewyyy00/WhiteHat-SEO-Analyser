@@ -59,7 +59,7 @@ class BaseStructure:
 
 #1 URL Structure
 class UrlStructure(BaseStructure):
-    @sort_links
+    #@sort_links
     @handle_request_errors
     def get_all_200_links(self):
         if self.soup:
@@ -68,14 +68,17 @@ class UrlStructure(BaseStructure):
             
             for link in links:
                 href = link['href']
-                full_url = urljoin(self.website, href)
-                if not urlparse(full_url).scheme:
-                    print(f"Invalid URL: {href}")
-                    continue
-        
-                link_response = requests.get(full_url, timeout=1)
-                if link_response.status_code == 200:
-                    links_200.append(full_url)                 
+                if href.startswith("https") or href.startswith("http"):
+                    
+                    full_url = urljoin(self.website, href)
+                    print(full_url)
+                    if not urlparse(full_url).scheme:
+                        print(f"Invalid URL: {href}")
+                        continue
+            
+                    link_response = requests.get(full_url, timeout=1)
+                    if link_response.status_code == 200:
+                        links_200.append(full_url)                 
             return links_200
         return []
     
@@ -167,6 +170,23 @@ class UrlStructure(BaseStructure):
                     internal_links.append(full_url)
             return internal_links
         return None
+    
+    def get_all_canonical_links(self):
+        links = self.get_all_internal_links()
+        canonical_links = []
+
+        for link in links:
+            response = requests.get(link)
+            response.raise_for_status()  # Raise an error for bad status codes
+            soup = BeautifulSoup(response.content, 'html.parser')
+
+            for tag in soup.find_all('link', rel='canonical'):
+                if 'href' in tag.attrs:
+                    canonical_links.append(tag['href'])
+            
+        return set(canonical_links)
+
+            
 
 class DataFromUrl(BaseStructure):   
 

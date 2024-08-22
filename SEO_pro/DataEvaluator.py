@@ -315,7 +315,7 @@ class Text():
         vectors = vectorizer.toarray()
         return vectors
     
-    def find_duplicates(self, threshold=0.8):
+    def find_duplicates(self, threshold=0.7):
         similarities = cosine_similarity(self.vectors)
         duplicates = []
         for i in range(len(similarities)):
@@ -324,8 +324,7 @@ class Text():
                     duplicates.append((list(self.contents.keys())[i], list(self.contents.keys())[j], similarities[i][j]))
         return duplicates
     
-    def print_duplicates(self, threshold=0.8):
-        
+    def print_duplicates(self, threshold=0.7):
         duplicates = self.find_duplicates(threshold)
         for url1, url2, similarity in duplicates:
             print(f"{url1} and {url2} are simillar in {similarity * 100:.2f}%")
