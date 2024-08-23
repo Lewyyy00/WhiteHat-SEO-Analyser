@@ -186,8 +186,6 @@ class UrlStructure(BaseStructure):
             
         return set(canonical_links)
 
-            
-
 class DataFromUrl(BaseStructure):   
 
     def make_json(self):
@@ -319,21 +317,10 @@ class DataFromHtmlStructure(BaseStructure):
         return None
     
     @handle_request_errors    
-    def get_all_h1(self):
+    def get_all_h1(self, headingg = 'h1'):
         headings_dictionary = []
         if self.soup:
-            headings = self.soup.find_all('h1')
-            for heading in headings:
-                heading_name = heading.get_text()
-                headings_dictionary.append(heading_name)
-            return headings_dictionary
-        return None
-    
-    @handle_request_errors    
-    def get_all_h2(self):
-        headings_dictionary = []
-        if self.soup:
-            headings = self.soup.find_all('h2')
+            headings = self.soup.find_all(headingg)
             for heading in headings:
                 heading_name = heading.get_text()
                 headings_dictionary.append(heading_name)

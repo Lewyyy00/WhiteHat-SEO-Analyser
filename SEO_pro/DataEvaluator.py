@@ -196,10 +196,20 @@ class Title(AnalyseData):
                     result_from_multiple = 0
                     element['Points from multiple'] = result_from_multiple
             return json.dumps(data)
+    @staticmethod
+    def is_title_thesame_as_h1(url):
+        data = DataFromHtmlStructure(url)
+        h1 = data.get_all_h1()
+        title = data.get_title()
+        list_of_content = [h1,title]
+        text = Text(threshold=0.1,contents=list_of_content).print_duplicates()
 
-    def is_title_thesame_as_h1():
-        
-        pass
+        if text > 0.90:
+            print('the heading h1 and the title are the same')
+        else:
+            print('ok, have a nice day')
+        return text 
+
     def title_result(self):
         json_data = self.analyse_multiple()
         data = json.loads(json_data)
@@ -299,35 +309,53 @@ class MetaDescription(AnalyseData):
 
 class Text():
     
-    def __init__(self, urls, language = 'en'):
+    def __init__(self, urls = None, language = 'en', threshold=0.7, contents = None):
         self.urls = urls
         self.data = DataFromTextStructures
-        self.contents = self.fetch_contents()
+        self.contents = contents if contents is not None else self.fetch_contents()
         self.vectors = self.vectorize_contents()
         self.language = language
+        self.threshold = threshold
 
     def fetch_contents(self):
         contents = DataFromTextStructures.get_content_from_urls(self.urls)
         return contents
     
     def vectorize_contents(self):
-        vectorizer = TfidfVectorizer().fit_transform(self.contents.values())
-        vectors = vectorizer.toarray()
+        
+        if isinstance(self.contents, list):
+            list_withoutlists = []
+
+            for i in self.contents:
+                list_withoutlists.append(str(i[0]))
+
+            vectorizer = TfidfVectorizer()
+            vectors = vectorizer.fit_transform(list_withoutlists).toarray()
+        else:
+            vectorizer = TfidfVectorizer().fit_transform(self.contents.values())
+            vectors = vectorizer.toarray()
         return vectors
     
-    def find_duplicates(self, threshold=0.7):
+    def find_duplicates(self):
         similarities = cosine_similarity(self.vectors)
         duplicates = []
+        
         for i in range(len(similarities)):
             for j in range(i + 1, len(similarities)):
-                if similarities[i][j] >= threshold:
-                    duplicates.append((list(self.contents.keys())[i], list(self.contents.keys())[j], similarities[i][j]))
+                if similarities[i][j] >= self.threshold:
+                    if isinstance(self.contents, dict):
+                        duplicates.append((list(self.contents.keys())[i], list(self.contents.keys())[j], similarities[i][j]))
+                    elif isinstance(self.contents, list):
+                         duplicates.append((self.contents[i], self.contents[j], similarities[i][j]))
+                    else:
+                        print('kill me please')
         return duplicates
     
-    def print_duplicates(self, threshold=0.7):
-        duplicates = self.find_duplicates(threshold)
+    def print_duplicates(self):
+        duplicates = self.find_duplicates()
         for url1, url2, similarity in duplicates:
             print(f"{url1} and {url2} are simillar in {similarity * 100:.2f}%")
+        return similarity
 
     def text_lenght(self):
        # short_paragraphs = [p for p in self.data  if len(p) < 50]
