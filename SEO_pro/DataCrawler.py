@@ -219,19 +219,6 @@ class DataFromUrl(BaseStructure):
         data['Url parts'] = [parsed_url.scheme, parsed_url.netloc, parsed_url.path, parsed_url.params, parsed_url.query, parsed_url.fragment]
         return json.dumps(data)
     
-    """def is_url_has_https(self):
-        parsed_url = urlparse(self.website)
-        data = parsed_url.scheme
-
-        if data == 'https':
-            pass
-        elif data == 'http':
-            pass
-        else:
-            pass
-
-        pass"""
-
     @handle_request_errors
     def get_website_language(self):
         if self.soup:
@@ -289,6 +276,18 @@ class DataFromUrl(BaseStructure):
         else:
             data['Not ASCII letters'] = 'False'
             return json.dumps(data)
+        
+    def is_valid_protocol(self):
+        parsed_url = self.find_any_not_ascii_letters()
+        data = json.loads(parsed_url)
+        
+        if data["Url parts"][0] == 'https':
+            data["Https exist"] = 'True'
+            return json.dumps(data)
+        else:
+            data["Https exist"] = 'False'
+            return json.dumps(data)
+
 
 # HTML 
 class DataFromHtmlStructure(BaseStructure):
