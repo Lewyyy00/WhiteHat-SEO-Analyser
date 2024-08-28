@@ -81,7 +81,7 @@ class UrlStructure(BaseStructure):
                         links_200.append(full_url)                 
             return links_200
         return []
-    
+    @handle_request_errors
     def get_sitemap_from_robots(self):
         if self.soup:
             if not self.website.endswith('/'):
@@ -103,6 +103,27 @@ class UrlStructure(BaseStructure):
                 print(f"Nie udało się pobrać {robots_url} (status code: {response.status_code})")
                 return None
         return []
+    
+    def get_all_links_from_sitemap(self):
+        data = ' '.join(self.get_sitemap_from_robots())
+        response = requests.get(data)
+        soup = BeautifulSoup(response.content, 'lxml-xml')  
+        all_links = []
+        sitemap_tags = soup.find_all('sitemap')
+
+        for sitemap in sitemap_tags:
+            sitemap_url = sitemap.find('loc').text
+            sitemap_response = requests.get(sitemap_url)
+            sitemap_soup = BeautifulSoup(sitemap_response.content, 'lxml-xml')
+            
+            url_tags = sitemap_soup.find_all('url')
+            
+            for url in url_tags:
+                loc = url.find('loc').text
+                all_links.append(loc)
+
+        return all_links
+
     
     @sort_links
     @handle_request_errors
