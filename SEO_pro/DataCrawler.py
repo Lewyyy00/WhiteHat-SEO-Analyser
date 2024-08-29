@@ -63,7 +63,7 @@ class UrlStructure(BaseStructure):
     @handle_request_errors
     def get_all_200_links(self):
         if self.soup:
-            links = self.soup.find_all('a', href=True)  # szuka wszystkich linków, gdzie jest spełniony warunek href=True
+            links = self.soup.find_all('a', href=True)
             links_200 = []
             
             for link in links:
@@ -124,7 +124,6 @@ class UrlStructure(BaseStructure):
 
         return all_links
 
-    
     @sort_links
     @handle_request_errors
     def get_all_not_valid_links(self):
@@ -192,6 +191,12 @@ class UrlStructure(BaseStructure):
             return internal_links
         return None
     
+    def method_choicer(self):
+        if len(self.get_all_links_from_sitemap()) == 0:
+            return self.get_all_internal_links()
+        else:
+            return self.get_all_links_from_sitemap()
+
     def get_all_canonical_links(self):
         links = self.get_all_internal_links()
         canonical_links = []
@@ -206,7 +211,7 @@ class UrlStructure(BaseStructure):
                     canonical_links.append(tag['href'])
             
         return set(canonical_links)
-
+  
 class DataFromUrl(BaseStructure):   
 
     def make_json(self):
