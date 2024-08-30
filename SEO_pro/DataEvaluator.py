@@ -114,13 +114,12 @@ class AnalyseData:
             return json.dumps(data)
         return json.dumps([])
 
-    
-    def is_duplicate(self):
+    """def is_duplicate(self):
        
-       pass
+       pass"""
 
    
-class Title(AnalyseData):
+class Results(AnalyseData):
 
     def path_selector(self):
         data = self.is_characters_alright()
@@ -223,7 +222,6 @@ class Title(AnalyseData):
             return json.dumps(data)
 
 class Headings(AnalyseData):
-
 
     def analyse_missing(self):
         json_data = self.is_characters_alright()
