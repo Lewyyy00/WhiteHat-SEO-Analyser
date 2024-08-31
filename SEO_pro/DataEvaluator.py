@@ -35,7 +35,6 @@ class AnalyseData:
         numer_of_words = [self.count_words(element) for element in elements]
         return numer_of_words
 
-#needs to be fixed
     def is_length_alright(self):
         json_data = self.is_right_file()
         data = json.loads(json_data)
@@ -370,6 +369,11 @@ class Text():
         if matches:
             errors.append((paragraph, matches))
 
+    def is_missing(self):
+        for element in self.data:
+                element["Missing value"] = "True" if element["length"] == 0 else "False"
+
+    
 
 
 
