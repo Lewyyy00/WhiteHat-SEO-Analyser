@@ -1,14 +1,104 @@
-{% extends "layout.html" %}
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEO Analityka</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>SEO Analityka</h1>
 
-{% block title %}Website Chooser{% endblock %}
+    <form id="analyzeForm">
+        <div>
+            <label for="url">URL:</label>
+            <input type="text" id="url" name="url" placeholder="Wklej URL">
+        </div>
 
-{% block content %}
-<h1>URL Analyzer</h1>
-<form method="post" action="/">
-  <label for="url">URL:</label>
-  <input type="text" id="url" name="url" required>
-  <label for="keyword">Keyword (optional):</label>
-  <input type="text" id="keyword" name="keyword">
-  <button type="submit">Analyze</button>
-</form>
-{% endblock %}
+        <div>
+            <label for="query">Zapytanie:</label>
+            <input type="text" id="query" name="query" placeholder="Wpisz zapytanie">
+        </div>
+
+        <div>
+            <input type="radio" id="analyzeSinglePage" name="analyze_option" value="single" checked>
+            <label for="analyzeSinglePage">Analizuj tylko podaną stronę</label>
+
+            <input type="radio" id="analyzeAllLinks" name="analyze_option" value="all">
+            <label for="analyzeAllLinks">Analizuj wszystkie linki jakie występują w danej domenie</label>
+        </div>
+
+        <div id="linksTable" class="disabled">
+            <h3>Wybierz linki do analizy</h3>
+            <input type="checkbox" id="allLinks" name="selected_links[]" value="allLinks">
+            <label for="allLinks">Wszystkie linki</label><br>
+
+            <input type="checkbox" id="canonicalLinks" name="selected_links[]" value="canonicalLinks">
+            <label for="canonicalLinks">Wszystkie linki kanoniczne</label><br>
+
+            <input type="checkbox" id="statusLinks" name="selected_links[]" value="statusLinks">
+            <label for="statusLinks">Linki ze statusem innym niż 200</label>
+        </div>
+
+        <button type="submit">Analizuj</button>
+    </form>
+
+    <div id="linksList"></div>
+
+    <script>
+        const analyzeSinglePage = document.getElementById('analyzeSinglePage');
+        const analyzeAllLinks = document.getElementById('analyzeAllLinks');
+        const linksTable = document.getElementById('linksTable');
+        const keywordComparisonTable = document.getElementById('keywordComparisonTable');
+        const analyzeForm = document.getElementById('analyzeForm');
+        const linksList = document.getElementById('linksList');
+
+        function handleCheckboxChange() {
+            if (analyzeAllLinks.checked) {
+                linksTable.classList.remove('disabled');
+                keywordComparisonTable.classList.add('disabled');
+
+                fetch('/get_links', {
+                    method: 'POST'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Linki z sitemapy:', data);
+                    linksList.innerHTML = '<h3>Wybrane linki:</h3>';
+                    data.forEach(link => {
+                        const linkElement = document.createElement('p');
+                        linkElement.textContent = link;
+                        linkElement.style.cursor = 'pointer';
+                        linkElement.addEventListener('click', () => {
+                            document.getElementById('url').value = link;
+                            window.scrollTo(0, 0);
+                        });
+                        linksList.appendChild(linkElement);
+                    });
+                });
+            } else if (analyzeSinglePage.checked) {
+                linksTable.classList.add('disabled');
+                keywordComparisonTable.classList.remove('disabled');
+            }
+        }
+
+        analyzeSinglePage.addEventListener('change', handleCheckboxChange);
+        analyzeAllLinks.addEventListener('change', handleCheckboxChange);
+
+        analyzeForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(analyzeForm);
+
+            fetch('/analyze', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Dane z backendu:', data);
+            });
+        });
+    </script>
+</body>
+</html>

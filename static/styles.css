@@ -1,72 +1,44 @@
-.container {
-  display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
-  height: 100vh;
+.disabled {
+  opacity: 0.5;
+  pointer-events: none;
 }
 
-.nav {
-  background-color: #f4f4f4;
-  padding: 20px;
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
 }
 
-.nav h2 {
-  margin-top: 0;
-}
-
-.nav ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-.nav ul li {
-  margin-bottom: 10px;
-}
-
-.nav ul li a {
-  text-decoration: none;
+h1 {
   color: #333;
 }
 
-.content {
-  padding: 20px;
-  overflow-y: auto;
+label {
+  font-weight: bold;
 }
 
-.content ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-.content ul li {
-  padding: 10px;
-  border: 1px solid #ccc;
-  margin-bottom: 5px;
-  cursor: pointer;
-}
-
-.content ul li.selected {
-  background-color: #e0e0e0;
-}
-
-.details {
-  background-color: #f4f4f4;
-  padding: 20px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-}
-
-.details button {
+input[type="text"] {
   margin-bottom: 10px;
-  padding: 10px;
-  font-size: 16px;
+  padding: 5px;
+  width: 100%;
+  max-width: 400px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  margin-right: 5px;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 3px;
   cursor: pointer;
 }
 
-#result {
-  margin-top: 20px;
-  white-space: pre-wrap;
-  border: 1px solid #ccc;
-  padding: 10px;
-  overflow-x: auto;
+button:hover {
+  background-color: #0056b3;
 }

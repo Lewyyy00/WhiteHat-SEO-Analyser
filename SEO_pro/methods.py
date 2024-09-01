@@ -65,7 +65,26 @@ def make_right_choice(url, option, keywords = None):
 
     return choicer(data, keywords, website_language)
 
-#z = make_right_choice('https://wazdan.com', 'title', "wazdan")
+
+def links_choice(url, option):
+    all_links = UrlStructure(url)
+
+    if option == 'All valid links':
+        data = all_links.get_all_200_links()
+    elif option == 'All not valid links':
+        data = all_links.get_all_not_valid_links()
+    elif option == 'All domain links':
+        data = all_links.method_choicer()
+    elif option == 'All canonical links':
+        data = all_links.get_all_canonical_links()
+    elif option == 'All external links':
+        data = all_links.get_all_external_links()
+
+    return data
+
+
+
+#z = make_right_choice('https://wazdan.com', 'title')
 #z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'content','load balancer')
 #z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'alt_content', 'load')
 #z = make_right_choice('https://la-finestra.pl/', 'headings','menu')
