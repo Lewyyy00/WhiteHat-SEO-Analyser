@@ -30,6 +30,21 @@ def choicer(data, keywords, website_language):
             print('c')
             text_analyser = TextAnalyzer(data, website_language)
             return text_analyser.is_keyword_in_element(keywords, data, website_language)
+        
+def get_all_data(url):
+    data_from_html = DataFromHtmlStructure(url)
+    data_from_text = DataFromTextStructures(url)
+    data_from_url = DataFromUrl(url)
+
+    data = {
+        'title': data_from_html.get_title(),
+        'meta_description': data_from_html.get_meta_description(),
+        'headings': data_from_html.get_headings(),
+        #'content': data_from_text.get_content(), does not have any sens, needs to be fixed 
+        #'alt_content': data_from_text.get_all_alt_texts(), error here 
+        #'url_content': data_from_url.find_any_not_ascii_letters() yeah idk xd
+    }
+    return data
                 
 @handle_request_errors
 def make_right_choice(url, option, keywords = None):
@@ -62,7 +77,15 @@ def make_right_choice(url, option, keywords = None):
         else:
             split_url = data_from_html.split_url() 
             return TextAnalyzer(split_url).is_keyword_in_element(keywords, split_url, website_language) 
-
+    elif option == 'all':
+        data = get_all_data(url)
+        all_results = {}
+        for key, value in data.items():
+            print(key)
+            all_results[key] = choicer(value, keywords, website_language)
+        
+        return all_results
+        
     return choicer(data, keywords, website_language)
 
 
@@ -79,6 +102,14 @@ def links_choice(url, option):
         data = all_links.get_all_canonical_links()
     elif option == 'All external links':
         data = all_links.get_all_external_links()
+    elif option == 'All':
+        data = {
+            #'All valid links': all_links.get_all_200_links(),
+            #'All not valid links': all_links.get_all_not_valid_links(),
+            'All domain links': all_links.method_choicer(),
+            'All canonical links': all_links.get_all_canonical_links(),
+            'All external links': all_links.get_all_external_links()
+        }
 
     return data
 
@@ -87,9 +118,11 @@ def links_choice(url, option):
 #z = make_right_choice('https://wazdan.com', 'title')
 #z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'content','load balancer')
 #z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'alt_content', 'load')
-#z = make_right_choice('https://la-finestra.pl/', 'headings','menu')
+#z = make_right_choice('https://la-finestra.pl/', 'headings')
 #z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'meta_description', 'load')
-z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'url_content')
+#z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'url_content')
+#z = links_choice('https://wazdan.com', 'All')
+z = make_right_choice('https://wazdan.com', 'all')
 
 print(z)
 
