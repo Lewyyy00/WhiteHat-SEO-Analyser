@@ -198,7 +198,7 @@ class UrlStructure(BaseStructure):
             return self.get_all_links_from_sitemap()
 
     def get_all_canonical_links(self):
-        links = self.get_all_internal_links()
+        links = self.method_choicer()
         canonical_links = []
 
         for link in links:
@@ -211,6 +211,22 @@ class UrlStructure(BaseStructure):
                     canonical_links.append(tag['href'])
             
         return set(canonical_links)
+    def evaluate_all_links(self):
+        links = self.method_choicer()
+        list_of_links_status = {}
+
+        for link in links:
+            try:
+                link_response = requests.get(link, timeout=1)
+                list_of_links_status[link] = link_response.status_code
+                
+            except requests.exceptions.Timeout:
+                print(f"Timeout checking {link}")
+                list_of_links_status[link] = "Timeout"
+            except requests.exceptions.RequestException as e:
+                print(f"Error checking {link}: {e}")
+                list_of_links_status[link] = "Error"
+        return list_of_links_status
   
 class DataFromUrl(BaseStructure):   
 

@@ -112,6 +112,8 @@ def links_choice(url, option):
         data = all_links.get_all_canonical_links()
     elif option == 'All external links':
         data = all_links.get_all_external_links()
+    elif option == 'All links statuses':
+        data = all_links.evaluate_all_links()
     elif option == 'All':
         data = {
             #'All valid links': all_links.get_all_200_links(),
@@ -131,8 +133,8 @@ def links_choice(url, option):
 #x = make_right_choice('https://wazdan.com', 'headings', 'wazdan')
 #z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'meta_description', 'load')
 #z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'url_content')
-#z = links_choice('https://wazdan.com', 'All')
-z = make_right_choice('https://wazdan.com', 'all', 'wazdan')
+z = links_choice('https://wazdan.com', 'All links statuses')
+#z = make_right_choice('https://wazdan.com', 'all', 'wazdan')
 
 print(z)
 #print(x)
