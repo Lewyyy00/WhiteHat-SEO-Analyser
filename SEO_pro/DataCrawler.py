@@ -14,6 +14,7 @@ import json
 from collections import Counter
 from functools import wraps
 from sitemap import Sitemap
+import concurrent.futures
 nltk.download('stopwords')
 nltk.download('punkt')
 
@@ -211,21 +212,43 @@ class UrlStructure(BaseStructure):
                     canonical_links.append(tag['href'])
             
         return set(canonical_links)
+    
+    def link_status(self, link, max_retries = 3):
+        
+        """Sometimies when timeout is too low, the method returns too many timeouts, 
+        that's why I use retries"""
+
+        retries = 0
+        while retries < max_retries:
+            try:
+                link_response = requests.get(link, timeout=2)
+                return (link, link_response.status_code)
+                
+            except requests.exceptions.Timeout:
+                retries += 1
+                print(f"Timeout checking {link}")
+                if retries == max_retries:
+                    return (link, "Timeout")
+            except requests.exceptions.RequestException as e:
+                retries += 1
+                print(f"Error checking {link}: {e}")
+                if retries == max_retries:
+                    return (link, "Error")
+        
     def evaluate_all_links(self):
+
+        """Singlethreating takes a lot of time if there are a lot of links, 
+        so multithreating is crucial. Thats why it is implemented """
+
         links = self.method_choicer()
         list_of_links_status = {}
 
-        for link in links:
-            try:
-                link_response = requests.get(link, timeout=1)
-                list_of_links_status[link] = link_response.status_code
-                
-            except requests.exceptions.Timeout:
-                print(f"Timeout checking {link}")
-                list_of_links_status[link] = "Timeout"
-            except requests.exceptions.RequestException as e:
-                print(f"Error checking {link}: {e}")
-                list_of_links_status[link] = "Error"
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            results = executor.map(self.link_status, links)
+
+        for link, status in results:
+            list_of_links_status[link] = status
+
         return list_of_links_status
   
 class DataFromUrl(BaseStructure):   
