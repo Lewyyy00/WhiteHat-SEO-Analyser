@@ -125,10 +125,37 @@ def links_choice(url, option):
 
     return data
 
+def keyword_options(url, option, text, querytext = None, n=None):
+
+    """Some of these methods are unnecessary, becasue in choicer() we got a path for analysing 
+    keywords in the text. Anyway, I put it here to bring some order"""
+
+    laguange = stopwordsss(url)
+    text_analyser = TextAnalyzer(text)
+
+    if option == 'Most popular Ngrams':
+        data = text_analyser.find_most_common_ngrams(n)
+    elif option == 'Ngrams in query':
+        data = text_analyser.is_ngrams_in_query(querytext, text, n)
+    elif option == 'Keywords in paragraphs':
+        data = text_analyser.is_keyword_in_element(querytext, text, laguange)
+    elif option == 'Keyword_density':
+        data = text_analyser.keyword_density(querytext, text, laguange)
+    elif option == 'All':
+        data = {
+            'Most popular Ngrams': text_analyser.find_most_common_ngrams(n),
+            'Ngrams in query': text_analyser.is_ngrams_in_query(querytext, text, n),
+            'Keywords in paragraphs': text_analyser.is_keyword_in_element(querytext, text, laguange),
+            'Keyword_density': text_analyser.keyword_density(querytext, text, laguange),
+            
+        }
+    
+    return data
+
 
 
 #z = make_right_choice('https://wazdan.com', 'title')
-#z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'content','load balancer')
+z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'content','load balancer')
 #z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'alt_content', 'load')
 #x = make_right_choice('https://wazdan.com', 'headings', 'wazdan')
 #z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'meta_description', 'load')
