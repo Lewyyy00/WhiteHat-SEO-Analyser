@@ -155,12 +155,12 @@ def keyword_options(url, option, text, querytext = None, n=None):
 
 
 #z = make_right_choice('https://wazdan.com', 'title')
-z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'content','load balancer')
+#z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'content','load balancer')
 #z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'alt_content', 'load')
 #x = make_right_choice('https://wazdan.com', 'headings', 'wazdan')
 #z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'meta_description', 'load')
 #z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'url_content')
-z = links_choice('https://wazdan.com', 'All links statuses')
+z = links_choice('https://wazdan.com', 'All canonical links')
 #z = make_right_choice('https://wazdan.com', 'all', 'wazdan')
 
 print(z)

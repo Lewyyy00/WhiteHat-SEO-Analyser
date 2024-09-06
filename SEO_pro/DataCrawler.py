@@ -14,7 +14,7 @@ import json
 from collections import Counter
 from functools import wraps
 from sitemap import Sitemap
-import concurrent.futures
+from concurrent.futures import ThreadPoolExecutor, as_completed
 nltk.download('stopwords')
 nltk.download('punkt')
 
@@ -199,17 +199,32 @@ class UrlStructure(BaseStructure):
             return self.get_all_links_from_sitemap()
 
     def get_all_canonical_links(self):
+
+        """Retrieves canonical links from a list of URLs using multi-threading for faster processing."""
+
         links = self.method_choicer()
         canonical_links = []
 
-        for link in links:
-            response = requests.get(link)
-            response.raise_for_status()  # Raise an error for bad status codes
-            soup = BeautifulSoup(response.content, 'html.parser')
+        def get_canonical_link(link):
+            try:
+                response = requests.get(link)
+                response.raise_for_status()  # Raise an error for bad status codes
+                soup = BeautifulSoup(response.content, 'html.parser')
 
-            for tag in soup.find_all('link', rel='canonical'):
-                if 'href' in tag.attrs:
-                    canonical_links.append(tag['href'])
+                for tag in soup.find_all('link', rel='canonical'):
+                    if 'href' in tag.attrs:
+                        return tag['href']
+            except Exception as e:
+                print(f"Error fetching {link}: {e}")
+            return None
+        
+        with ThreadPoolExecutor(max_workers=10) as executor:
+            future_to_link = {executor.submit(get_canonical_link, link): link for link in links}
+
+            for future in as_completed(future_to_link):
+                canonical = future.result()
+                if canonical:
+                    canonical_links.append(canonical)
             
         return set(canonical_links)
     
@@ -243,7 +258,7 @@ class UrlStructure(BaseStructure):
         links = self.method_choicer()
         list_of_links_status = {}
 
-        with concurrent.futures.ThreadPoolExecutor() as executor:
+        with ThreadPoolExecutor() as executor:
             results = executor.map(self.link_status, links)
 
         for link, status in results:
