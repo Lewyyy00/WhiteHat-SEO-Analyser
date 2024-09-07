@@ -113,9 +113,13 @@ class AnalyseData:
             return json.dumps(data)
         return json.dumps([])
 
-    """def is_duplicate(self):
+    @staticmethod
+    def is_duplicate(links):
        
-       pass"""
+       for link in links:
+            text = Text(threshold=0.1,contents=list_of_content).print_duplicates()
+       
+       pass
 
    
 class Results(AnalyseData):
@@ -194,6 +198,7 @@ class Results(AnalyseData):
                     result_from_multiple = 0
                     element['Points from multiple'] = result_from_multiple
             return json.dumps(data)
+        
     @staticmethod
     def is_title_thesame_as_h1(url):
         data = DataFromHtmlStructure(url)
