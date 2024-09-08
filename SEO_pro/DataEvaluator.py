@@ -113,13 +113,22 @@ class AnalyseData:
             return json.dumps(data)
         return json.dumps([])
 
+
+
+
     @staticmethod
     def is_duplicate(links):
+        dict_of_elements = {}
        
-       for link in links:
-            text = Text(threshold=0.1,contents=list_of_content).print_duplicates()
+        for link in links:
+            dict_of_elements[link] = DataFromHtmlStructure(link).get_title()
+
+        data  = dict_of_elements.values()
+        print(data)
+
+        text = Text(threshold=0.6,contents=data).print_duplicates()
        
-       pass
+        return text
 
    
 class Results(AnalyseData):
