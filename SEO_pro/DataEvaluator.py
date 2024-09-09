@@ -117,20 +117,15 @@ class AnalyseData:
 
 
     @staticmethod
-    def is_duplicate(links):
-        dict_of_elements = {}
+    def is_duplicate(links, threshold=0.1):
+        dict_of_elements = []
        
         for link in links:
-            dict_of_elements[link] = DataFromHtmlStructure(link).get_title()
+            dict_of_elements.append(DataFromHtmlStructure(link).get_title())
 
-        data  = dict_of_elements.values()
-        print(data)
-
-        text = Text(threshold=0.6,contents=data).print_duplicates()
-       
+        text = Text(threshold=threshold,contents=dict_of_elements).print_duplicates()
         return text
 
-   
 class Results(AnalyseData):
 
     def path_selector(self):
@@ -364,9 +359,12 @@ class Text():
     
     def print_duplicates(self):
         duplicates = self.find_duplicates()
-        for url1, url2, similarity in duplicates:
-            print(f"{url1} and {url2} are simillar in {similarity * 100:.2f}%")
-        return similarity
+        if len(duplicates) == 0:
+            print('too low threshold')
+        else:
+            for url1, url2, similarity in duplicates:
+                print(f"{url1} and {url2} are simillar in {similarity * 100:.2f}%")
+            return similarity
 
     def text_lenght(self):
        # short_paragraphs = [p for p in self.data  if len(p) < 50]
