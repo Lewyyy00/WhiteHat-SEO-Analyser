@@ -125,13 +125,14 @@ def links_choice(url, option):
 
     return data
 
-def keyword_options(url, option, text, querytext = None, n=None):
+def keyword_options(url, option, analysingobject, querytext = None, n=None):
 
     """Some of these methods are unnecessary, becasue in choicer() we got a path for analysing 
     keywords in the text. Anyway, I put it here to bring some order"""
 
     laguange = stopwordsss(url)
     text_analyser = TextAnalyzer(text)
+    text = make_right_choice(url,analysingobject) #here must be an object which we want to analyse 
 
     if option == 'Most popular Ngrams':
         data = text_analyser.find_most_common_ngrams(n)
@@ -152,17 +153,4 @@ def keyword_options(url, option, text, querytext = None, n=None):
     
     return data
 
-
-
-#z = make_right_choice('https://wazdan.com', 'title')
-#z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'content','load balancer')
-#z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'alt_content', 'load')
-#x = make_right_choice('https://wazdan.com', 'headings', 'wazdan')
-#z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'meta_description', 'load')
-#z = make_right_choice('https://www.ovhcloud.com/pl/public-cloud/what-load-balancing/', 'url_content')
-z = links_choice('https://wazdan.com', 'All canonical links')
-#z = make_right_choice('https://wazdan.com', 'all', 'wazdan')
-
-print(z)
-#print(x)
 
