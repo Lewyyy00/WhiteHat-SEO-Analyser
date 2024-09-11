@@ -48,13 +48,13 @@ def keywords():
     data = request.json
     url = data.get('url')
     option = data.get('option')
-    text = data.get('text')
+    analysingobject = data.get('analysingobject')
     querytext = data.get('querytext', None)
     n = data.get('n', None)
 
     validate_params(data, option, None)
 
-    result = keyword_options(url, option, text, querytext, n)
+    result = keyword_options(url, option, analysingobject, querytext, n)
     return jsonify(result)
 
 if __name__ == '__main__':

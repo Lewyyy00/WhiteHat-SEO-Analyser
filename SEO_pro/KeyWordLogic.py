@@ -17,6 +17,8 @@ class TextAnalyzer:
         self.language = language
 
     def preprocess_text(self):
+        print(self.text)
+        print(type(self.text))
         if isinstance(self.text, list):
             processed_texts = [self._preprocess_single_text(t) for t in self.text]
             return processed_texts
@@ -37,6 +39,7 @@ class TextAnalyzer:
         if text is None:
             return ''
         else:
+            print(text)
             preprocesed_text = text.lower()  
             preprocesed_text = re.sub(r'\b\w{1}\b', '', preprocesed_text)  
             preprocesed_text = re.sub(r'\s+', ' ', preprocesed_text)  

@@ -52,7 +52,36 @@ def get_all_data(url, keywords = None):
             'url_content': data_from_url.find_any_not_ascii_letters() 
         } 
     return data
-                
+
+# a lot of unneccesey code, somehow this function could be joined with make_right_choice
+@handle_request_errors
+def object_choicer(url, option):
+
+    data_from_html = None
+    data = None
+    
+    if option in ['title', 'meta_description', 'headings']:
+        data_from_html = DataFromHtmlStructure(url)
+    elif option in ['content', 'alt_content']:
+        data_from_html = DataFromTextStructures(url)
+    elif option == 'url_content':
+        data_from_html = DataFromUrl(url)
+
+    if option == 'title':
+        data = data_from_html.get_title()
+    elif option == 'meta_description':
+        data = data_from_html.get_meta_description()
+    elif option == 'headings':
+        data = data_from_html.get_headings()
+    elif option == 'content':
+        data = data_from_html.get_content()
+    elif option == 'alt_content':
+        data = data_from_html.get_all_alt_texts()
+    elif option == 'url_content':
+        data = data_from_html.split_url() 
+
+    return data
+    
 @handle_request_errors
 def make_right_choice(url, option, keywords = None):
 
@@ -131,8 +160,11 @@ def keyword_options(url, option, analysingobject, querytext = None, n=None):
     keywords in the text. Anyway, I put it here to bring some order"""
 
     laguange = stopwordsss(url)
+    print(analysingobject)
+    text = object_choicer(url,analysingobject) #here must be an object which we want to analyse 
+    print(text)
     text_analyser = TextAnalyzer(text)
-    text = make_right_choice(url,analysingobject) #here must be an object which we want to analyse 
+    
 
     if option == 'Most popular Ngrams':
         data = text_analyser.find_most_common_ngrams(n)
@@ -140,6 +172,9 @@ def keyword_options(url, option, analysingobject, querytext = None, n=None):
         data = text_analyser.is_ngrams_in_query(querytext, text, n)
     elif option == 'Keywords in paragraphs':
         data = text_analyser.is_keyword_in_element(querytext, text, laguange)
+        print(querytext)
+        print(text)
+
     elif option == 'Keyword_density':
         data = text_analyser.keyword_density(querytext, text, laguange)
     elif option == 'All':
