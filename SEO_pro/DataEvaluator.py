@@ -113,9 +113,6 @@ class AnalyseData:
             return json.dumps(data)
         return json.dumps([])
 
-
-
-
     @staticmethod
     def is_duplicate(links, threshold=0.1):
         dict_of_elements = []

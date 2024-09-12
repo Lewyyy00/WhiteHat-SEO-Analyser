@@ -1,6 +1,7 @@
 from KeyWordLogic import *
 from DataCrawler import *
 from DataEvaluator import *
+from WebsiteTimeAndSecurity import *
 
 def stopwordsss(url):
     data = DataFromUrl(url)
@@ -188,4 +189,13 @@ def keyword_options(url, option, analysingobject, querytext = None, n=None):
     
     return data
 
+def other_options(url, option):
+    timer = PageLoadTimerAnaylyser(url)
 
+    if option == 'website time load':
+        load_time = timer.measure_webiste_load_time(url)
+        timer.close_browser()    
+
+        return load_time
+    else:
+        pass    

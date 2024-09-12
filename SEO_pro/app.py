@@ -57,5 +57,19 @@ def keywords():
     result = keyword_options(url, option, analysingobject, querytext, n)
     return jsonify(result)
 
+@app.route('/time', methods=['POST'])
+def timer():
+
+    """endpoint for other_options()"""
+
+    data = request.json
+    url = data.get('url')
+    option = data.get('option')
+
+    validate_params(data, option, None)
+
+    result = other_options(url, option)
+    return jsonify(result)
+
 if __name__ == '__main__':
     app.run(debug=True)

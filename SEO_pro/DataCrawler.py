@@ -368,8 +368,6 @@ class DataFromUrl(BaseStructure):
             data["Https exist"] = 'False'
             return json.dumps(data)
 
-
-# HTML 
 class DataFromHtmlStructure(BaseStructure):
  
     @handle_request_errors
