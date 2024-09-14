@@ -4,12 +4,25 @@ from methods import *
 app = Flask(__name__)
 
 
-def validate_params(data, option, keywords):
+def validate_params(data, required_params):
 
-    """checks if the user has given the correct option or data"""
+    """Check if all required parameters are present."""
 
-    if not data or not option:
-        return jsonify({"error": "Invalid parameters"}), 400
+    missing_params = [param for param in required_params if not data.get(param)]
+    if missing_params:
+        return jsonify({"error": f"Missing parameters: {', '.join(missing_params)}"}), 400
+    return None
+
+#implement this function into code next time
+def process_request(required_params):
+
+    """Helper function to process request and validate params."""
+
+    data = request.json
+    validation_error = validate_params(data, required_params)
+    if validation_error:
+        return validation_error, None
+    return None, data
 
 @app.route('/choose', methods=['POST'])
 def make_choice():
