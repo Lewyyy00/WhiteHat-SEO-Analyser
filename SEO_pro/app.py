@@ -27,16 +27,13 @@ def process_request(required_params):
 @app.route('/choose', methods=['POST'])
 def make_choice():
 
-    """endpoint for make_right_choice()"""
+    """Endpoint for make_right_choice()"""
 
-    data = request.json
-    url = data.get('url')
-    option = data.get('option')
-    keywords = data.get('keywords', None)
-
-    validate_params(data, option, keywords)
-
-    result = make_right_choice(url, option, keywords)
+    validation_error, data = process_request(['url', 'option'])
+    if validation_error:
+        return validation_error
+    
+    result = make_right_choice(data['url'], data['option'], data.get('keywords'))
     return jsonify(result)
 
 @app.route('/links', methods=['POST'])
