@@ -39,15 +39,13 @@ def make_choice():
 @app.route('/links', methods=['POST'])
 def links():
 
-    """endpoint for links_choice()"""
-
-    data = request.json
-    url = data.get('url')
-    option = data.get('option')
-
-    validate_params(data, option, None)
-
-    result = links_choice(url, option)
+    """Endpoint for links_choice()"""
+    
+    validation_error, data = process_request(['url', 'option'])
+    if validation_error:
+        return validation_error
+    
+    result = links_choice(data['url'], data['option'])
     return jsonify(result)
 
 @app.route('/keywords', methods=['POST'])
@@ -70,15 +68,13 @@ def keywords():
 @app.route('/time', methods=['POST'])
 def timer():
 
-    """endpoint for other_options()"""
+    """Endpoint for other_options()"""
 
-    data = request.json
-    url = data.get('url')
-    option = data.get('option')
-
-    validate_params(data, option, None)
-
-    result = other_options(url, option)
+    validation_error, data = process_request(['url', 'option'])
+    if validation_error:
+        return validation_error
+    
+    result = other_options(data['url'], data['option'])
     return jsonify(result)
 
 if __name__ == '__main__':
