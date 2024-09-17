@@ -51,18 +51,18 @@ def links():
 @app.route('/keywords', methods=['POST'])
 def keywords():
 
-    """endpoint for keyword_options()"""
-
-    data = request.json
-    url = data.get('url')
-    option = data.get('option')
-    analysingobject = data.get('analysingobject')
-    querytext = data.get('querytext', None)
-    n = data.get('n', None)
-
-    validate_params(data, option, None)
-
-    result = keyword_options(url, option, analysingobject, querytext, n)
+    """Endpoint for keyword_options()"""
+    
+    validation_error, data = process_request(['url', 'option', 'analysingobject'])
+    if validation_error:
+        return validation_error
+    
+    result = keyword_options(
+        data['url'], data['option'], 
+        data['analysingobject'], 
+        data.get('querytext'), 
+        data.get('n')
+    )
     return jsonify(result)
 
 @app.route('/time', methods=['POST'])
