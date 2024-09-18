@@ -196,6 +196,12 @@ def other_options(url, option):
         load_time = timer.measure_webiste_load_time(url)
         timer.close_browser()    
 
+    if option == 'language correctness':
+        pass
+
+    if option == 'find duplicates':
+        pass
+
         return load_time
     else:
         pass    
