@@ -112,16 +112,12 @@ class TextAnalyzer:
         text_from_query = [x for x in text_from_query if x]
         text_from_page = [x for x in text_from_page if x]
 
-        print(text_from_query)
-        print(text_from_page)
-
         if len(text_from_page) == 1:
             words_from_page = text_from_page[0].split()
         else: 
             words_from_page = text_from_page
 
         common_elements = [element for element in words_from_page if any(x in element for x in text_from_query)]
-        print(common_elements)
         return common_elements
     
     @staticmethod

@@ -21,7 +21,8 @@ def choicer(data, keywords, website_language):
                     text_analyser = TextAnalyzer(data, website_language)
                     ta = text_analyser.is_keyword_in_element(keywords, data, website_language)
                     headings_list.append(ta)
-                headings_dict[key] = [x for x in headings_list if x]
+
+                headings_dict[key] = [x for x in headings_list if x] # removing empty List from List
             return headings_dict
         
         elif len(data) > 3: #path for content and alt_content if keywords are not none (content and alt_content go always with keywords)
