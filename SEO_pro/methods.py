@@ -13,15 +13,16 @@ def choicer(data, keywords, website_language):
         return evaluator.title_result()
     else:
         if isinstance(data, dict):
-            headings_list = []
-            print(data)
+            headings_dict = {}
             print('j')
-            for j in data.values(): #path for headings 
-                for data in j:
+            for key, value in data.items(): #path for headings 
+                headings_list = []
+                for data in value:
                     text_analyser = TextAnalyzer(data, website_language)
                     ta = text_analyser.is_keyword_in_element(keywords, data, website_language)
                     headings_list.append(ta)
-            return headings_list
+                headings_dict[key] = headings_list
+            return headings_dict
         
         elif len(data) > 3: #path for content and alt_content if keywords are not none (content and alt_content go always with keywords)
             print('i')
