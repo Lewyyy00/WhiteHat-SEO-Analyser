@@ -109,6 +109,9 @@ class TextAnalyzer:
         text_from_query = analyzer_query.sentence_tokenize()
         text_from_page = analyzer_text.sentence_tokenize()
 
+        text_from_query = [x for x in text_from_query if x]
+        text_from_page = [x for x in text_from_page if x]
+
         print(text_from_query)
         print(text_from_page)
 
