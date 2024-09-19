@@ -58,7 +58,8 @@ def keywords():
         return validation_error
     
     result = keyword_options(
-        data['url'], data['option'], 
+        data['url'], 
+        data['option'], 
         data['analysingobject'], 
         data.get('querytext'), 
         data.get('n')

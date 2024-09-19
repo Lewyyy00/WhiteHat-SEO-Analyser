@@ -82,8 +82,10 @@ class UrlStructure(BaseStructure):
                         links_200.append(full_url)                 
             return links_200
         return []
+     
     @handle_request_errors
     def get_sitemap_from_robots(self):
+        
         if self.soup:
             if not self.website.endswith('/'):
                 self.website += '/'

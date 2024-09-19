@@ -14,23 +14,31 @@ def choicer(data, keywords, website_language):
     else:
         if isinstance(data, dict):
             headings_list = []
+            print(data)
             print('j')
             for j in data.values(): #path for headings 
                 for data in j:
                     text_analyser = TextAnalyzer(data, website_language)
-                    ta = text_analyser.sentence_tokenize()
+                    ta = text_analyser.is_keyword_in_element(keywords, data, website_language)
                     headings_list.append(ta)
             return headings_list
         
         elif len(data) > 3: #path for content and alt_content if keywords are not none (content and alt_content go always with keywords)
             print('i')
             text_analyser = TextAnalyzer(data, website_language)
-            return text_analyser.keyword_density(keywords, data, website_language)
+            data = {
+                'kewords density': text_analyser.keyword_density(keywords, data, website_language)
+            }
+            return data
                 
         else: #path for title, meta description 
             print('c')
             text_analyser = TextAnalyzer(data, website_language)
-            return text_analyser.is_keyword_in_element(keywords, data, website_language)
+            data = {
+                'keywords': text_analyser.is_keyword_in_element(keywords, data, website_language),
+                'kewords density': text_analyser.keyword_density(keywords, data, website_language)
+            }
+            return data
         
 def get_all_data(url, keywords = None):
     data_from_html = DataFromHtmlStructure(url)
@@ -183,8 +191,7 @@ def keyword_options(url, option, analysingobject, querytext = None, n=None):
             'Most popular Ngrams': text_analyser.find_most_common_ngrams(n),
             'Ngrams in query': text_analyser.is_ngrams_in_query(querytext, text, n),
             'Keywords in paragraphs': text_analyser.is_keyword_in_element(querytext, text, laguange),
-            'Keyword_density': text_analyser.keyword_density(querytext, text, laguange),
-            
+            'Keyword_density': text_analyser.keyword_density(querytext, text, laguange),    
         }
     
     return data
