@@ -10,22 +10,19 @@ class AnalyseData:
 
     def is_right_file(self):
         if isinstance(self.data, list) or isinstance(self.data, str):
-            newdata = {
+            data = {
                 "Text": self.data 
             }
-            json_data = json.dumps(newdata)
-            return json_data
+            return data
         
         elif isinstance(self.data, dict):  
             rows = []
             for heading, texts in self.data.items():
                 for text in texts:
                     rows.append({"Headings": heading, "Text": text})
-
-            json_data = json.dumps(rows)
-            return json_data
+            return rows
         else:
-            return json.dumps([])
+            return []
             
     def count_words(self, text):
         words = text.split()
@@ -36,8 +33,8 @@ class AnalyseData:
         return numer_of_words
 
     def is_length_alright(self):
-        json_data = self.is_right_file()
-        data = json.loads(json_data)
+        data = self.is_right_file()
+
         if isinstance(data, dict) and "Text" in data:
             texts = data["Text"]
             lengths = [len(text) for text in texts]
@@ -49,36 +46,36 @@ class AnalyseData:
                 "word_count": word_counts,
                 "elements": elements_in_list
             }
-            return json.dumps(result)
+            return result
         elif isinstance(data, list):
             for element in data:
                 element["length"] = len(element["Text"])
                 element["word_count"] = self.count_words(element["Text"])
-            return json.dumps(data)
-        return json.dumps([])
+            return data
+        return []
 
     def is_missing(self):
-        json_data = self.is_length_alright()
-        data = json.loads(json_data)
+        data = self.is_length_alright()
 
         if isinstance(data, dict):
             data["Missing value"] = [length == 0 for length in data["length"]]
             data["Missing value"] = ["True" if x else "False" for x in data["Missing value"]]
-            return json.dumps(data)
+            return data
+        
         elif isinstance(data, list):
             for element in data:
                 element["Missing value"] = "True" if element["length"] == 0 else "False"
-            return json.dumps(data)
-        return json.dumps([])
+            return data
+        return []
 
     def is_multiple(self):
-        json_data = self.is_missing()
-        data = json.loads(json_data)
+        data = self.is_missing()
 
         if isinstance(data, dict):
             data["Multiple values"] = [length != 1 for length in data["elements"]]
             data["Multiple values"] = ["True" if x else "False" for x in data["Multiple values"]]
-            return json.dumps(data)
+            return data
+        
         elif isinstance(data, list):
             headings = [d['Headings'] for d in data]
             amount_of_headings = Counter(headings)
@@ -95,23 +92,23 @@ class AnalyseData:
                 for element in data:
                     element["Multiple values"] = "s"
 
-        return json.dumps(data)
+        return data
 
     def count_characters(self, elements):
         return [len(element) for element in elements]
 
     def is_characters_alright(self):
-        json_data = self.is_multiple()
-        data = json.loads(json_data)
+        data = self.is_multiple()
 
         if isinstance(data, dict):
             data["Number of characters"] = self.count_characters(data["Text"])
-            return json.dumps(data)
+            return data
+        
         elif isinstance(data, list):
             for entry in data:
                 entry["Number of characters"] = len(entry["Text"])
-            return json.dumps(data)
-        return json.dumps([])
+            return data
+        return []
 
     @staticmethod
     def is_duplicate(links, threshold=0.1):
@@ -134,18 +131,18 @@ class Results(AnalyseData):
         pass
 
     def analyse_missing(self):
-        json_data = self.is_characters_alright()
-        data = json.loads(json_data)
+        data = self.is_characters_alright()
         result_from_missing = 0
+
         if isinstance(data, dict):
             if data['Missing value'] == ["False"]:
                 result_from_missing = 5
                 data['Points from missing'] = result_from_missing
-                return json.dumps(data)
+                return data
             else:
                 result_from_missing = 0
                 data['Points from missing'] = result_from_missing
-                return json.dumps(data)
+                return data
         else:
             for element in data:
                 if element['Missing value'] == 'False':
@@ -154,11 +151,10 @@ class Results(AnalyseData):
                 else:
                     result_from_missing = 0
                     element['Points from missing'] = result_from_missing
-            return json.dumps(data)
+                return data
 
     def analyse_length(self):
-        json_data = self.analyse_missing()
-        data = json.loads(json_data)
+        data = self.analyse_missing()
         result_from_title = 0
         
         if isinstance(data, dict):
@@ -167,29 +163,28 @@ class Results(AnalyseData):
                 if 30 < num_chars < 70:
                     result_from_title = 5
             data['Points from length'] = result_from_title
-            return json.dumps(data)
+            return data
         else:
             for element in data:
                 num_chars = element['Number of characters']
                 if 30 < num_chars < 70:
                     result_from_title = 5
                 element['Points from length'] = result_from_title
-            return json.dumps(data)
+                return data
 
     def analyse_multiple(self):
-        json_data = self.analyse_length()
-        data = json.loads(json_data)
+        data = self.analyse_length()
         result_from_multiple = 0
         
         if isinstance(data, dict):
             if data['Multiple values'] == ["False"]:
                 result_from_multiple = 5
                 data['Points from multiple'] = result_from_multiple
-                return json.dumps(data)
+                return data
             else:
                 result_from_multiple = 0
                 data['Points from multiple'] = result_from_multiple
-                return json.dumps(data)
+                return data
         else:
             for element in data:
                 if element['Multiple values'] == 'False':
@@ -198,7 +193,7 @@ class Results(AnalyseData):
                 else:
                     result_from_multiple = 0
                     element['Points from multiple'] = result_from_multiple
-            return json.dumps(data)
+            return data
         
     @staticmethod
     def is_title_thesame_as_h1(url):
@@ -215,32 +210,31 @@ class Results(AnalyseData):
         return text 
 
     def title_result(self):
-        json_data = self.analyse_multiple()
-        data = json.loads(json_data)
+        data = self.analyse_multiple()
 
-        if isinstance(data, dict):
+        """if isinstance(data, dict):
             data['Overall points'] = data['Points from missing'] + data['Points from length'] + data['Points from multiple']  
-            return json.dumps(data)
+            return data
         else:
             for element in data:
-                element['Overall points'] = element['Points from missing'] + element['Points from length'] + element['Points from multiple']  
-            return json.dumps(data)
+                element['Overall points'] = element['Points from missing'] + element['Points from length'] + element['Points from multiple']  """
+        return data
 
 class Headings(AnalyseData):
 
     def analyse_missing(self):
-        json_data = self.is_characters_alright()
-        data = json.loads(json_data)
+        data = self.is_characters_alright()
         result_from_missing = 0
+
         if isinstance(data, list):
             if data['Missing value'] == ["False"]:
                 result_from_missing = 3
                 data['Points from missing'] = result_from_missing
-                return json.dumps(data)
+                return data
             else:
                 result_from_missing = 0
                 data['Points from missing'] = result_from_missing
-                return json.dumps(data)
+                return data
         else:
             for element in data:
                 if element['Missing value'] == 'False':
@@ -249,7 +243,7 @@ class Headings(AnalyseData):
                 else:
                     result_from_missing = 0
                     element['Points from missing'] = result_from_missing
-            return json.dumps(data)
+            return data
 
     def analyse_missing(self):
         data = self.is_characters_alright()

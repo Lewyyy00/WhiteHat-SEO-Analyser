@@ -270,10 +270,6 @@ class UrlStructure(BaseStructure):
   
 class DataFromUrl(BaseStructure):   
 
-    def make_json(self):
-        data = {'URL': [self.website]}
-        return json.dumps(data)
-
     def split_url(self):
         url = re.sub(r'^https?:\/\/', '', self.website)
         url = re.sub(r'[\/\-_?&=]', ' ', url)
@@ -286,21 +282,19 @@ class DataFromUrl(BaseStructure):
         return url_keywords
 
     def get_lenght_url(self):
-        json_data = self.make_json()
-        data = json.loads(json_data)
+        data = {'URL': [self.website]}
         url_without_protocol  = re.sub(r'^https?:\/\/', '', self.website)
         
         data['Url lenght'] = len(url_without_protocol)
-        return json.dumps(data)
+        return data
 
     def get_parsed_url(self):
-        json_data = self.get_lenght_url()
-        data = json.loads(json_data)
+        data = self.get_lenght_url()
         parsed_url = urlparse(self.website)
 
         data['Url parts'] = [parsed_url.scheme, parsed_url.netloc, parsed_url.path, parsed_url.params, parsed_url.query, parsed_url.fragment]
-        return json.dumps(data)
-    
+        return data   
+     
     @handle_request_errors
     def get_website_language(self):
         if self.soup:
@@ -319,56 +313,53 @@ class DataFromUrl(BaseStructure):
         return stopwordss
         
     def find_stopwords(self):
-        json_data = self.get_parsed_url()
-        data = json.loads(json_data)
+        data = self.get_parsed_url()
         stop_words = self.get_stopwords_language()
         splited_url = self.split_url()
 
         data['List of stopwords in url'] = [element for element in splited_url if element in stop_words]
-        return json.dumps(data)
+        return data
 
     def analyze_url_hyphens(self):
-        json_data = self.find_stopwords()
-        data = json.loads(json_data)
+        data = self.find_stopwords()
+
         for i in self.website:
             if i == '_':
                 data['Hyphens'] = 'True'
-                return json.dumps(data)
+                return data
         data['Hyphens'] = 'False'
-        return json.dumps(data)
-
+        return data
+    
     def find_capital_letters(self):
-        json_data = self.analyze_url_hyphens()
-        data = json.loads(json_data)
+        data = self.analyze_url_hyphens()
+        
         for i in self.website:
             if i.isupper():
                 data['Capital letters'] = 'True'
-                return json.dumps(data)
+                return data
         data['Capital letters'] = 'False'
-        return json.dumps(data)
-
+        return data
+    
     def find_any_not_ascii_letters(self):
-        json_data = self.find_capital_letters()
-        data = json.loads(json_data)
+        data = self.find_capital_letters()
         non_ascii_chars = [char for char in self.website if ord(char) > 127]
         
         if len(non_ascii_chars) > 0:
             data['Not ASCII letters'] = 'True'
-            return json.dumps(data)
+            return data        
         else:
             data['Not ASCII letters'] = 'False'
-            return json.dumps(data)
-        
+            return data     
+           
     def is_valid_protocol(self):
-        parsed_url = self.find_any_not_ascii_letters()
-        data = json.loads(parsed_url)
+        data = self.find_any_not_ascii_letters()
         
         if data["Url parts"][0] == 'https':
             data["Https exist"] = 'True'
-            return json.dumps(data)
+            return data
         else:
             data["Https exist"] = 'False'
-            return json.dumps(data)
+            return data
 
 class DataFromHtmlStructure(BaseStructure):
  
