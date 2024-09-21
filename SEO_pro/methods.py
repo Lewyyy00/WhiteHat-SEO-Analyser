@@ -9,8 +9,8 @@ def stopwordsss(url):
 
 def choicer(data, keywords, website_language):    
     if keywords is None:
-        evaluator = Results(data)
-        return evaluator.title_result()
+        evaluator = AnalyseData(data)
+        return evaluator.is_characters_alright()
     else:
         if isinstance(data, dict):
             headings_dict = {}
@@ -137,7 +137,6 @@ def make_right_choice(url, option, keywords = None):
         return all_results
         
     return choicer(data, keywords, website_language)
-
 
 def links_choice(url, option):
     all_links = UrlStructure(url)
