@@ -213,3 +213,10 @@ def other_options(url, option):
         return load_time
     else:
         pass    
+
+def check_duplicates(url):
+    data = DataFromHtmlStructure(url).get_title()
+    links = UrlStructure(url).get_all_canonical_links()
+    search_dup = SearchDuplicates(data).check_duplicate_with_current_data(links)
+    
+    return search_dup

@@ -78,5 +78,17 @@ def timer():
     result = other_options(data['url'], data['option'])
     return jsonify(result)
 
+@app.route('/duplicates', methods=['POST'])
+def duplicates_checker():
+
+    """Endpoint for check_duplicates()"""
+
+    validation_error, data = process_request(['url'])
+    if validation_error:
+        return validation_error
+    
+    result = check_duplicates(data['url'])
+    return jsonify(result)
+
 if __name__ == '__main__':
     app.run(debug=True)

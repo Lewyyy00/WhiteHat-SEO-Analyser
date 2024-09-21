@@ -7,7 +7,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 class AnalyseData:
     def __init__(self, data):
         self.data = data
-
+        print(data)
     def is_right_file(self):
         if isinstance(self.data, list) or isinstance(self.data, str):
             data = {
@@ -114,8 +114,8 @@ class SearchDuplicates(AnalyseData):
     def __init__(self, data):
         super().__init__(data) 
         self.data = self.is_characters_alright() 
+        self.duplicates = {}
 
-    @staticmethod
     def is_title_duplicate(links, threshold=0.1):
         dict_of_elements = []
        
@@ -125,8 +125,8 @@ class SearchDuplicates(AnalyseData):
         text = Text(threshold=threshold,contents=dict_of_elements).print_duplicates()
         return text
     
+    #in progress
     def is_duplicate(links, method_name, threshold=0.1):
-        
         dict_of_elements = []
 
         for link in links:
@@ -136,7 +136,18 @@ class SearchDuplicates(AnalyseData):
         text = Text(threshold=threshold, contents=dict_of_elements).print_duplicates()
         return text
     
+    def check_duplicate_with_current_data(self, links):
+        current_title = self.data["Text"][0] 
+        other_titles = [DataFromHtmlStructure(link).get_title() for link in links]
+        is_duplicate = current_title in other_titles
 
+        self.duplicates[current_title] = {
+            "Is Duplicate": is_duplicate,
+            "Other Titles": other_titles
+        }
+
+        return self.duplicates
+    
     @staticmethod
     def is_title_thesame_as_h1(link):
         data = DataFromHtmlStructure(link)
