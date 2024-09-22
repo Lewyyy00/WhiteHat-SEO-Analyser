@@ -214,7 +214,7 @@ def other_options(url, option):
     else:
         pass    
 
-def check_duplicates(url, method, links=None):
+def check_duplicates(url, method, links=None, threshold=None):
 
     if method == 'title':
         data = str('get_title')
@@ -226,7 +226,10 @@ def check_duplicates(url, method, links=None):
     if links is None:
         links = UrlStructure(url).get_all_canonical_links()
 
-    return SearchDuplicates(data).is_duplicate(links, data)
+    if threshold is None:
+        threshold = 0.1
+
+    return SearchDuplicates(data).is_duplicate(links, data, threshold=threshold)
 
 
 

@@ -87,7 +87,7 @@ def duplicates_checker():
     if validation_error:
         return validation_error
     
-    result = check_duplicates(data['url'], data['method'], data.get('links'))
+    result = check_duplicates(data['url'], data['method'], data.get('links'), data.get('threshold'))
     return jsonify(result)
 
 if __name__ == '__main__':

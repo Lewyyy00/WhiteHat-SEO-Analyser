@@ -127,14 +127,10 @@ class SearchDuplicates(AnalyseData):
         return text
     
     @staticmethod
-    def is_duplicate(links, method_name, threshold=0.1):
+    def is_duplicate(links, method_name, threshold=0.01):
         dict_of_elements = []
-        print(links)
+
         for link in links:
-            print(link)
-            print(type(link))
-            print(method_name)
-            print(type(method_name))
             element = getattr(DataFromHtmlStructure(link), method_name)()
             dict_of_elements.append(element)
 
@@ -185,10 +181,10 @@ class Text():
         
         if isinstance(self.contents, list):
             list_withoutlists = []
-
+            
             for i in self.contents:
                 list_withoutlists.append(str(i[0]))
-
+            print(list_withoutlists)
             vectorizer = TfidfVectorizer()
             vectors = vectorizer.fit_transform(list_withoutlists).toarray()
         else:
@@ -213,12 +209,19 @@ class Text():
     
     def print_duplicates(self):
         duplicates = self.find_duplicates()
+        results = {}
+
         if len(duplicates) == 0:
-            print('too low threshold')
+            print('Too low threshold')
+            return {}
         else:
             for url1, url2, similarity in duplicates:
-                print(f"{url1} and {url2} are simillar in {similarity * 100:.2f}%")
-            return f"{url1} and {url2} are simillar in {similarity * 100:.2f}%"
+                pair = f"{url1} and {url2}"
+                results[pair] = similarity * 100  
+
+            sorted_results = dict(sorted(results.items(), key=lambda item: item[1], reverse=True))
+            print(sorted_results)
+            return sorted_results
 
     def text_lenght(self):
        # short_paragraphs = [p for p in self.data  if len(p) < 50]
