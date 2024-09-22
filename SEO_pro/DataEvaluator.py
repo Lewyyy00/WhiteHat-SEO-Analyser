@@ -116,6 +116,7 @@ class SearchDuplicates(AnalyseData):
         self.data = self.is_characters_alright() 
         self.duplicates = {}
 
+    @staticmethod
     def is_title_duplicate(links, threshold=0.1):
         dict_of_elements = []
        
@@ -125,11 +126,15 @@ class SearchDuplicates(AnalyseData):
         text = Text(threshold=threshold,contents=dict_of_elements).print_duplicates()
         return text
     
-    #in progress
+    @staticmethod
     def is_duplicate(links, method_name, threshold=0.1):
         dict_of_elements = []
-
+        print(links)
         for link in links:
+            print(link)
+            print(type(link))
+            print(method_name)
+            print(type(method_name))
             element = getattr(DataFromHtmlStructure(link), method_name)()
             dict_of_elements.append(element)
 
@@ -213,7 +218,7 @@ class Text():
         else:
             for url1, url2, similarity in duplicates:
                 print(f"{url1} and {url2} are simillar in {similarity * 100:.2f}%")
-            return similarity
+            return f"{url1} and {url2} are simillar in {similarity * 100:.2f}%"
 
     def text_lenght(self):
        # short_paragraphs = [p for p in self.data  if len(p) < 50]

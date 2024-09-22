@@ -214,9 +214,21 @@ def other_options(url, option):
     else:
         pass    
 
-def check_duplicates(url):
-    data = DataFromHtmlStructure(url).get_title()
-    links = UrlStructure(url).get_all_canonical_links()
-    search_dup = SearchDuplicates(data).check_duplicate_with_current_data(links)
+def check_duplicates(url, method, links=None):
+
+    if method == 'title':
+        data = str('get_title')
+    elif method == 'meta':
+        data = str('get_meta_description')
+    else:
+        raise ValueError("Invalid method. Choose either 'title' or 'meta'.")
+
+    if links is None:
+        links = UrlStructure(url).get_all_canonical_links()
+
+    return SearchDuplicates(data).is_duplicate(links, data)
+
+
+
     
-    return search_dup
+  

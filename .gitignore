@@ -162,6 +162,5 @@ cython_debug/
 #.idea/
 
 #my testing files 
-test.py
 aatest.py
-Archived.py
+aarchived.py

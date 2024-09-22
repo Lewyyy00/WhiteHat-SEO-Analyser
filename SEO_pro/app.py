@@ -83,11 +83,11 @@ def duplicates_checker():
 
     """Endpoint for check_duplicates()"""
 
-    validation_error, data = process_request(['url'])
+    validation_error, data = process_request(['url', 'method'])
     if validation_error:
         return validation_error
     
-    result = check_duplicates(data['url'])
+    result = check_duplicates(data['url'], data['method'], data.get('links'))
     return jsonify(result)
 
 if __name__ == '__main__':
