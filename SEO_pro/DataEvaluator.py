@@ -5,9 +5,14 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 class AnalyseData:
+
+    """Basically, we have two types of data here: lists and dictionaries. Each of them requires 
+    unique treatment thus is_right_file() and the rest of methods direct data on the correct truck"""
+
     def __init__(self, data):
         self.data = data
         print(data)
+
     def is_right_file(self):
         if isinstance(self.data, list) or isinstance(self.data, str):
             data = {
@@ -111,6 +116,9 @@ class AnalyseData:
         return []
 
 class SearchDuplicates(AnalyseData):
+
+    """This class is basically a set of methods that compare data with each other"""
+
     def __init__(self, data):
         super().__init__(data) 
         self.data = self.is_characters_alright() 
@@ -164,6 +172,10 @@ class SearchDuplicates(AnalyseData):
         return text 
 
 class Text():
+
+    """This class was created to be able to find duplicates based on cosine similarity. It was made 
+    in order to compare text (paragaphs from website) but it can be used for other purposes such as 
+    title or meta comparison"""
     
     def __init__(self, urls = None, language = 'en', threshold=0.7, contents = None):
         self.urls = urls
@@ -216,7 +228,7 @@ class Text():
             return {}
         else:
             for url1, url2, similarity in duplicates:
-                pair = f"{url1} and {url2}"
+                pair = f"{' '.join(url1)} and {' '.join(url2)}"  #Without ''.join() there are lists in json
                 results[pair] = similarity * 100  
 
             sorted_results = dict(sorted(results.items(), key=lambda item: item[1], reverse=True))
@@ -242,7 +254,7 @@ class Text():
         for element in self.data:
                 element["Missing value"] = "True" if element["length"] == 0 else "False"
 
-    
+
 
 #In progress
 """class Results(AnalyseData):

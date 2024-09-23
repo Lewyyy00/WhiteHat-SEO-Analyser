@@ -44,6 +44,10 @@ def sort_links(func):
     return wrapper
 
 class BaseStructure:
+
+    """The class made to avoid downloading every time a page, which is analysed. It is used by UrlStructure()
+    DataFromUrl(), DataFromHtmlStructure()"""
+
     def __init__(self, website: str):
         self.website = website
         self.soup: Optional[BeautifulSoup] = None
@@ -52,14 +56,16 @@ class BaseStructure:
     def _initialize_soup(self):
         try:
             response = requests.get(self.website)
-            response.raise_for_status()  # Raise an error for bad status codes
+            response.raise_for_status()  
             self.soup = BeautifulSoup(response.content, 'html.parser')
         except requests.exceptions.RequestException as error:
             print(f"Błąd podczas pobierania strony: {error}")
             self.soup = None
 
-#1 URL Structure
 class UrlStructure(BaseStructure):
+
+    """The class which contains a set of methods that download various combinations of links"""
+
     #@sort_links
     @handle_request_errors
     def get_all_200_links(self):
@@ -103,7 +109,7 @@ class UrlStructure(BaseStructure):
                         sitemap_links.append(sitemap_url)
                 return sitemap_links
             else:
-                print(f"Nie udało się pobrać {robots_url} (status code: {response.status_code})")
+                print(f"the {robots_url} is not downloaded: (status code: {response.status_code})")
                 return None
         return []
     
@@ -195,6 +201,10 @@ class UrlStructure(BaseStructure):
         return None
     
     def method_choicer(self):
+
+        """Firstly it tries to get links from a sitemap/s. If sitemap is not available or 
+        another error occurs, method uses self.get_all_internal_links()"""
+
         if len(self.get_all_links_from_sitemap()) == 0:
             return self.get_all_internal_links()
         else:
@@ -268,7 +278,10 @@ class UrlStructure(BaseStructure):
 
         return list_of_links_status
   
-class DataFromUrl(BaseStructure):   
+class DataFromUrl(BaseStructure):
+
+    """The class responsible for analyzing url in terms of SEO. Should be in a DataEvaluator 
+    but I leave it here, beacuse it inherits from BaseStructure"""   
 
     def split_url(self):
         url = re.sub(r'^https?:\/\/', '', self.website)
@@ -362,7 +375,9 @@ class DataFromUrl(BaseStructure):
             return data
 
 class DataFromHtmlStructure(BaseStructure):
- 
+
+    """It collects all crucial data from the website like title, headings, meta description"""
+
     @handle_request_errors
     def get_title(self):
         titles_list = []
@@ -412,6 +427,8 @@ class DataFromHtmlStructure(BaseStructure):
         return None
      
 class DataFromTextStructures(BaseStructure):
+
+    """It collects crucial content, which has more text then the the rest of the data in DataFromHtmlStructure"""
     
     @handle_request_errors
     def get_content(self):

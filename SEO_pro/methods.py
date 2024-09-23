@@ -8,6 +8,11 @@ def stopwordsss(url):
     return data.get_website_language()
 
 def choicer(data, keywords, website_language):    
+
+    """The function that pilots the API request depends on the needs. Basically there is a choice 
+    where you just want analyse for yor data (title, headings etc.) and a path for analysing keywords 
+    in the choosen data"""
+
     if keywords is None:
         evaluator = AnalyseData(data)
         return evaluator.is_characters_alright()
