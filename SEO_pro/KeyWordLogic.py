@@ -12,11 +12,19 @@ nltk.download('stopwords')
 nltk.download('punkt')
 
 class TextAnalyzer:
+
+    """This class is designed to preprocess and tokenize text data, 
+    supporting multiple input types including strings, lists, and dictionaries"""
+
     def __init__(self, text, language = None):
         self.text = text
         self.language = language
 
     def preprocess_text(self):
+
+        """The preprocess_text() method handles different text formats, performing cleaning 
+        tasks such as lowercasing, removing punctuation, and filtering out short words"""
+
         if isinstance(self.text, list):
             processed_texts = [self._preprocess_single_text(t) for t in self.text]
             return processed_texts
@@ -42,9 +50,13 @@ class TextAnalyzer:
             preprocesed_text = re.sub(r'\s+', ' ', preprocesed_text)  
             preprocesed_text = re.sub(r'[^\w\s]', '', preprocesed_text)  
             return preprocesed_text
-        
-    
+
     def sentence_tokenize(self):
+
+        """The sentence_tokenize() method tokenizes the text into individual words while removing stopwords 
+        based on the specified language (Only english and polish available at this moment). This class is used for preparing 
+        text for natural language processing tasks like is_keyword_in_element() and keyword_density()"""
+
         preprocessed_texts = self.preprocess_text()
         if 'en' in self.language or 'GB' in self.language:
             stop_words = set(stopwords.words("english"))
