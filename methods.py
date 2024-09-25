@@ -55,17 +55,17 @@ def get_all_data(url, keywords = None):
     if keywords == None:
         data = {
             'title': data_from_html.get_title(),
-            'meta_description': data_from_html.get_meta_description(),
+            'metadescription': data_from_html.get_meta_description(),
             'headings': data_from_html.get_headings(), 
         }
     else:
          data = {
             'title': data_from_html.get_title(),
-            'meta_description': data_from_html.get_meta_description(),
+            'metadescription': data_from_html.get_meta_description(),
             'headings': data_from_html.get_headings(),
             'content': data_from_text.get_content(),
-            'alt_content': data_from_text.get_all_alt_texts(), 
-            'url_content': data_from_url.find_any_not_ascii_letters() 
+            'altcontent': data_from_text.get_all_alt_texts(), 
+            'urlcontent': data_from_url.find_any_not_ascii_letters() 
         } 
     return data
 
@@ -76,24 +76,24 @@ def object_choicer(url, option):
     data_from_html = None
     data = None
     
-    if option in ['title', 'meta_description', 'headings']:
+    if option in ['title', 'metadescription', 'headings']:
         data_from_html = DataFromHtmlStructure(url)
-    elif option in ['content', 'alt_content']:
+    elif option in ['content', 'altcontent']:
         data_from_html = DataFromTextStructures(url)
-    elif option == 'url_content':
+    elif option == 'urlcontent':
         data_from_html = DataFromUrl(url)
 
     if option == 'title':
         data = data_from_html.get_title()
-    elif option == 'meta_description':
+    elif option == 'metadescription':
         data = data_from_html.get_meta_description()
     elif option == 'headings':
         data = data_from_html.get_headings()
     elif option == 'content':
         data = data_from_html.get_content()
-    elif option == 'alt_content':
+    elif option == 'altcontent':
         data = data_from_html.get_all_alt_texts()
-    elif option == 'url_content':
+    elif option == 'urlcontent':
         data = data_from_html.split_url() 
 
     return data
@@ -104,26 +104,26 @@ def make_right_choice(url, option, keywords = None):
     data_from_html = None
     data = None
     
-    if option in ['title', 'meta_description', 'headings']:
+    if option in ['title', 'metadescription', 'headings']:
         data_from_html = DataFromHtmlStructure(url)
-    elif option in ['content', 'alt_content']:
+    elif option in ['content', 'altcontent']:
         data_from_html = DataFromTextStructures(url)
-    elif option == 'url_content':
+    elif option == 'urlcontent':
         data_from_html = DataFromUrl(url)
 
     website_language = stopwordsss(url)
 
     if option == 'title':
         data = data_from_html.get_title()
-    elif option == 'meta_description':
+    elif option == 'metadescription':
         data = data_from_html.get_meta_description()
     elif option == 'headings':
         data = data_from_html.get_headings()
     elif option == 'content':
         data = data_from_html.get_content()
-    elif option == 'alt_content':
+    elif option == 'altcontent':
         data = data_from_html.get_all_alt_texts()
-    elif option == 'url_content':
+    elif option == 'urlcontent':
         if keywords is None:
             return data_from_html.find_any_not_ascii_letters() #url goes without choicer if we check keywords
         else:

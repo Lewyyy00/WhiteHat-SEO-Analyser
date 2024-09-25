@@ -13,7 +13,6 @@ def validate_params(data, required_params):
         return jsonify({"error": f"Missing parameters: {', '.join(missing_params)}"}), 400
     return None
 
-#implement this function into code next time
 def process_request(required_params):
 
     """Helper function to process request and validate params."""
@@ -27,13 +26,38 @@ def process_request(required_params):
 @app.route('/choose', methods=['POST'])
 def make_choice():
 
-    """Endpoint for make_right_choice()"""
+    """
+    Endpoint for make_right_choice()
 
+     Accepted options:
+        - 'title'
+        - 'metadescription'
+        - 'headings'
+        - 'content'
+        - 'altcontent'
+        - 'urlcontent'
+
+    You can also provide a 'keywords' field for content-related options.
+
+    Example request body:
+    {
+        "url": "https://example.com",
+        "option": "title",
+        "keywords": "example keyword"
+    }
+
+    """
     validation_error, data = process_request(['url', 'option'])
     if validation_error:
         return validation_error
-    
+
     result = make_right_choice(data['url'], data['option'], data.get('keywords'))
+
+    if data['option'] in ['content', 'altcontent']:
+        if not data.get('keywords'): 
+            return jsonify({'error': 'The option "content" or "altcontent" requires keywords.'}), 400
+
+    print(data)
     return jsonify(result)
 
 @app.route('/links', methods=['POST'])
