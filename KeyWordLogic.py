@@ -33,11 +33,14 @@ class TextAnalyzer:
             processed_texts = [self._preprocess_single_text(word) for word in text]
             return processed_texts
         elif isinstance(self.text, dict):  
-            
-            for texts in self.text.items():
+            all_processed_texts = []
+            for key, texts in self.text.items():
+                print(texts)
                 
                 processed_texts = [self._preprocess_single_text(t) for t in texts]
-                return processed_texts
+                all_processed_texts.extend(processed_texts)
+            return all_processed_texts
+                
         else:
             return self._preprocess_single_text(self.text)
 
@@ -54,7 +57,7 @@ class TextAnalyzer:
     def sentence_tokenize(self):
 
         """The sentence_tokenize() method tokenizes the text into individual words while removing stopwords 
-        based on the specified language (Only english and polish available at this moment). This class is used for preparing 
+        based on the specified language (Only english and polish are available at this moment). This class is used for preparing 
         text for natural language processing tasks like is_keyword_in_element() and keyword_density()"""
 
         preprocessed_texts = self.preprocess_text()
@@ -85,11 +88,15 @@ class TextAnalyzer:
         sentences = self.sentence_tokenize()
         ngram_list = []
 
+        print(sentences)
+
         if self.is_single_word_list(sentences) == True:
             ngram_list = list(ngrams(sentences, n))
             return ngram_list
         else:
             for sentence in sentences:
+                print(sentence)
+                print(type(sentence))
                 words = word_tokenize(sentence)
                 ngrams_generated = list(ngrams(words, n))
                 ngram_list.extend(ngrams_generated)

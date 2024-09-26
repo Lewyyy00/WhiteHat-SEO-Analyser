@@ -29,7 +29,7 @@ def make_choice():
     """
     Endpoint for make_right_choice()
 
-     Accepted options:
+    Accepted options:
         - 'title'
         - 'metadescription'
         - 'headings'
@@ -63,8 +63,24 @@ def make_choice():
 @app.route('/links', methods=['POST'])
 def links():
 
-    """Endpoint for links_choice()"""
+    """
+    Endpoint for links_choice()
+
+    Accepted options:
+        - 'valid' - All links with status 200
+        - 'notvalid' - All links with a status other than 200
+        - 'domain' - All domain links
+        - 'canonical' - All canonical links from domain links
+        - 'external' - All links other than domain links
+        - 'status' - All domain links with statuses 
+
+    Example request body:
+    {
+        "url": "https://example.com",
+        "option": "status"
+    }
     
+    """
     validation_error, data = process_request(['url', 'option'])
     if validation_error:
         return validation_error
@@ -75,11 +91,30 @@ def links():
 @app.route('/keywords', methods=['POST'])
 def keywords():
 
-    """Endpoint for keyword_options()"""
+    """
+    Endpoint for keyword_options()
     
+    Accepted options:
+        - 'mostpopularngrams' - Most popular Ngrams in an analysing object
+        - 'ngramsinquery' - Most popular Ngrams in a query (keywords)
+        - 'keywordsinparagraphs' - 
+        - 'keywordsdensity' - 
+        - 'all' -
+
+    You can also provide a 'keywords' field for content-related options.
+
+    Example request body:
+    {
+        "url": "https://example.com",
+        "option": "status"
+    }
+    
+    """
     validation_error, data = process_request(['url', 'option', 'analysingobject'])
     if validation_error:
         return validation_error
+    
+    print(data)
     
     result = keyword_options(
         data['url'], 

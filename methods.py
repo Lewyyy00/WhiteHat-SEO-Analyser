@@ -146,26 +146,26 @@ def make_right_choice(url, option, keywords = None):
 def links_choice(url, option):
     all_links = UrlStructure(url)
 
-    if option == 'All valid links':
+    if option == 'valid':
         data = all_links.get_all_200_links()
-    elif option == 'All not valid links':
+    elif option == 'notvalid':
         data = all_links.get_all_not_valid_links()
-    elif option == 'All domain links':
+    elif option == 'domain':
         data = all_links.method_choicer()
-    elif option == 'All canonical links':
+    elif option == 'canonical':
         data = all_links.get_all_canonical_links()
-    elif option == 'All external links':
+    elif option == 'external':
         data = all_links.get_all_external_links()
-    elif option == 'All links statuses':
+    elif option == 'status':
         data = all_links.evaluate_all_links()
-    elif option == 'All':
+    """elif option == 'all':
         data = {
             #'All valid links': all_links.get_all_200_links(),
             #'All not valid links': all_links.get_all_not_valid_links(),
             'All domain links': all_links.method_choicer(),
             'All canonical links': all_links.get_all_canonical_links(),
             'All external links': all_links.get_all_external_links()
-        }
+        }"""
 
     return data
 
@@ -178,21 +178,18 @@ def keyword_options(url, option, analysingobject, querytext = None, n=None):
     print(analysingobject)
     text = object_choicer(url,analysingobject) #here must be an object which we want to analyse 
     print(text)
-    text_analyser = TextAnalyzer(text)
+    text_analyser = TextAnalyzer(text, laguange)
     
 
-    if option == 'Most popular Ngrams':
+    if option == 'mostpopularngrams':
         data = text_analyser.find_most_common_ngrams(n)
-    elif option == 'Ngrams in query':
+    elif option == 'ngramsinquery':
         data = text_analyser.is_ngrams_in_query(querytext, text, n)
-    elif option == 'Keywords in paragraphs':
+    elif option == 'keywordsinparagraphs':
         data = text_analyser.is_keyword_in_element(querytext, text, laguange)
-        print(querytext)
-        print(text)
-
-    elif option == 'Keyword_density':
+    elif option == 'keywordsdensity':
         data = text_analyser.keyword_density(querytext, text, laguange)
-    elif option == 'All':
+    elif option == 'all':
         data = {
             'Most popular Ngrams': text_analyser.find_most_common_ngrams(n),
             'Ngrams in query': text_analyser.is_ngrams_in_query(querytext, text, n),
