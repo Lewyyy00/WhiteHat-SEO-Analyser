@@ -185,7 +185,7 @@ def keyword_options(url, option, analysingobject, querytext = None, n=None):
         data = text_analyser.find_most_common_ngrams(n)
     elif option == 'ngramsinquery':
         data = text_analyser.is_ngrams_in_query(querytext, text, n)
-    elif option == 'keywordsinparagraphs':
+    elif option == 'contentwithkeywords':
         data = text_analyser.is_keyword_in_element(querytext, text, laguange)
     elif option == 'keywordsdensity':
         data = text_analyser.keyword_density(querytext, text, laguange)

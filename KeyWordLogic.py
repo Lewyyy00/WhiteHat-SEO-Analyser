@@ -61,21 +61,30 @@ class TextAnalyzer:
         text for natural language processing tasks like is_keyword_in_element() and keyword_density()"""
 
         preprocessed_texts = self.preprocess_text()
-        if 'en' in self.language or 'GB' in self.language:
-            stop_words = set(stopwords.words("english"))
+        if self.language is None:
+            pass
         else:
-            stop_words = polish_stopwords
+            if 'en' in self.language or 'GB' in self.language:
+                stop_words = set(stopwords.words("english"))
+            else:
+                stop_words = polish_stopwords
         
         filtered_sentences = []
 
         for sentence in preprocessed_texts:
             words = word_tokenize(sentence)
-            filtered_sentence = ' '.join([word for word in words if word not in stop_words]) #there is a list of lists with each word without ' '.join()
-            filtered_sentences.append(filtered_sentence)
+            print(words)
+            if self.language is None:
+                filtered_sentence = ' '.join([word for word in words]) #there is a list of lists with each word without ' '.join()
+                filtered_sentences.append(filtered_sentence)
+            else:
+                filtered_sentence = ' '.join([word for word in words if word not in stop_words]) #there is a list of lists with each word without ' '.join()
+                filtered_sentences.append(filtered_sentence)
 
         for i in filtered_sentences:
             if len(i) == 0:
                 filtered_sentences.remove(i)
+        print(filtered_sentences)
         return filtered_sentences
     
     def sentence_chunking(self):
@@ -87,9 +96,8 @@ class TextAnalyzer:
     def generate_ngrams(self, n):
         sentences = self.sentence_tokenize()
         ngram_list = []
-
-        print(sentences)
-
+        n = int(n)
+        
         if self.is_single_word_list(sentences) == True:
             ngram_list = list(ngrams(sentences, n))
             return ngram_list
@@ -105,7 +113,8 @@ class TextAnalyzer:
     def find_most_common_ngrams(self, n):
         data = self.generate_ngrams(n)
         ngram_counts = Counter(data)
-        most_common_ngrams = ngram_counts.most_common(5)
+        print(ngram_counts)
+        most_common_ngrams = ngram_counts.most_common(10)
         return most_common_ngrams
     
     @staticmethod
@@ -114,6 +123,11 @@ class TextAnalyzer:
         analyzer_text = TextAnalyzer(text)
         text_from_query = analyzer_query.generate_ngrams(n)
         text_from_page = analyzer_text.generate_ngrams(n)
+
+        print("_____________")
+        print(text_from_query)
+        print(text_from_page)
+
         common_elements = []
 
         for element in text_from_query:

@@ -97,7 +97,7 @@ def keywords():
     Accepted options:
         - 'mostpopularngrams' - Most popular Ngrams in an analysing object
         - 'ngramsinquery' - Most popular Ngrams in a query (keywords)
-        - 'keywordsinparagraphs' - 
+        - 'contentwithkeywords' - 
         - 'keywordsdensity' - 
         - 'all' -
 
