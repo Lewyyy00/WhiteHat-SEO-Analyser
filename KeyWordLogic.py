@@ -10,6 +10,9 @@ from nltk.util import ngrams
 from values import polish_stopwords
 nltk.download('stopwords')
 nltk.download('punkt')
+import logging
+
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class TextAnalyzer:
 
@@ -61,6 +64,9 @@ class TextAnalyzer:
         text for natural language processing tasks like is_keyword_in_element() and keyword_density()"""
 
         preprocessed_texts = self.preprocess_text()
+
+        logging.debug(f"sentence_tokenize - preprocessed_texts:{preprocessed_texts}")
+
         if self.language is None:
             pass
         else:
@@ -73,7 +79,9 @@ class TextAnalyzer:
 
         for sentence in preprocessed_texts:
             words = word_tokenize(sentence)
-            print(words)
+            
+            logging.debug(f"sentence_tokenize - words:{words}")
+
             if self.language is None:
                 filtered_sentence = ' '.join([word for word in words]) #there is a list of lists with each word without ' '.join()
                 filtered_sentences.append(filtered_sentence)
@@ -84,7 +92,9 @@ class TextAnalyzer:
         for i in filtered_sentences:
             if len(i) == 0:
                 filtered_sentences.remove(i)
-        print(filtered_sentences)
+
+        logging.debug(f"sentence_tokenize - filtered_sentences:{filtered_sentences}")
+
         return filtered_sentences
     
     def sentence_chunking(self):
@@ -95,6 +105,9 @@ class TextAnalyzer:
 
     def generate_ngrams(self, n):
         sentences = self.sentence_tokenize()
+
+        logging.debug(f"generate_ngrams - sentences:{sentences}")
+
         ngram_list = []
         n = int(n)
         
@@ -103,8 +116,6 @@ class TextAnalyzer:
             return ngram_list
         else:
             for sentence in sentences:
-                print(sentence)
-                print(type(sentence))
                 words = word_tokenize(sentence)
                 ngrams_generated = list(ngrams(words, n))
                 ngram_list.extend(ngrams_generated)
@@ -112,21 +123,26 @@ class TextAnalyzer:
     
     def find_most_common_ngrams(self, n):
         data = self.generate_ngrams(n)
+
+        logging.debug(f"find_most_common_ngrams - data:{data}")
+
         ngram_counts = Counter(data)
-        print(ngram_counts)
         most_common_ngrams = ngram_counts.most_common(10)
         return most_common_ngrams
     
     @staticmethod
     def is_ngrams_in_query(querytext, text, n):
+
+        logging.debug(f"is_ngrams_in_query - querytext:{querytext}")
+        logging.debug(f"is_ngrams_in_query - text:{text}")
+
         analyzer_query = TextAnalyzer(querytext)
         analyzer_text = TextAnalyzer(text)
         text_from_query = analyzer_query.generate_ngrams(n)
         text_from_page = analyzer_text.generate_ngrams(n)
-
-        print("_____________")
-        print(text_from_query)
-        print(text_from_page)
+        
+        logging.debug(f"is_ngrams_in_query - text from query:{text_from_query}")
+        logging.debug(f"is_ngrams_in_query - text from page:{text_from_query}")
 
         common_elements = []
 
@@ -137,10 +153,17 @@ class TextAnalyzer:
     
     @staticmethod
     def is_keyword_in_element(querytext, text, website_language):
+
+        logging.debug(f"is_keyword_in_element - querytext:{querytext}")
+        logging.debug(f"is_keyword_in_element - text:{text}")
+
         analyzer_query = TextAnalyzer(querytext, website_language)
         analyzer_text = TextAnalyzer(text, website_language)
         text_from_query = analyzer_query.sentence_tokenize()
         text_from_page = analyzer_text.sentence_tokenize()
+
+        logging.debug(f"is_keyword_in_element - text from query:{text_from_query}")
+        logging.debug(f"is_keyword_in_element - text from page:{text_from_query}")
 
         text_from_query = [x for x in text_from_query if x]
         text_from_page = [x for x in text_from_page if x]
@@ -155,10 +178,17 @@ class TextAnalyzer:
     
     @staticmethod
     def keyword_density(querytext, text, website_language):
+
+        logging.debug(f"keyword_density - querytext: {querytext}")
+        logging.debug(f"keyword_density - text: {text}")
+
         analyzer_query = TextAnalyzer(querytext, website_language)
         analyzer_text = TextAnalyzer(text, website_language)
         text_from_query = analyzer_query.sentence_tokenize()
         text_from_page = analyzer_text.sentence_tokenize()
+
+        logging.debug(f"keyword_density - text from query: {text_from_query}")
+        logging.debug(f"keyword_density - text from page: {text_from_page}")
 
         ta = ' '.join(text_from_page)
         x = len(ta.split())

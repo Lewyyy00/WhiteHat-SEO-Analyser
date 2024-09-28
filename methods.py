@@ -176,8 +176,7 @@ def keyword_options(url, option, analysingobject, querytext = None, n=None):
 
     laguange = stopwordsss(url)
     print(analysingobject)
-    text = object_choicer(url,analysingobject) #here must be an object which we want to analyse 
-    print(text)
+    text = object_choicer(url,analysingobject) 
     text_analyser = TextAnalyzer(text, laguange)
     
 
@@ -191,10 +190,12 @@ def keyword_options(url, option, analysingobject, querytext = None, n=None):
         data = text_analyser.keyword_density(querytext, text, laguange)
     elif option == 'all':
         data = {
-            'Most popular Ngrams': text_analyser.find_most_common_ngrams(n),
-            'Ngrams in query': text_analyser.is_ngrams_in_query(querytext, text, n),
+            'Most popular Ngrams': text_analyser.find_most_common_ngrams(n), #does not work properly 
+            'Ngrams in query': text_analyser.is_ngrams_in_query(querytext, text, n), #does not work properly
             'Keywords in paragraphs': text_analyser.is_keyword_in_element(querytext, text, laguange),
-            'Keyword_density': text_analyser.keyword_density(querytext, text, laguange),    
+            'Keyword_density': text_analyser.keyword_density(querytext, text, laguange), 
+            'Elements': text,
+            'Analysing object': analysingobject
         }
     
     return data
