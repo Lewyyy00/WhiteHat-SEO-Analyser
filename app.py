@@ -95,20 +95,32 @@ def keywords():
     Endpoint for keyword_options()
     
     Accepted options:
-        - 'mostpopularngrams' - Most popular Ngrams in an analysing object
-        - 'ngramsinquery' - Most popular Ngrams in a query (keywords)
-        - 'contentwithkeywords' - 
-        - 'keywordsdensity' - 
-        - 'all' -
+        - 'mostpopularngrams' - Most popular Ngrams in the analysing object
+        - 'ngramsinquery' - Most popular Ngrams in the query (keywords)
+        - 'contentwithkeywords' - Shows which keywords are in the analysing object  
+        - 'keywordsdensity' - Shows keywords density so Shows keywords density so (the amount of keywords in a analyzing object/the amount of words in a analyzing object)
+        - 'all' - Each option from the top
 
-    You can also provide a 'keywords' field for content-related options.
+    Accepted analysingobject:
+        - 'title'
+        - 'metadescription'
+        - 'headings' 
+        - 'content' 
+        - 'altcontent' 
+        - 'urlcontent'
+
+    You can also provide a 'querytext' and 'n' fields. Querytext is just the query you would use 
+    in a browser or you can treat it as a set of keywords. 'n' is a size of ngram.
 
     Example request body:
     {
         "url": "https://example.com",
-        "option": "status"
+        "option": "all",
+        "analysingobject": "title",
+        "querytext": "one example ",
+        "n": "2"
     }
-    
+
     """
     validation_error, data = process_request(['url', 'option', 'analysingobject'])
     if validation_error:
@@ -128,13 +140,25 @@ def keywords():
 @app.route('/time', methods=['POST'])
 def timer():
 
-    """Endpoint for other_options()"""
+    """Endpoint for other_options()
+
+     Accepted options:
+        - 'websitetimeload' - returns the time at which the page loaded
+        - 'filecorrectness' - checks if all files loaded in the webiste #does not work 
+
+    Example request body:
+    {
+        "url": "https://example.com",
+        "option": "websitetimeload",
+    }
+
+    """
 
     validation_error, data = process_request(['url', 'option'])
     if validation_error:
         return validation_error
     
-    result = other_options(data['url'], data['option'])
+    result = time_options(data['url'], data['option'])
     return jsonify(result)
 
 @app.route('/duplicates', methods=['POST'])

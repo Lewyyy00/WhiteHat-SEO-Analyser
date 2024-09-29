@@ -3,6 +3,9 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 import time
+import logging
+
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 class PageLoadTimerAnaylyser:
@@ -14,6 +17,9 @@ class PageLoadTimerAnaylyser:
         self.driver = webdriver.Chrome(service=self.service)
     
     def measure_webiste_load_time(self, url):
+
+        logging.debug(f"procesing...")
+
         start_time = time.time()
         self.driver.get(url)
         
@@ -21,8 +27,12 @@ class PageLoadTimerAnaylyser:
             time.sleep(0.1)  
    
         end_time = time.time()
-        load_time = end_time - start_time
-        return load_time
+        load_time = round(end_time - start_time,2)
+
+        logging.debug(f"measure_webiste_load_time - load_time:{load_time}")
+
+
+        return f"{load_time} seconds"
     
     def open_page(self, url):
         self.driver.get(url)
@@ -46,10 +56,4 @@ class PageLoadTimerAnaylyser:
         self.driver.quit()
 
 
-if __name__ == "__main__":
-    timer = PageLoadTimerAnaylyser()
-    url = 'https://www.screamingfrog.co.uk'
-    load_time = timer.measure_webiste_load_time(url)
-    print(f"time needed to load the webiste: {load_time:.2f} sec")
-    timer.close_browser()
 

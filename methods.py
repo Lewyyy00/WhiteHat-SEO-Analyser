@@ -200,25 +200,26 @@ def keyword_options(url, option, analysingobject, querytext = None, n=None):
     
     return data
 
-def other_options(url, option):
-    timer = PageLoadTimerAnaylyser(url)
-
-    if option == 'website time load':
+def time_options(url, option):    
+    timer = PageLoadTimerAnaylyser()
+    if option == 'websitetimeload':
         load_time = timer.measure_webiste_load_time(url)
-        timer.close_browser()    
+        
+        timer.close_browser()
+        return load_time  
 
-    if option == 'language correctness':
-        pass
+    #does not work
+    elif option == 'filecorrectness':
+        load_time = timer.is_each_file_loaded(url)
+        
+        timer.close_browser()
+        return load_time  
 
-    if option == 'find duplicates':
-        pass
-
-        return load_time
-    else:
+    else: #add all 
         pass    
 
 def check_duplicates(url, method, links=None, threshold=None):
-
+    #add more options 
     if method == 'title':
         data = str('get_title')
     elif method == 'meta':
