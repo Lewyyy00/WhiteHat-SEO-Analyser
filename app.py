@@ -142,7 +142,7 @@ def timer():
 
     """Endpoint for other_options()
 
-     Accepted options:
+    Accepted options:
         - 'websitetimeload' - returns the time at which the page loaded
         - 'filecorrectness' - checks if all files loaded in the webiste #does not work 
 
@@ -164,7 +164,23 @@ def timer():
 @app.route('/duplicates', methods=['POST'])
 def duplicates_checker():
 
-    """Endpoint for check_duplicates()"""
+    """
+    Endpoint for check_duplicates()
+
+    Accepted methods:
+        - 'title' - returns the time at which the page loaded
+        - 'meta' - checks if all files loaded in the webiste #does not work 
+        - 'content' - checks if all files loaded in the webiste #does not work 
+
+    Example request body:
+    {
+        "url": "https://example.com",
+        "option": "websitetimeload",
+        "links": ["https://example.com", "https://example2.com", "https://example3.com"],
+        "threshold": "0.8"
+    }6
+
+    """
 
     validation_error, data = process_request(['url', 'method'])
     if validation_error:

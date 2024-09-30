@@ -3,6 +3,10 @@ import language_tool_python
 import language_tool_python
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+import logging
+
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+
 
 class AnalyseData:
 
@@ -195,6 +199,9 @@ class Text():
             list_withoutlists = []
             
             for i in self.contents:
+
+                logging.debug(f"Text - vectorize_contents:{i}")
+
                 list_withoutlists.append(str(i[0]))
             print(list_withoutlists)
             vectorizer = TfidfVectorizer()
