@@ -178,7 +178,7 @@ def duplicates_checker():
         "option": "websitetimeload",
         "links": ["https://example.com", "https://example2.com", "https://example3.com"],
         "threshold": "0.8"
-    }6
+    }
 
     """
 

@@ -17,6 +17,9 @@ from sitemap import Sitemap
 from concurrent.futures import ThreadPoolExecutor, as_completed
 nltk.download('stopwords')
 nltk.download('punkt')
+import logging
+
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def handle_request_errors(func):
     @wraps(func)

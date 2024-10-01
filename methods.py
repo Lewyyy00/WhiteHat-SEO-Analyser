@@ -224,6 +224,10 @@ def check_duplicates(url, method, links=None, threshold=None):
         data = str('get_title')
     elif method == 'meta':
         data = str('get_meta_description')
+    elif method == 'content':
+        data = str('content')
+        
+
     else:
         raise ValueError("Invalid method. Choose either 'title' or 'meta'.")
 

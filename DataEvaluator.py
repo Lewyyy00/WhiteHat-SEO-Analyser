@@ -140,13 +140,22 @@ class SearchDuplicates(AnalyseData):
     
     @staticmethod
     def is_duplicate(links, method_name, threshold=0.01):
-        dict_of_elements = []
+        print(type(method_name))
+        if method_name == 'content':
+            dict_of_elements = None
+            links = links
 
-        for link in links:
-            element = getattr(DataFromHtmlStructure(link), method_name)()
-            dict_of_elements.append(element)
+            text = Text(links, threshold=threshold, contents=dict_of_elements).print_duplicates()
 
-        text = Text(threshold=threshold, contents=dict_of_elements).print_duplicates()
+        else:
+            dict_of_elements = []
+            for link in links:
+                element = getattr(DataFromHtmlStructure(link), method_name)()
+                dict_of_elements.append(element)
+
+            text = Text(threshold=threshold, contents=dict_of_elements).print_duplicates()
+
+        
         return text
     
     def check_duplicate_with_current_data(self, links):
@@ -233,10 +242,18 @@ class Text():
         if len(duplicates) == 0:
             print('Too low threshold')
             return {}
+        
         else:
             for url1, url2, similarity in duplicates:
+                if isinstance(url1, str):
+                    url1 = [url1]  
+    
+                if isinstance(url2, str):
+                    url2 = [url2]
+
+
                 pair = f"{' '.join(url1)} and {' '.join(url2)}"  #Without ''.join() there are lists in json
-                results[pair] = similarity * 100  
+                results[pair] = round(similarity * 100,2)  
 
             sorted_results = dict(sorted(results.items(), key=lambda item: item[1], reverse=True))
             print(sorted_results)
