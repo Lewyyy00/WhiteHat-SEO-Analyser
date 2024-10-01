@@ -1,4 +1,4 @@
-from DataCrawler import *
+from web_crawler.data_crawler import *
 import language_tool_python
 import language_tool_python
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -196,7 +196,7 @@ class Text():
         self.contents = contents if contents is not None else self.fetch_contents()
         self.vectors = self.vectorize_contents()
         self.language = language
-        self.threshold = threshold
+        self.threshold = float(threshold)
 
     def fetch_contents(self):
         contents = DataFromTextStructures.get_content_from_urls(self.urls)

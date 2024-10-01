@@ -1,7 +1,7 @@
-from KeyWordLogic import *
-from DataCrawler import *
-from DataEvaluator import *
-from WebsiteTimeAndSecurity import *
+from app_logic.keywords_logic import *
+from web_crawler.data_crawler import *
+from web_evaluator.data_evaluator import *
+from web_evaluator.website_loading_time_evaluator import *
 
 def stopwordsss(url):
     data = DataFromUrl(url)
@@ -226,8 +226,6 @@ def check_duplicates(url, method, links=None, threshold=None):
         data = str('get_meta_description')
     elif method == 'content':
         data = str('content')
-        
-
     else:
         raise ValueError("Invalid method. Choose either 'title' or 'meta'.")
 

@@ -6,8 +6,8 @@ import nltk
 from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize, sent_tokenize
-from KeyWordLogic import *
-from values import polish_stopwords
+from app_logic.keywords_logic import *
+from app_logic.values import polish_stopwords
 import pandas as pd
 from typing import Optional
 import json

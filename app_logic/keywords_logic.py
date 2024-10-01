@@ -7,7 +7,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk.util import ngrams
-from values import polish_stopwords
+from app_logic.values import polish_stopwords
 nltk.download('stopwords')
 nltk.download('punkt')
 import logging
