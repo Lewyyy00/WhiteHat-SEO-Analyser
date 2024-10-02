@@ -119,19 +119,22 @@ class AnalyseData:
             return data
         return []
     
-    #@staticmethod
+    #implement it into title result 
+    @staticmethod
     def is_title_thesame_as_h1(link):
         web_data = DataFromHtmlStructure(link)
         h1 = web_data.get_all_h1()
         title = web_data.get_title()
+
+        data = AnalyseData(title).is_characters_alright()
+
         list_of_content = [h1,title]
         text = Text(threshold=0.1,contents=list_of_content).print_duplicates()
 
-        if text > 0.90:
-            print('the heading h1 and the title are the same')
-        else:
-            print('ok, have a nice day')
-        return text 
+        data["headings h1 and title similarity"] = f"h1 and tilte are similar in {text}%"
+        
+        return data 
+    
     
 class SearchDuplicates(AnalyseData):
 
@@ -250,7 +253,6 @@ class Text():
     
                 if isinstance(url2, str):
                     url2 = [url2]
-
 
                 pair = f"{' '.join(url1)} and {' '.join(url2)}"  #Without ''.join() there are lists in json
                 results[pair] = round(similarity * 100,2)  
