@@ -118,7 +118,21 @@ class AnalyseData:
                 entry["Number of characters"] = len(entry["Text"])
             return data
         return []
+    
+    #@staticmethod
+    def is_title_thesame_as_h1(link):
+        web_data = DataFromHtmlStructure(link)
+        h1 = web_data.get_all_h1()
+        title = web_data.get_title()
+        list_of_content = [h1,title]
+        text = Text(threshold=0.1,contents=list_of_content).print_duplicates()
 
+        if text > 0.90:
+            print('the heading h1 and the title are the same')
+        else:
+            print('ok, have a nice day')
+        return text 
+    
 class SearchDuplicates(AnalyseData):
 
     """This class is basically a set of methods that compare data with each other"""
@@ -170,20 +184,6 @@ class SearchDuplicates(AnalyseData):
 
         return self.duplicates
     
-    @staticmethod
-    def is_title_thesame_as_h1(link):
-        data = DataFromHtmlStructure(link)
-        h1 = data.get_all_h1()
-        title = data.get_title()
-        list_of_content = [h1,title]
-        text = Text(threshold=0.1,contents=list_of_content).print_duplicates()
-
-        if text > 0.90:
-            print('the heading h1 and the title are the same')
-        else:
-            print('ok, have a nice day')
-        return text 
-
 class Text():
 
     """This class was created to be able to find duplicates based on cosine similarity. It was made 

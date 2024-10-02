@@ -321,7 +321,7 @@ class DataFromUrl(BaseStructure):
         
     def get_stopwords_language(self):
         web_lang = self.get_website_language()
-        
+        print(web_lang)
         if web_lang.startswith('pl'):
             stopwordss = polish_stopwords
         else:

@@ -19,9 +19,10 @@ def choicer(data, keywords, website_language):
     else:
         if isinstance(data, dict):
             headings_dict = {}
-            print('j')
+            
             for key, value in data.items(): #path for headings 
                 headings_list = []
+        
                 for data in value:
                     text_analyser = TextAnalyzer(data, website_language)
                     ta = text_analyser.is_keyword_in_element(keywords, data, website_language)
@@ -64,8 +65,7 @@ def get_all_data(url, keywords = None):
             'metadescription': data_from_html.get_meta_description(),
             'headings': data_from_html.get_headings(),
             'content': data_from_text.get_content(),
-            'altcontent': data_from_text.get_all_alt_texts(), 
-            'urlcontent': data_from_url.find_any_not_ascii_letters() 
+            'altcontent': data_from_text.get_all_alt_texts() 
         } 
     return data
 
@@ -125,7 +125,7 @@ def make_right_choice(url, option, keywords = None):
         data = data_from_html.get_all_alt_texts()
     elif option == 'urlcontent':
         if keywords is None:
-            return data_from_html.find_any_not_ascii_letters() #url goes without choicer if we check keywords
+            return data_from_html.is_valid_protocol() #url goes without choicer if we check keywords
         else:
             split_url = data_from_html.split_url() 
             return TextAnalyzer(split_url).is_keyword_in_element(keywords, split_url, website_language) 
@@ -136,9 +136,14 @@ def make_right_choice(url, option, keywords = None):
             print(key)
             all_results[key] = choicer(value, keywords, website_language)
 
+        print(keywords)
+
         if keywords == None:
             all_results['url'] = DataFromUrl(url).is_valid_protocol()
-        
+        else: 
+            
+            pass #add function, that analyse url keywrods
+
         return all_results
         
     return choicer(data, keywords, website_language)
@@ -158,7 +163,8 @@ def links_choice(url, option):
         data = all_links.get_all_external_links()
     elif option == 'status':
         data = all_links.evaluate_all_links()
-    """elif option == 'all':
+    #currently not avaliable, because it takes a lot of time
+    """elif option == 'all': 
         data = {
             #'All valid links': all_links.get_all_200_links(),
             #'All not valid links': all_links.get_all_not_valid_links(),
@@ -190,7 +196,7 @@ def keyword_options(url, option, analysingobject, querytext = None, n=None):
         data = text_analyser.keyword_density(querytext, text, laguange)
     elif option == 'all':
         data = {
-            'Most popular Ngrams': text_analyser.find_most_common_ngrams(n), #does not work properly 
+            'Most popular Ngrams': text_analyser.find_most_common_ngrams(n), #does not work properly
             'Ngrams in query': text_analyser.is_ngrams_in_query(querytext, text, n), #does not work properly
             'Keywords in paragraphs': text_analyser.is_keyword_in_element(querytext, text, laguange),
             'Keyword_density': text_analyser.keyword_density(querytext, text, laguange), 

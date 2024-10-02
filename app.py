@@ -23,6 +23,41 @@ def process_request(required_params):
         return validation_error, None
     return None, data
 
+@app.route('/all', methods=['POST'])
+def all_choice():
+
+    """
+    Quick, almost complete analysis of website elements (there are no functions that 
+    analyze ngrams, list links, their statuses, website loading time  etc.).
+
+    
+    It's basically the same endpoint as /choose, but instead of analysing one option 
+    it analyses all of them with and without keywords.
+
+    Example request body:
+    {
+        "url": "https://example.com",
+        "keywords": "example keyword"
+    }
+
+    """
+
+    validation_error, data = process_request(['url'])
+    if validation_error:
+        return validation_error
+    
+    result1 = make_right_choice(data['url'], 'all')
+    result2 = make_right_choice(data['url'], 'all', data.get('keywords'))
+    result = [result1, result2]
+    
+    
+    if data.get('url') is None:
+        if not data.get('keywords'): 
+            return jsonify({'error': 'The option "url" or "keywords" requires data.'}), 400
+
+    print(data)
+    return jsonify(result)
+
 @app.route('/choose', methods=['POST'])
 def make_choice():
 
