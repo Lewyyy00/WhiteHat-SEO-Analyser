@@ -289,12 +289,13 @@ class DataFromUrl(BaseStructure):
     def split_url(self):
         url = re.sub(r'^https?:\/\/', '', self.website)
         url = re.sub(r'[\/\-_?&=]', ' ', url)
+        
         potential_keywords = url.split()
         return potential_keywords
 
-    def find_keywords_url(self):
+    def find_keywords_url(self, keywords):
         keywords_url = self.split_url()
-        url_keywords = [keyword for keyword in keywords_url if any(key in keyword for key in self.keywords)]
+        url_keywords = [keyword for keyword in keywords_url if any(key in keyword for key in keywords)]
         return url_keywords
 
     def get_lenght_url(self):

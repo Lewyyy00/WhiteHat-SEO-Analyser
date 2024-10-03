@@ -126,16 +126,14 @@ class AnalyseData:
         h1 = web_data.get_all_h1()
         title = web_data.get_title()
 
-        data = AnalyseData(title).is_characters_alright()
-
         list_of_content = [h1,title]
         text = Text(threshold=0.1,contents=list_of_content).print_duplicates()
-
+        
+        data = AnalyseData(title).is_characters_alright()
         data["headings h1 and title similarity"] = f"h1 and tilte are similar in {text}%"
         
         return data 
-    
-    
+        
 class SearchDuplicates(AnalyseData):
 
     """This class is basically a set of methods that compare data with each other"""
@@ -172,7 +170,6 @@ class SearchDuplicates(AnalyseData):
 
             text = Text(threshold=threshold, contents=dict_of_elements).print_duplicates()
 
-        
         return text
     
     def check_duplicate_with_current_data(self, links):
@@ -189,9 +186,9 @@ class SearchDuplicates(AnalyseData):
     
 class Text():
 
-    """This class was created to be able to find duplicates based on cosine similarity. It was made 
-    in order to compare text (paragaphs from website) but it can be used for other purposes such as 
-    title or meta comparison"""
+    """This class was created to be able to find duplicates based on cosine similarity. 
+    It was made in order to compare text (paragaphs from website) but it can be used for 
+    other purposes such as title or meta comparison"""
     
     def __init__(self, urls = None, language = 'en', threshold=0.7, contents = None):
         self.urls = urls

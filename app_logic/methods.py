@@ -8,7 +8,7 @@ def stopwordsss(url):
     return data.get_website_language()
 
 def choicer(data, keywords, website_language):    
-
+    print(data)
     """The function that pilots the API request depends on the needs. Basically there is a choice 
     where you just want An analyse for yor data (title, headings etc.) and a path for analysing keywords 
     in the choosen data"""
@@ -31,8 +31,13 @@ def choicer(data, keywords, website_language):
                 headings_dict[key] = [x for x in headings_list if x] # removing empty List from List
             return headings_dict
         
-        elif len(data) > 3: #path for content and alt_content if keywords are not none (content and alt_content go always with keywords)
+        elif data is None:
+            data = "No data found"
+            return data
+        
+        elif len(data) > 10: #path for content and alt_content if keywords are not none (content and alt_content go always with keywords)
             print('i')
+            
             text_analyser = TextAnalyzer(data, website_language)
             data = {
                 'kewords density': text_analyser.keyword_density(keywords, data, website_language)
@@ -129,20 +134,24 @@ def make_right_choice(url, option, keywords = None):
         else:
             split_url = data_from_html.split_url() 
             return TextAnalyzer(split_url).is_keyword_in_element(keywords, split_url, website_language) 
+    
     elif option == 'all':
         data = get_all_data(url, keywords)
         all_results = {}
         for key, value in data.items():
             print(key)
+            print(value)
             all_results[key] = choicer(value, keywords, website_language)
 
         print(keywords)
 
         if keywords == None:
             all_results['url'] = DataFromUrl(url).is_valid_protocol()
+        
         else: 
-            
-            pass #add function, that analyse url keywrods
+            split_url = DataFromUrl(url).split_url() 
+            print(split_url)
+            all_results['url'] = choicer(split_url, keywords, website_language)
 
         return all_results
         
