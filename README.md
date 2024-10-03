@@ -9,8 +9,7 @@ Using this application you can gain useful SEO suggestions to improve website ra
 1. [Installation](#installation)
 2. [Usage](#usage)
 3. [API Endpoints](#api-endpoints)
-4. [Examples](#examples)
-5. [License](#license)
+4. [License](#license)
 
 ## Installation
 
@@ -55,3 +54,40 @@ You can use Postman or curl to interact with the WhiteHatSEO Analyser endpoints.
 curl -X POST http://localhost:5000/choose ^
 -H "Content-Type: application/json" ^
 -d "{\"url\": \"https://example.com\", \"option\": \"content\", \"keywords\": \"example keyword\"}"
+```
+
+## API Endpoints
+
+More descriptive and detailed ways to use these endpoints can be found in the app.py file
+
+| Endpoint       | Method | Description                       | Parameters   |
+|----------------|--------|-----------------------------------|--------------|
+| `/all`     | POST   | Quick, almost complete analysis of website elements | `url`, `keywords`|
+| `/choose`  | POST   | A more specific way to extract/analyze just one element                | `url`, `option`, `keywords` |
+| `/links` | POST | A set of different options, which extracts links from your page  | `url`, `option` |
+| `/keywords`     | POST   | A tool that can compare keywords on your website with those you gave | `url`, `option`, `analysingobject`, `querytext`, `n` |
+| `/time`  | POST   | Everything connected with page loading time               | `url`, `option` |
+| `/duplicates` | POST | This endpoint can detect how similar are given elements for example contents from pages| `url`, `option`, `links`, `threshold` |
+
+## License
+MIT License
+
+Copyright (c) 2024 Michał Lewandowski
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

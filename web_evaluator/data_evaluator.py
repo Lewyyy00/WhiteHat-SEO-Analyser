@@ -51,14 +51,14 @@ class AnalyseData:
             word_counts = [self.count_words(text) for text in texts]
             result = {
                 "Text": texts,
-                "length": lengths,
+                "Number of characters": lengths,
                 "word_count": word_counts,
                 "elements": elements_in_list
             }
             return result
         elif isinstance(data, list):
             for element in data:
-                element["length"] = len(element["Text"])
+                element["Number of characters"] = len(element["Text"])
                 element["word_count"] = self.count_words(element["Text"])
             return data
         return []
@@ -67,13 +67,13 @@ class AnalyseData:
         data = self.is_length_alright()
 
         if isinstance(data, dict):
-            data["Missing value"] = [length == 0 for length in data["length"]]
+            data["Missing value"] = [length == 0 for length in data["Number of characters"]]
             data["Missing value"] = ["True" if x else "False" for x in data["Missing value"]]
             return data
         
         elif isinstance(data, list):
             for element in data:
-                element["Missing value"] = "True" if element["length"] == 0 else "False"
+                element["Missing value"] = "True" if element["Number of characters"] == 0 else "False"
             return data
         return []
 
@@ -115,6 +115,7 @@ class AnalyseData:
         
         elif isinstance(data, list):
             for entry in data:
+                print(entry)
                 entry["Number of characters"] = len(entry["Text"])
             return data
         return []

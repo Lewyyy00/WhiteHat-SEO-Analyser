@@ -56,7 +56,7 @@ def all_choice():
 
     print(data)
     return jsonify(result)
-
+#ADD one request = option with keywords + option without keywords
 @app.route('/choose', methods=['POST'])
 def make_choice():
 
@@ -71,7 +71,8 @@ def make_choice():
         - 'altcontent'
         - 'urlcontent'
 
-    You can also provide a 'keywords' field for content-related options.
+    You can also provide a 'keywords' field for content-related options. It can be one word, 
+    set of words or a sentence.
 
     Example request body:
     {

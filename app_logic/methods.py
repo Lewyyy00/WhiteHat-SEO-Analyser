@@ -15,7 +15,7 @@ def choicer(data, keywords, website_language):
 
     if keywords is None:
         evaluator = AnalyseData(data)
-        return evaluator.is_characters_alright()
+        return evaluator.is_multiple()
     else:
         if isinstance(data, dict):
             headings_dict = {}
