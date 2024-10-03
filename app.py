@@ -30,7 +30,6 @@ def all_choice():
     Quick, almost complete analysis of website elements (there are no functions that 
     analyze ngrams, list links, their statuses, website loading time  etc.).
 
-    
     It's basically the same endpoint as /choose, but instead of analysing one option 
     it analyses all of them with and without keywords.
 
