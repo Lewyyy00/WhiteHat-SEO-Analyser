@@ -41,22 +41,16 @@ def all_choice():
 
     """
 
-    validation_error, data = process_request(['url'])
+    validation_error, data = process_request(['url', 'keywords'])
     if validation_error:
         return validation_error
     
     result1 = make_right_choice(data['url'], 'all')
-    result2 = make_right_choice(data['url'], 'all', data.get('keywords'))
+    result2 = make_right_choice(data['url'], 'all', data['keywords'])
     result = [result1, result2]
     
-    
-    if data.get('url') is None:
-        if not data.get('keywords'): 
-            return jsonify({'error': 'The option "url" or "keywords" requires data.'}), 400
-
-    print(data)
     return jsonify(result)
-#ADD one request = option with keywords + option without keywords
+
 @app.route('/choose', methods=['POST'])
 def make_choice():
 
@@ -71,8 +65,7 @@ def make_choice():
         - 'altcontent'
         - 'urlcontent'
 
-    You can also provide a 'keywords' field for content-related options. It can be one word, 
-    set of words or a sentence.
+    Specific analysis of one element of the website in terms of SEO.
 
     Example request body:
     {
@@ -82,17 +75,15 @@ def make_choice():
     }
 
     """
-    validation_error, data = process_request(['url', 'option'])
+    validation_error, data = process_request(['url', 'option', 'keywords'])
     if validation_error:
         return validation_error
 
-    result = make_right_choice(data['url'], data['option'], data.get('keywords'))
+    result1 = make_right_choice(data['url'], data['option'])
+    result2 = make_right_choice(data['url'], data['option'], data['keywords'])
 
-    if data['option'] in ['content', 'altcontent']:
-        if not data.get('keywords'): 
-            return jsonify({'error': 'The option "content" or "altcontent" requires keywords.'}), 400
-
-    print(data)
+    result = [result1, result2]
+    
     return jsonify(result)
 
 @app.route('/links', methods=['POST'])
@@ -204,8 +195,8 @@ def duplicates_checker():
 
     Accepted methods:
         - 'title' - returns the time at which the page loaded
-        - 'meta' - checks if all files loaded in the webiste #does not work 
-        - 'content' - checks if all files loaded in the webiste #does not work 
+        - 'meta' - checks if all files loaded in the webiste  
+        - 'content' - checks if all files loaded in the webiste 
 
     Example request body:
     {
