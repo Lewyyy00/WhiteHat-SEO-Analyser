@@ -1,15 +1,37 @@
 # WhiteHatSEO Analyser
 
-This project is a web application built with Flask that analyzes website elements for SEO (Search Engine Optimization). It provides multiple endpoints that can be accessed via Postman or curl for analyzing and retrieving SEO-related data. 
+This project is a web application built with Flask that analyzes website elements for SEO (Search Engine Optimization), so if you need to compare your website with your competitors check out this project. It provides multiple endpoints that can be accessed via Postman or curl for analyzing and retrieving SEO-related data. 
 
 Using this application you can gain useful SEO suggestions to improve website ranking.
 
 ## Table of Contents
 
-1. [Installation](#installation)
-2. [Usage](#usage)
-3. [API Endpoints](#api-endpoints)
-4. [License](#license)
+1. [Project structure](#project-structure)
+2. [Installation](#installation)
+3. [Usage](#usage)
+4. [API Endpoints](#api-endpoints)
+
+## Project structure
+```
+WhiteHatSEO/
+├── app_logic/
+│   ├── __init__.py     
+│   ├── keywords_logic.py                       # Contains text processing logic
+│   ├── methods.py                              # API query routing functions
+│   └── values.py                               # Contains Polish stopwords
+├── web_crawler/ 
+│   ├── __init__.py     
+│   └── data_crawler.py                         # Contains a class that extract data from pages
+├── web_evaluator/ 
+│   ├── __init__.py     
+│   ├── data_evaluator_extended.py              # Expanded set of methods responsible for data evaluation (in progress)
+│   ├── data_evaluator.py                       # A set of methods that are responsible for assessing data
+│   └── website_loading_time_evaluator.py       # A set of methods responsible for assessing the loading time of a website and whether all files have been loaded
+├── README.md                                   # Project documentation 
+├── requirements.txt                            # Python dependencies
+├── app.py                                      # Main application file (Flask app)
+└── .gitignore                                  # Git ignore file
+```
 
 ## Installation
 
@@ -68,26 +90,3 @@ More descriptive and detailed ways to use these endpoints can be found in the ap
 | `/keywords`     | POST   | A tool that can compare keywords on your website with those you gave | `url`, `option`, `analysingobject`, `querytext`, `n` |
 | `/time`  | POST   | Everything connected with page loading time               | `url`, `option` |
 | `/duplicates` | POST | This endpoint can detect how similar are given elements for example contents from pages| `url`, `option`, `links`, `threshold` |
-
-## License
-MIT License
-
-Copyright (c) 2024 Michał Lewandowski
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
