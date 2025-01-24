@@ -11,11 +11,10 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %
 class AnalyseData:
 
     """Basically, we have two types of data here: lists and dictionaries. Each of them requires 
-    unique treatment thus is_right_file() and the rest of methods direct data on the correct truck"""
+    unique treatment thus is_right_file() and the rest of methods direct data on the correct track"""
 
     def __init__(self, data):
         self.data = data
-        print(data)
 
     def is_right_file(self):
         if isinstance(self.data, list) or isinstance(self.data, str):
@@ -41,8 +40,7 @@ class AnalyseData:
         numer_of_words = [self.count_words(element) for element in elements]
         return numer_of_words
 
-    def is_length_alright(self):
-        data = self.is_right_file()
+    def is_length_alright(self, data):
 
         if isinstance(data, dict) and "Text" in data:
             texts = data["Text"]
@@ -63,8 +61,7 @@ class AnalyseData:
             return data
         return []
 
-    def is_missing(self):
-        data = self.is_length_alright()
+    def is_missing(self, data):
 
         if isinstance(data, dict):
             data["Missing value"] = [length == 0 for length in data["Number of characters"]]
@@ -77,8 +74,7 @@ class AnalyseData:
             return data
         return []
 
-    def is_multiple(self):
-        data = self.is_missing()
+    def is_multiple(self, data):
 
         if isinstance(data, dict):
             data["Multiple values"] = [length != 1 for length in data["elements"]]
@@ -106,8 +102,7 @@ class AnalyseData:
     def count_characters(self, elements):
         return [len(element) for element in elements]
 
-    def is_characters_alright(self):
-        data = self.is_multiple()
+    def is_characters_alright(self, data):
 
         if isinstance(data, dict):
             data["Number of characters"] = self.count_characters(data["Text"])
@@ -119,6 +114,14 @@ class AnalyseData:
                 entry["Number of characters"] = len(entry["Text"])
             return data
         return []
+    
+    def process_all(self):
+        data = self.is_right_file()
+        data = self.is_length_alright(data)
+        data = self.is_missing(data)
+        data = self.is_multiple(data)
+        data = self.is_characters_alright(data)
+        return data
     
     #implement it into title result 
     @staticmethod
