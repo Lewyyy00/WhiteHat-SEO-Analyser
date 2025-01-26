@@ -8,7 +8,7 @@ def validate_params(data, required_params):
 
     """Check if all required parameters are present."""
 
-    missing_params = [param for param in required_params if not data.get(param)]
+    missing_params = [param for param in required_params if param not in data]
     if missing_params:
         return jsonify({"error": f"Missing parameters: {', '.join(missing_params)}"}), 400
     return None
@@ -18,6 +18,10 @@ def process_request(required_params):
     """Helper function to process request and validate params."""
 
     data = request.json
+
+    if not data:
+        return jsonify({"error": "Invalid or missing JSON body"}), None
+
     validation_error = validate_params(data, required_params)
     if validation_error:
         return validation_error, None
@@ -75,15 +79,16 @@ def make_choice():
     }
 
     """
-    validation_error, data = process_request(['url', 'option', 'keywords'])
+    validation_error, data = process_request(['url', 'option'])
     if validation_error:
         return validation_error
 
-    result1 = make_right_choice(data['url'], data['option'])
-    result2 = make_right_choice(data['url'], data['option'], data['keywords'])
+    if 'keywords' in data:
+        result = make_right_choice(data['url'], 'option', data['keywords'])
+        print(result)
+    else:
+        result = make_right_choice(data['url'], 'option')
 
-    result = [result1, result2]
-    
     return jsonify(result)
 
 @app.route('/links', methods=['POST'])

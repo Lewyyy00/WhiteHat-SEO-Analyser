@@ -133,7 +133,7 @@ class AnalyseData:
         list_of_content = [h1,title]
         text = Text(threshold=0.1,contents=list_of_content).print_duplicates()
         
-        data = AnalyseData(title).is_characters_alright()
+        data = AnalyseData(title).process_all()
         data["headings h1 and title similarity"] = f"h1 and tilte are similar in {text}%"
         
         return data 
@@ -144,7 +144,7 @@ class SearchDuplicates(AnalyseData):
 
     def __init__(self, data):
         super().__init__(data) 
-        self.data = self.is_characters_alright() 
+        self.data = self.process_all() 
         self.duplicates = {}
 
     @staticmethod
