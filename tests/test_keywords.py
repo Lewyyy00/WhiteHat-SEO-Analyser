@@ -32,3 +32,49 @@ def test_keywords_success(client):
     assert "Elements" in data
     assert "Keyword_density" in data
     assert "Keywords in paragraphs" in data
+
+
+def test_keywords_missing_url(client):
+
+    """Test request without 'url' field."""
+
+    response = client.post('/keywords', json={
+        "option": "all",
+        "analysingobject": "content"
+    })
+
+    assert response.status_code == 400  # Response code for error
+    data = response.get_json()
+
+    assert "error" in data  # Check if 'error' key is present
+    assert "Missing parameters: url" in data["error"]  # Match the message
+
+def test_keywords_missing_analysingobject(client):
+
+    """Test request without 'analysingobject' field."""
+
+    response = client.post('/keywords', json={
+        "url": "https://example.com",
+        "option": "all"
+    })
+
+    assert response.status_code == 400  
+    data = response.get_json()
+
+    assert "error" in data  
+    assert "Missing parameters: analysingobject" in data["error"]  
+
+def test_keywords_missing_option(client):
+
+    """Test request without 'option' field."""
+
+    response = client.post('/keywords', json={
+        "url": "https://example.com",
+        "analysingobject": "content"
+    })
+
+    assert response.status_code == 400  
+    data = response.get_json()
+
+    assert "error" in data  
+    assert "Missing parameters: option" in data["error"]  
