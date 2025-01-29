@@ -45,12 +45,12 @@ def all_choice():
 
     """
 
-    validation_error, data = process_request(['url', 'keywords'])
+    validation_error, data = process_request(['url'])
     if validation_error:
         return validation_error
     
     result1 = make_right_choice(data['url'], 'all')
-    result2 = make_right_choice(data['url'], 'all', data['keywords'])
+    result2 = make_right_choice(data['url'], 'all', data.get('keywords'))
     result = [result1, result2]
     
     return jsonify(result)
@@ -83,13 +83,12 @@ def make_choice():
     if validation_error:
         return validation_error
 
-    if 'keywords' in data:
-        result = make_right_choice(data['url'], 'option', data['keywords'])
-        print(result)
-    else:
-        result = make_right_choice(data['url'], 'option')
+    result1 = make_right_choice(data['url'], data['option'])
+    result2 = make_right_choice(data['url'], data['option'], data.get('keywords'))
+    result = [result1, result2]
 
     return jsonify(result)
+
 
 @app.route('/links', methods=['POST'])
 def links():
