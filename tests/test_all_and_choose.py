@@ -44,6 +44,7 @@ def test_choose_success(client):
         data = response.get_json()
 
         #Check the presence of keys in the returned response
+        print(data)
         assert isinstance(data, list)
         assert len(data) == 2
         assert "Missing value" in data[0]

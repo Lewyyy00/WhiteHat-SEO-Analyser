@@ -198,8 +198,11 @@ class TextAnalyzer:
             count = ta.count(element)
             counter += count
         
-        density = round((counter/x) * 100, 2) 
-        return f'{density}%'
+        if x == 0:
+            return '0%'
+        else:
+            density = round((counter/x) * 100, 2) 
+            return f'{density}%'
      
 
 
