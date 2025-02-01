@@ -1,6 +1,4 @@
-import pytest
-from app import *
-
+from test_config import *
 
 @pytest.fixture
 def client():
