@@ -1,15 +1,5 @@
 from test_config import *
 
-@pytest.fixture
-def client():
-    
-    """Fixture returning a Flask test client."""
-
-    app.config['TESTING'] = True
-    with app.test_client() as client:
-        yield client
-
-
 def test_keywords_success(client):
 
     """Test for a successful request to the /keywords endpoint."""
